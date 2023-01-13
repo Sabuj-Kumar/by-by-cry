@@ -31,9 +31,6 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Row(
-
-
-
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Padding(
