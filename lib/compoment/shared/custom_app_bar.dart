@@ -49,7 +49,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
             onPressed: () {
               //SystemNavigator.pop();
-              Navigator.of(context).popUntil((route) => false);
+              Navigator.of(context).pop();
             },
           ),
         ),
@@ -58,6 +58,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         text: title,
         fontSize: 24,
         fontWeight: FontWeight.w700,
+        color: secondaryBlackColor,
       ),
       actions: <Widget>[
         if (actionTitle != null)

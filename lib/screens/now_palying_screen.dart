@@ -139,7 +139,7 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
             ),
           ),
           Container(
-            color: Colors.green,
+            //color: Colors.green,
             //height: width * 0.3,
             child: Padding(
               padding: const EdgeInsets.only(left: 30.0,right: 30),
@@ -156,7 +156,7 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
                         'asset/images/icon_png/now_playing_icon/left_shift.png',
                   ),
                   Container(
-                    color: Colors.red,
+                   // color: Colors.red,
                     height: width * 0.2,
                     width: width * 0.2,
                     child: const CustomImage(

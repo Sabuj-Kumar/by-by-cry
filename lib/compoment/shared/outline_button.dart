@@ -26,10 +26,12 @@ class OutLineButton extends StatelessWidget {
     this.anotherTextColor = secondaryBlackColor,
     this.anotherTextFontWeight = FontWeight.w400,
     this.anotherTextFontSize = 16,
-    this.textPaddingVertical = 0,
-    this.otherTextPaddingVertical = 0,
+    this.textPaddingVerticalTop = 0,
+    this.otherTextPaddingVerticalTop = 0,
     this.otherTextPaddingHorizontal = 0,
-    this.textPaddingHorizontal = 0
+    this.textPaddingHorizontal = 0,
+    this.textPaddingVerticalBottom = 0,
+    this.otherTextPaddingVerticalBottom = 0
   }) : super(key: key);
 
   final String text;
@@ -51,8 +53,10 @@ class OutLineButton extends StatelessWidget {
   final FontWeight anotherTextFontWeight;
   final double textFontSize;
   final double anotherTextFontSize;
-  final double textPaddingVertical;
-  final double otherTextPaddingVertical;
+  final double textPaddingVerticalTop;
+  final double otherTextPaddingVerticalTop;
+  final double textPaddingVerticalBottom;
+  final double otherTextPaddingVerticalBottom;
   final double textPaddingHorizontal;
   final double otherTextPaddingHorizontal;
 
@@ -87,7 +91,7 @@ class OutLineButton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: textPaddingHorizontal,vertical: textPaddingVertical),
+              padding: EdgeInsets.only(left: textPaddingHorizontal,top: textPaddingVerticalTop,bottom: textPaddingVerticalBottom,right: textPaddingHorizontal),
               child: CustomText(
                 text: text,
                 fontWeight: textFontWeight,
@@ -97,7 +101,7 @@ class OutLineButton extends StatelessWidget {
             ),
             if (anotherText != null)
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: otherTextPaddingHorizontal,vertical: otherTextPaddingVertical),
+                padding: EdgeInsets.only(left: otherTextPaddingHorizontal,top: otherTextPaddingVerticalTop,bottom: otherTextPaddingVerticalBottom,right: otherTextPaddingHorizontal),
                 child: CustomText(
                   text: anotherText!,
                   fontWeight: anotherTextFontWeight,
