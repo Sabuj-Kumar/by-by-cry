@@ -35,7 +35,7 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
             children: [
               Padding(
                 padding: EdgeInsets.only(right: width * .07),
-                child: CustomImage(
+                child: const CustomImage(
                   imageUrl: 'asset/images/icon_png/now_playing_icon/Sun.png',
                 ),
               ),
