@@ -1,6 +1,7 @@
 import 'package:bye_bye_cry_new/compoment/shared/screen_size.dart';
 import 'package:flutter/material.dart';
 
+import '../utils/color_utils.dart';
 import 'custom_text.dart';
 
 class CustomImageText extends StatelessWidget {
@@ -15,13 +16,28 @@ class CustomImageText extends StatelessWidget {
     return Column(
       children: [
         Container(
-          height: width * .25,
-          width: width * .25,
+          height: width * .24,
+          width: width * .24,
           clipBehavior: Clip.hardEdge,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
               image: DecorationImage(
-                  fit: BoxFit.fill, image: AssetImage(imageUrl))),
+                  fit: BoxFit.fill, image: AssetImage(imageUrl)),
+            boxShadow: [
+              BoxShadow(
+                offset: Offset(2, 3),
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 1,
+                spreadRadius: 1
+              ),
+              BoxShadow(
+                offset: Offset(2,1),
+                color: Colors.black.withOpacity(0.1),
+                  blurRadius: 1,
+                  spreadRadius: 1
+              ),
+            ]
+          ),
 
         ),
         const SizedBox(

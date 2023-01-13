@@ -35,7 +35,7 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
             children: [
               Padding(
                 padding: EdgeInsets.only(right: width * .07),
-                child: CustomImage(
+                child: const CustomImage(
                   imageUrl: 'asset/images/icon_png/now_playing_icon/Sun.png',
                 ),
               ),
@@ -115,6 +115,7 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
             ),
           ),
           SizedBox(
+            //color: Colors.green,
             width: width * .95,
             child: SliderTheme(
               data: const SliderThemeData(
@@ -137,30 +138,39 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
                   }),
             ),
           ),
-          SizedBox(
-            height: 50,
+          Container(
+            color: Colors.green,
+            //height: width * 0.3,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30.0),
+              padding: const EdgeInsets.only(left: 30.0,right: 30),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  CustomImage(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children:  [
+                  const CustomImage(
                     imageUrl:
                         'asset/images/icon_png/now_playing_icon/sound.png',
                   ),
-                  CustomImage(
+                  const CustomImage(
                     imageUrl:
                         'asset/images/icon_png/now_playing_icon/left_shift.png',
                   ),
-                  CustomImage(
-                    imageUrl:
-                        'asset/images/icon_png/now_playing_icon/pause.png',
+                  Container(
+                    color: Colors.red,
+                    height: width * 0.2,
+                    width: width * 0.2,
+                    child: const CustomImage(
+                      //color: Colors.blue,
+                      boxFit: BoxFit.fill,
+                      imageUrl:
+                          'asset/images/icon_png/now_playing_icon/pause.png',
+                    ),
                   ),
-                  CustomImage(
+                  const CustomImage(
                     imageUrl:
                         'asset/images/icon_png/now_playing_icon/right_shft.png',
                   ),
-                  CustomImage(
+                  const CustomImage(
                     imageUrl: 'asset/images/icon_png/now_playing_icon/time.png',
                   ),
                 ],

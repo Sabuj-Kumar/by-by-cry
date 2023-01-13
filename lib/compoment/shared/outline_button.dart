@@ -26,6 +26,10 @@ class OutLineButton extends StatelessWidget {
     this.anotherTextColor = secondaryBlackColor,
     this.anotherTextFontWeight = FontWeight.w400,
     this.anotherTextFontSize = 16,
+    this.textPaddingVertical = 0,
+    this.otherTextPaddingVertical = 0,
+    this.otherTextPaddingHorizontal = 0,
+    this.textPaddingHorizontal = 0
   }) : super(key: key);
 
   final String text;
@@ -47,6 +51,10 @@ class OutLineButton extends StatelessWidget {
   final FontWeight anotherTextFontWeight;
   final double textFontSize;
   final double anotherTextFontSize;
+  final double textPaddingVertical;
+  final double otherTextPaddingVertical;
+  final double textPaddingHorizontal;
+  final double otherTextPaddingHorizontal;
 
   @override
   Widget build(BuildContext context) {
@@ -78,18 +86,24 @@ class OutLineButton extends StatelessWidget {
           // crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CustomText(
-              text: text,
-              fontWeight: textFontWeight,
-              fontSize: textFontSize,
-              color: textColor,
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: textPaddingHorizontal,vertical: textPaddingVertical),
+              child: CustomText(
+                text: text,
+                fontWeight: textFontWeight,
+                fontSize: textFontSize,
+                color: textColor,
+              ),
             ),
             if (anotherText != null)
-              CustomText(
-                text: anotherText!,
-                fontWeight: anotherTextFontWeight,
-                fontSize: anotherTextFontSize,
-                color: anotherTextColor,
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: otherTextPaddingHorizontal,vertical: otherTextPaddingVertical),
+                child: CustomText(
+                  text: anotherText!,
+                  fontWeight: anotherTextFontWeight,
+                  fontSize: anotherTextFontSize,
+                  color: anotherTextColor,
+                ),
               ),
           ],
         ),

@@ -1,6 +1,7 @@
 import 'package:bye_bye_cry_new/compoment/shared/custom_image.dart';
 import 'package:bye_bye_cry_new/compoment/shared/custom_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../utils/color_utils.dart';
 
@@ -47,7 +48,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               color: secondaryBlackColor,
             ),
             onPressed: () {
-              Navigator.pop(context);
+              //SystemNavigator.pop();
+              Navigator.of(context).popUntil((route) => false);
             },
           ),
         ),

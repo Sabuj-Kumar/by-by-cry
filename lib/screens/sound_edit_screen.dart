@@ -49,9 +49,8 @@ class _SoundEditScreenState extends ConsumerState<SoundEditScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
-    super.initState();
     initilized();
+    super.initState();
   }
 
   initilized() {
@@ -180,7 +179,7 @@ class _SoundEditScreenState extends ConsumerState<SoundEditScreen> {
                       color: secondaryAwashColor),
                 ),
               )
-            : SizedBox(),
+            : const SizedBox(),
       ],
     );
   }

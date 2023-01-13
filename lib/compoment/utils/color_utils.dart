@@ -17,3 +17,4 @@ const Color secondaryBlackColor2 = Color(0xFF545351);
 const Color primaryWhiteColor = Color(0xFFFFFFFF);
 const Color secondaryWhiteColor2 = Color(0xFFF4F4F4);
 const Color blackColor2 = Color(0xFF505050);
+const Color blackColor57 = Color(0xFF555F57);
