@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class Font{
   static TextStyle neueEinstellung (){
@@ -33,7 +34,16 @@ class Font{
     );
   }
 
+  static TextStyle sacramento(){
+    return GoogleFonts.sacramento(
+        fontWeight: FontWeight.w500,
+        fontSize: 14,
+        color: Colors.amber
+    );/*const TextStyle(
+        fontFamily:'Neue Einstellung',
 
+    );*/
+  }
 }
 
 

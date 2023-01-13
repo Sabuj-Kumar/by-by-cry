@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
+import '../compoment/font_class.dart';
 import '../compoment/shared/custom_image.dart';
 import '../compoment/shared/custom_image_text.dart';
 import '../compoment/shared/custom_text.dart';
 import '../compoment/shared/outline_button.dart';
 import '../compoment/shared/screen_size.dart';
 import '../compoment/utils/color_utils.dart';
-import 'botom_nev_bar/bootom_nav_bar.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -42,95 +42,113 @@ class HomePage extends StatelessWidget {
       backgroundColor: backGroundColor,
       body: SingleChildScrollView(
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(
               height: height * .04,
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20.0),
-              child: CustomImage(
-                imageUrl: 'asset/images/logo_png.png',
-                height: height * .12,
-              ),
-            ),
-            const Divider(
-              color: primaryPinkColor,
-              thickness: 2,
-            ),
-
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Container(
-                decoration: const BoxDecoration(
-                    color: secondaryWhiteColor,
-                    borderRadius: BorderRadius.all(Radius.circular(10))),
-                padding: const EdgeInsets.symmetric(vertical: 5.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        CustomText(
-                          text: 'Sleep never sounded so ',
-                          fontWeight: FontWeight.w600,
-                          fontSize: 20,
-                        ),
-                        CustomImage(
-                          height: 70,
-                          width: 70,
-                          imageUrl: 'asset/images/good.png',
-                        ),
-                      ],
-                    ),
-                    const CustomText(
-                      text: 'Re-discover Peace With ByeByeCry',
-                      fontWeight: FontWeight.w400,
-                      fontSize: 16,
-                    ),
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8.0),
-                      child: Image.asset(
-                        'asset/images/baby_cry.png',
-                        height: height * .3,
-                        width: width * .8,
-                        fit: BoxFit.fill,
-                      ),
-                    ),
-                    OutLineButton(
-                      height: height * .09,
-                      text: 'Mom Made',
-                      anotherText: 'Pediatrician Recommended',
-                      textColor: secondaryBlackColor2,
-                      textFontSize: 22,
-                      textFontWeight: FontWeight.w700,
-                      borderRadius: 50,
-                      onPressed: () {},
-                    ),
-                  ],
+            Container(
+              color: primaryWhiteColor,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20.0),
+                child: CustomImage(
+                  imageUrl: 'asset/images/logo_png.png',
+                  height: height * .12,
                 ),
               ),
             ),
-
+            Container(width: width,color: primaryPinkColor,height: 2,),
+            const SizedBox(
+              height: 15,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Container(
+                decoration:  BoxDecoration(
+                    color: secondaryWhiteColor,
+                    borderRadius: BorderRadius.circular(15)),
+                padding: const EdgeInsets.symmetric(vertical: 5.0),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const CustomText(
+                            text: 'Sleep never sounded so ',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 22,
+                          ),
+                          Text("Good",style: Font.sacramento().copyWith(fontWeight: FontWeight.w400,fontSize: 48,color: secondaryBlackColor))
+                        ],
+                      ),
+                      const CustomText(
+                        text: 'Re-discover Peace With ByeByeCry',
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16,
+                      ),
+                      SizedBox(height: width * 0.1),
+                      Container(
+                        color: Colors.transparent,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const SizedBox(width: 8,),
+                            Expanded(
+                              child: Image.asset(
+                                'asset/images/baby_cry.png',
+                                fit: BoxFit.fill,
+                                alignment: Alignment.topRight,
+                               // color: Colors.transparent,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      OutLineButton(
+                        height: height * .09,
+                        text: 'Mom Made',
+                        anotherText: 'Pediatrician Recommended',
+                        textColor: secondaryBlackColor2,
+                        textFontSize: 22,
+                        textFontWeight: FontWeight.w700,
+                        borderRadius: 40,
+                        onPressed: () {},
+                        textPaddingVertical: 5,
+                        otherTextPaddingHorizontal: 15,
+                        otherTextPaddingVertical: 5,
+                      ),
+                      SizedBox(height: width * 0.03,)
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 40,
+            ),
             Container(
-              height: height * .21,
+             // height: height * .21,
               padding: const EdgeInsets.all(20),
               color: secondaryGreenColor,
               child: Column(
-                children: const [
-                  CustomText(
+                children: [
+                  SizedBox(height: width * 0.02),
+                  const CustomText(
+                      height: 1.4,
                       textAlign: TextAlign.center,
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
+                      color: secondaryBlackColor,
                       text:
                           '“ByeByeCry completely changed our lives. It turned nap time/feeding time from a dearded activity into one that my sin and I can finally enjoy together. I ams so happy he’s happy!” '),
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
-                  CustomText(
+                  const CustomText(
+                      color: blackColor57,
                       textAlign: TextAlign.center,
                       fontSize: 16,
                       fontWeight: FontWeight.w400,
@@ -142,39 +160,42 @@ class HomePage extends StatelessWidget {
               height: 40,
             ),
             Padding(
-              padding: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.symmetric(horizontal: 15.0),
               child: Column(
                 children: const [
                   CustomText(
+                      height: 1.3,
                       textAlign: TextAlign.center,
-                      fontSize: 20,
+                      fontSize: 24,
                       fontWeight: FontWeight.w600,
                       text:
                           '10+ sounds designed specifically to calm Colickly Babies'),
-                  SizedBox(
-                    height: 10,
+                  SizedBox(height: 10),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8.0),
+                    child: CustomText(
+                        textAlign: TextAlign.justify,
+                        fontSize: 16,
+                        height: 1.3,
+                        fontWeight: FontWeight.w400,
+                        text:
+                            'Our unique sounds can help to soothe your fussy baby and can helpthem eat.Continue using the app even when your little ine grows out onf colic'),
                   ),
-                  CustomText(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      text:
-                          'Our unique sounds can help to soothe your fussy baby and can helpthem eat.Continue using the app even when your little ine grows out onf colic'),
                 ],
               ),
             ),
-            const SizedBox(
-              height: 10,
-            ),
-
+            SizedBox(height: width * 0.15),
             SizedBox(
-              height: height * .35,
+              height: width * 0.8,
+              width: width * 0.93,
               child: GridView.builder(
                   padding: const EdgeInsets.all(2.0),
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: imageUrl.length,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      //crossAxisCount: 2,
-                      mainAxisExtent: 130,
+                      childAspectRatio: 1,
+                      mainAxisSpacing: 20,
+                      crossAxisSpacing:0,
                       crossAxisCount: 3),
                   itemBuilder: (BuildContext context, int index) {
                     return CustomImageText(

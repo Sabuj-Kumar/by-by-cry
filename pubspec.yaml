@@ -57,6 +57,7 @@ flutter:
       fonts:
         - asset: asset/fonts/NeueEinstellung-Normal.otf
         - asset: asset/fonts/Neue Einstellung Bold.ttf
+        - asset: asset/fonts/f0174917-35f6-45fd-bd28-21254c0a6102.ttf
   #         style: italic
   #   - family: Trajan Pro
   #     fonts:

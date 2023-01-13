@@ -12,7 +12,11 @@ class AddMusicProvider extends ChangeNotifier {
   }
 
   initialised(List<String> nameList2) {
-    nameList = nameList2;
+
+    for(int index = 0; index < nameList2.length; index++){
+      nameList.add(nameList2[index]);
+    }
+
     notifyListeners();
   }
 }
