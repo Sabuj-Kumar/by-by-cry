@@ -147,9 +147,9 @@ class SoundScreen extends StatelessWidget {
             CustomText(text: textLink,color: blackColor50,fontWeight: FontWeight.w600,fontSize: 20,),
           ],
         ),
-        InkWell(
+        GestureDetector(
           onTap: (){
-            Navigation.navigatePages(context,  const NowPlayingScreen(),);
+            Navigation.navigatePages(context, const NowPlayingScreen(),);
           },
           child: Container(
             decoration: BoxDecoration(

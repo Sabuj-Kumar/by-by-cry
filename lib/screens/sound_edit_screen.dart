@@ -225,6 +225,8 @@ class _SoundEditScreenState extends ConsumerState<SoundEditScreen> {
                     )
                   ],
                 ),
+                actionsAlignment: MainAxisAlignment.center,
+                actionsPadding: const EdgeInsets.only(bottom: 30),
                 actions: <Widget>[
                   OutLineButton(
                     height: height * .05,

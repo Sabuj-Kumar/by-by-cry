@@ -19,6 +19,8 @@ class CustomBottomSheet{
       isScrollControlled: true,
       context: context,
       barrierColor: barrierColor,
+      enableDrag: true,
+      isDismissible: false,
       builder: (context) => Container(
         color: bottomSheetColor,
         height: bottomSheetHeight,

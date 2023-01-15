@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../compoment/font_class.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../compoment/shared/custom_image.dart';
 import '../compoment/shared/custom_image_text.dart';
 import '../compoment/shared/custom_text.dart';
@@ -79,9 +78,11 @@ class HomePage extends StatelessWidget {
                           const CustomText(
                             text: 'Sleep never sounded so ',
                             fontWeight: FontWeight.w600,
-                            fontSize: 22,
+                            fontSize: 20,
                           ),
-                          Text("Good",style: Font.sacramento().copyWith(fontWeight: FontWeight.w400,fontSize: 48,color: secondaryBlackColor))
+                          Text("Good",style: GoogleFonts.sacramento(
+                              fontWeight: FontWeight.w400,fontSize: 47,color: secondaryBlackColor
+                          ))
                         ],
                       ),
                       const CustomText(
