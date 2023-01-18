@@ -205,8 +205,8 @@ class _MixScreenState extends State<MixScreen> {
           ),
           CustomImage(
             imageUrl: 'asset/images/icon_png/play_button.png',
-            height: height * .2,
-            width: height * .2,
+            height: height * .12,
+            width: height * .12,
           ),
           OutLineButton(
             height: height * .06,

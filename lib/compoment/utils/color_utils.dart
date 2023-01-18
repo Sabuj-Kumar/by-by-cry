@@ -24,3 +24,5 @@ const Color blackColorA0 = Color(0xFFA0A0A0);
 const Color blackColor77 = Color(0xFF7F7C77);
 const Color blackColorD9 = Color(0xFFD9D9D9);
 const Color blackColor97 = Color(0xFF9F9C97);
+const Color greyEC = Color(0xFFECECEC);
+const Color lightGreen = Color(0xFFB8CCC2);

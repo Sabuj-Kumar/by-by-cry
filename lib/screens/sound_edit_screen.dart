@@ -127,9 +127,7 @@ class _SoundEditScreenState extends ConsumerState<SoundEditScreen> {
                 ),
               ),
             )):const SizedBox(),
-            const SizedBox(
-              height: 10,
-            ),
+
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Column(
@@ -161,7 +159,10 @@ class _SoundEditScreenState extends ConsumerState<SoundEditScreen> {
       children: [
         Row(
           children: [
-            CustomImage(imageUrl: imageLink),
+            Padding(
+              padding: const EdgeInsets.only(top: 5.0),
+              child: CustomImage(imageUrl: imageLink),
+            ),
             const SizedBox(
               width: 10,
             ),

@@ -81,44 +81,41 @@ class _PlayListScreenState extends State<PlayListScreen> {
             Column(
               children: List.generate(
                 textList.length,
-                (index) => musicList(musicName: textList[index]),
+                (index) => Container(
+                    color: index % 2 == 0?Colors.transparent:pinkLightColor,
+                    child: musicList(musicName: textList[index])),
               ),
             ),
             const SizedBox(
               height: 10,
             ),
-            Container(
-              height: height * .07,
-              color: pinkLightColor,
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  left: 20.0,
-                  right: 20,
-                ),
-                child: Row(
-                  children: [
-                    IconButton(
-                      iconSize: 40,
-                      icon: const Icon(
-                        Icons.add,
+            GestureDetector(
+              onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context) => const AddToPlayListPage()));},
+              child: Container(
+              //  height: height * .07,
+                color: pinkLightColor,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 5),
+                  child: Row(
+                    children: [
+                      IconButton(
+                        iconSize: 40,
+                        icon: const Icon(
+                          Icons.add,
+                        ),
+                        onPressed: () {},
                       ),
-                      onPressed: () {},
-                    ),
-                    SizedBox(
-                      width: height * .05,
-                    ),
-                    GestureDetector(
-                      onTap: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => const AddToPlayListPage()));
-                      },
-                      child: const CustomText(
+                      SizedBox(
+                        width: height * .05,
+                      ),
+                      const CustomText(
                         text: 'Add Playlist',
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
                         color: blackColor2,
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

@@ -60,7 +60,7 @@ class _AddToPlayListPageState extends State<AddToPlayListPage> {
                 child: Column(
                   children: [
                     const SizedBox(height: 20),
-                    CustomText(text: "Sound Set ${index+1}",fontWeight: FontWeight.w400,fontSize: 20,color: primaryGreyColor),
+                    CustomText(text: "Sound Set ${index+1}",fontWeight: FontWeight.w600,fontSize: 20,color: primaryGreyColor),
                     const SizedBox(height: 20),
 
                     Row(
@@ -185,7 +185,7 @@ class _AddToPlayListPageState extends State<AddToPlayListPage> {
                     Icons.add,
                     color: primaryGreyColor,
                   ),
-                   CustomText(text: "Add another Sound Set",fontSize: 16,fontWeight: FontWeight.w400,color: primaryGreyColor),
+                  CustomText(text: "Add another Sound Set",fontSize: 16,fontWeight: FontWeight.w600,color: primaryGreyColor),
                 ],
               ),
             ),

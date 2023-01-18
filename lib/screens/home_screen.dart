@@ -6,38 +6,53 @@ import '../compoment/shared/custom_text.dart';
 import '../compoment/shared/outline_button.dart';
 import '../compoment/shared/screen_size.dart';
 import '../compoment/utils/color_utils.dart';
+import 'home_page_again.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  List<String> imageUrl = [
+    'asset/images/blowdryer.png',
+    'asset/images/chainshaw.png',
+    'asset/images/jackhammer.png',
+    'asset/images/lawnmower.png',
+    'asset/images/vaccum.png',
+    'asset/images/washer.png'
+  ];
+
+  List<String> textUrl = [
+    'Jackhammer',
+    'Chainshaw',
+    'Vaccum',
+    'Blowdryer',
+    'Lawnmower',
+    'Washer',
+  ];
+
+  List<String> socialMedia = [
+    'asset/images/icon_png/fb.png',
+    'asset/images/icon_png/linkedIn.png',
+    'asset/images/icon_png/insta.png',
+  ];
+
+  bool subscription = false;
   @override
   Widget build(BuildContext context) {
     final width = ScreenSize(context).width;
     final height = ScreenSize(context).height;
-    List<String> imageUrl = [
-      'asset/images/blowdryer.png',
-      'asset/images/chainshaw.png',
-      'asset/images/jackhammer.png',
-      'asset/images/lawnmower.png',
-      'asset/images/vaccum.png',
-      'asset/images/washer.png'
-    ];
-    List<String> textUrl = [
-      'Jackhammer',
-      'Chainshaw',
-      'Vaccum',
-      'Blowdryer',
-      'Lawnmower',
-      'Washer',
-    ];
 
-    List<String> socialMedia = [
-      'asset/images/icon_png/fb.png',
-      'asset/images/icon_png/linkedIn.png',
-      'asset/images/icon_png/insta.png',
-    ];
-
-    return Scaffold(
+    return subscription?HomePageAgain(
+      onTap: (){
+        setState(() {
+          subscription = !subscription;
+        });
+      },
+    ):Scaffold(
       backgroundColor: backGroundColor,
       body: SingleChildScrollView(
         child: Column(
@@ -46,13 +61,20 @@ class HomePage extends StatelessWidget {
             SizedBox(
               height: height * .04,
             ),
-            Container(
-              color: primaryWhiteColor,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20.0),
-                child: CustomImage(
-                  imageUrl: 'asset/images/logo_png.png',
-                  height: height * .12,
+            GestureDetector(
+              onTap: (){
+                setState(() {
+                  subscription = !subscription;
+                });
+              },
+              child: Container(
+                color: primaryWhiteColor,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20.0),
+                  child: CustomImage(
+                    imageUrl: 'asset/images/logo_png.png',
+                    height: height * .12,
+                  ),
                 ),
               ),
             ),
@@ -170,6 +192,7 @@ class HomePage extends StatelessWidget {
                       textAlign: TextAlign.center,
                       fontSize: 24,
                       fontWeight: FontWeight.w600,
+                      color: secondaryBlackColor,
                       text:
                           '10+ sounds designed specifically to calm Colickly Babies'),
                   SizedBox(height: 10),
@@ -180,6 +203,7 @@ class HomePage extends StatelessWidget {
                         fontSize: 16,
                         height: 1.3,
                         fontWeight: FontWeight.w400,
+                        color: primaryGreyColor,
                         text:
                             'Our unique sounds can help to soothe your fussy baby and can helpthem eat.Continue using the app even when your little ine grows out onf colic'),
                   ),
@@ -218,21 +242,23 @@ class HomePage extends StatelessWidget {
             ),
             SizedBox(height: width * 0.1),
             Container(
-              height: height * .19,
               padding: const EdgeInsets.all(20),
               color: secondaryGreenColor,
               child: Column(
-                children: const [
-                  CustomText(
+                children: [
+                  const CustomText(
                       textAlign: TextAlign.center,
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
+                      color: secondaryBlackColor,
+                      height: 1.5,
                       text:
                           '“The app is a saved us. We would not be surviving without it. We sleep better. Baby sleeps better. Even our dog sleeps better” '),
                   SizedBox(
-                    height: 20,
+                    height: width * 0.1,
                   ),
-                  CustomText(
+                  const CustomText(
+                      color: blackColor57,
                       textAlign: TextAlign.center,
                       fontSize: 20,
                       fontWeight: FontWeight.w400,
@@ -245,6 +271,7 @@ class HomePage extends StatelessWidget {
                 textAlign: TextAlign.center,
                 fontSize: 23,
                 fontWeight: FontWeight.w600,
+                color: secondaryBlackColor,
                 text: '7 Unique features'),
             SizedBox(
               height: width * 0.06,
@@ -284,22 +311,24 @@ class HomePage extends StatelessWidget {
               height: 20,
             ),
             Container(
-              padding: const EdgeInsets.symmetric(vertical: 30,horizontal: 20),
+              padding: const EdgeInsets.symmetric(vertical: 20,horizontal: 20),
               color: secondaryGreenColor,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  CustomText(
-                      color: secondaryBlackColor,
-                      textAlign: TextAlign.center,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      text:
-                          '“This app is my favorite because I don’t miss calls or texts when the sounds are playing and they don’t wake up my daughter! My parents downloaded it on their phones too for when they babysit!” '),
-                  SizedBox(
-                    height: 20,
+                children:  [
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 10.0),
+                    child: CustomText(
+                        color: secondaryBlackColor,
+                        textAlign: TextAlign.center,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        height: 1.5,
+                        text:
+                            '“This app is my favorite because I don’t miss calls or texts when the sounds are playing and they don’t wake up my daughter! My parents downloaded it on their phones too for when they babysit!” '),
                   ),
-                  CustomText(
+                  SizedBox(height: width * 0.05),
+                  const CustomText(
                       color: blackColor57,
                       textAlign: TextAlign.center,
                       fontSize: 20,
@@ -312,7 +341,7 @@ class HomePage extends StatelessWidget {
               height: width * 0.1,
             ),
             Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.symmetric(horizontal: 28.0,vertical: 20),
               child: Container(
                 height: height * .53,
                 padding: const EdgeInsets.all(15),
@@ -511,9 +540,9 @@ class HomePage extends StatelessWidget {
               Container(
                 height: 7,
                 width: 7,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                     color: primaryGreyColor,
-                    borderRadius: BorderRadius.circular(100)
+                    shape: BoxShape.circle
                     //more than 50% of width makes circle
                     ),
               ),
@@ -525,13 +554,10 @@ class HomePage extends StatelessWidget {
             ],
           ),
           const SizedBox(
-            height: 20,
+            height: 10,
           ),
           CustomText(
-              fontSize: 16, fontWeight: FontWeight.w400, text: secondText,color: secondaryBlackColor,textAlign: TextAlign.justify,),
-          const SizedBox(
-            height: 20,
-          ),
+              fontSize: 16, fontWeight: FontWeight.w400, text: secondText,color: secondaryBlackColor,textAlign: TextAlign.justify,height: 1.2,),
         ],
       ),
     );
