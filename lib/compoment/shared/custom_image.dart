@@ -7,13 +7,15 @@ class CustomImage extends StatelessWidget {
       this.height,
       this.width,
       this.color,
-      this.boxFit})
+      this.boxFit,
+      this.scale})
       : super(key: key);
   final String imageUrl;
   final double? height;
   final double? width;
   final Color? color;
   final BoxFit? boxFit;
+  final double? scale;
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +25,7 @@ class CustomImage extends StatelessWidget {
       width: width,
       color: color,
       fit: boxFit,
+      scale: scale,
     );
   }
 }

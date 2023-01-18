@@ -17,17 +17,32 @@ class StartPage extends StatefulWidget {
 
 class _StartPageState extends State<StartPage> {
   var selectedIndex = 0;
-  List<Widget> pageList = [
+  List<Widget> pageList = [];
 
-    const HomePage(),
-    const SoundScreen(),
-    const MixScreen(),
-    const PlayListScreen(),
-    const BlogScreen(),
-  ];
+  @override
+  void initState() {
+    initialized();
+    super.initState();
+  }
+
+  initialized(){
+      pageList = [
+        const HomePage(),
+        const SoundScreen(),
+        MixScreen(onPressed: (){
+          setState(() {
+            selectedIndex = 1;
+          });
+          print("from mix $selectedIndex");
+        },),
+        const PlayListScreen(),
+        const BlogScreen(),
+      ];
+      setState(() {});
+    print("asche");
+  }
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       bottomNavigationBar: CustomBottomAppBar(
         onPressed: (index) {
@@ -36,8 +51,9 @@ class _StartPageState extends State<StartPage> {
             print('${selectedIndex}');
           });
         },
+        index: selectedIndex,
       ),
-      body: pageList[selectedIndex],
+      body: pageList.isEmpty?const SizedBox():pageList[selectedIndex],
     );
   }
 }

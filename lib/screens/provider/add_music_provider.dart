@@ -5,18 +5,18 @@ final addProvider = ChangeNotifierProvider((ref) => AddMusicProvider());
 
 class AddMusicProvider extends ChangeNotifier {
   List<String> nameList = [];
+  List<String> nameListTemp = [];
 
   addString(String name) {
     nameList.add(name);
     notifyListeners();
   }
 
-  initialised(List<String> nameList2) {
-
-    for(int index = 0; index < nameList2.length; index++){
+  initialisedNameList(List<String> nameList2) {
+    nameList = List.from(nameList2);
+    /*for(int index = 0; index < nameList2.length; index++){
       nameList.add(nameList2[index]);
-    }
-
+    }*/
     notifyListeners();
   }
 }

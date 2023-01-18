@@ -1,3 +1,4 @@
+import 'package:bye_bye_cry_new/compoment/utils/color_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -36,9 +37,7 @@ class Font{
 
   static TextStyle sacramento(){
     return GoogleFonts.sacramento(
-        fontWeight: FontWeight.w500,
-        fontSize: 14,
-        color: Colors.amber
+        fontWeight: FontWeight.w400,fontSize: 47,color: secondaryBlackColor
     );/*const TextStyle(
         fontFamily:'Neue Einstellung',
 

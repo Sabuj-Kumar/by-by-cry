@@ -1,4 +1,5 @@
 import 'package:bye_bye_cry_new/compoment/shared/custom_image.dart';
+import 'package:bye_bye_cry_new/compoment/shared/custom_svg.dart';
 import 'package:bye_bye_cry_new/compoment/shared/custom_text.dart';
 import 'package:bye_bye_cry_new/screens/sound_edit_screen.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/material.dart';
 import '../compoment/shared/custom_app_bar.dart';
 import '../compoment/shared/custom_navigation.dart';
 import '../compoment/utils/color_utils.dart';
+import '../compoment/utils/image_link.dart';
 import 'now_palying_screen.dart';
 
 class SoundScreen extends StatelessWidget {
@@ -45,15 +47,14 @@ class SoundScreen extends StatelessWidget {
               Navigation.navigatePages(context, const SoundEditScreen());
             }),
         body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Container(
-                //     height: 200, width: 400, child: searchableUsersWidget()),
-                Container(
-                  height: 60,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Container(
+              //     height: 200, width: 400, child: searchableUsersWidget()),
+              Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Container(
                   margin: const EdgeInsets.all(8),
                   color: secondaryWhiteColor2,
                   child: ListTile(
@@ -61,7 +62,9 @@ class SoundScreen extends StatelessWidget {
                     title: TextField(
                       controller: searchController,
                       decoration: const InputDecoration(
-                          hintText: 'Search music', border: InputBorder.none),
+                          hintStyle: TextStyle(color: blackColorA0,fontSize: 14,fontWeight: FontWeight.w400),
+                          hintText: 'Search music', border: InputBorder.none
+                      ),
                       // onChanged: (text) {
                       //   if (text.length > 0) {
                       //     searching = true;
@@ -81,35 +84,36 @@ class SoundScreen extends StatelessWidget {
                       //   }
                       // },
                     ),
-                    trailing: IconButton(
-                      icon: const Icon(
-                        Icons.search,
-                        size: 30,
-                      ),
-                      onPressed: () {
-                        // searchController.clear();
-                        // searching = false;
-                        // filtered.value = [];
-                        // if (searchFocus.hasFocus) searchFocus.unfocus();
-                      },
-                    ),
+                    trailing: GestureDetector(onTap:(){},child: const CustomSvg(svg: "asset/images/search_icon.svg",)),
                   ),
                 ),
-                Column(
-                    children: List.generate(
-                  imageUrl.length,
-                  (index) => imageList(
-                    context: context,
-                      imageLink: imageUrl[index], textLink: textUrl[index]),
-                )),
-                Row(
+              ),
+              Column(
+                  children: List.generate(
+                imageUrl.length,
+                (index) => Column(
+                  children: [
+                    Container(
+                      color: index % 2 == 0?Colors.transparent:pinkLightColor,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                        child: imageList(
+                          context: context,
+                            imageLink: imageUrl[index],textLink: textUrl[index]),
+                      ),
+                    ),// const SizedBox(height: 5,)
+                  ],
+                ),
+              )),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 25.0,vertical: 5),
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Container(
-                      height: 60,
                       width: 60,
-                      margin: const EdgeInsets.all(10.0),
-                      padding: const EdgeInsets.all(15.0),
+                     // height: 50,
+                      padding: const EdgeInsets.all(10.0),
                       decoration: const BoxDecoration(
                         borderRadius: BorderRadius.all(
                           Radius.circular(10),
@@ -117,9 +121,9 @@ class SoundScreen extends StatelessWidget {
                         color: primaryPinkColor,
                       ),
                       child: const CustomImage(
-                        imageUrl: 'asset/images/icon_png/plus.png',
-                        height: 20,
-                        width: 20,
+                        boxFit: BoxFit.fill,
+                        imageUrl: whitePlus,
+                        scale: 1,
                       ),
                     ),
                     const SizedBox(
@@ -129,11 +133,13 @@ class SoundScreen extends StatelessWidget {
                       text: 'Mix Two Sounds',
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
+                      color: blackColor50,
                     )
                   ],
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(height: 15,)
+            ],
           ),
         ));
   }
@@ -144,21 +150,36 @@ class SoundScreen extends StatelessWidget {
       children: [
         Row(
           children: [
-            CustomImage(imageUrl: imageLink),
+            Padding(
+              padding: const EdgeInsets.only(top: 5.0),
+              child: CustomImage(imageUrl: imageLink),
+            ),
             const SizedBox(
               width: 10,
             ),
-            CustomText(text: textLink),
+            CustomText(text: textLink,color: blackColor50,fontWeight: FontWeight.w600,fontSize: 20,),
           ],
         ),
-        InkWell(
-          onTap: (){
-            Navigation.navigatePages(context,  const NowPlayingScreen(),);
-          },
-          child: const CustomImage(
-            imageUrl: 'asset/images/icon_png/playlist.png',
-            height: 30,
-            width: 30,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: GestureDetector(
+            onTap: (){
+              Navigation.navigatePages(context, const NowPlayingScreen(),);
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.black.withOpacity(0.1)
+              ),
+              child: const Padding(
+                padding: EdgeInsets.all(1.0),
+                child: CustomImage(
+                  imageUrl: playButton,
+                  height: 30,
+                  width: 30,
+                ),
+              ),
+            ),
           ),
         ),
       ],

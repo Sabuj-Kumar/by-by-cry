@@ -4,10 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../compoment/shared/custom_app_bar.dart';
 import '../compoment/shared/custom_image.dart';
+import '../compoment/shared/custom_svg.dart';
 import '../compoment/shared/custom_text.dart';
 import '../compoment/shared/outline_button.dart';
 import '../compoment/shared/screen_size.dart';
 import '../compoment/utils/color_utils.dart';
+import '../compoment/utils/image_link.dart';
 
 class SoundEditScreen extends ConsumerStatefulWidget {
   const SoundEditScreen({Key? key}) : super(key: key);
@@ -18,24 +20,8 @@ class SoundEditScreen extends ConsumerStatefulWidget {
 
 class _SoundEditScreenState extends ConsumerState<SoundEditScreen> {
   TextEditingController searchController = TextEditingController();
-  List<String> imageUrl = [
-    'asset/images/sounds_image/Chainsaw.png',
-    'asset/images/sounds_image/Vaccum.png',
-    'asset/images/sounds_image/Jackhammer.png',
-    'asset/images/sounds_image/Blowdryer.png',
-    'asset/images/sounds_image/Lawnmower.png',
-    'asset/images/sounds_image/Washer.png',
-    'asset/images/sounds_image/Ocean.png',
-  ];
-  List<String> textUrl = [
-    'Chainshaw',
-    'Vaccum',
-    'Jackhammer',
-    'Blowdryer',
-    'Lawnmower',
-    'Washer',
-    'Ocean',
-  ];
+  List<String> imageUrl = [];
+  List<String> textUrl = [];
 
   List<String> dummyImage = [
     'asset/images/sounds_image/dummy.png',
@@ -49,17 +35,36 @@ class _SoundEditScreenState extends ConsumerState<SoundEditScreen> {
 
   @override
   void initState() {
-    initilized();
     super.initState();
+    initilizedNameList();
   }
 
-  initilized() {
+  initilizedNameList() {
+    textUrl = [
+      'Chainshaw',
+      'Vaccum',
+      'Jackhammer',
+      'Blowdryer',
+      'Lawnmower',
+      'Washer',
+      'Ocean',
+    ];
+    imageUrl = [
+      'asset/images/sounds_image/Chainsaw.png',
+      'asset/images/sounds_image/Vaccum.png',
+      'asset/images/sounds_image/Jackhammer.png',
+      'asset/images/sounds_image/Blowdryer.png',
+      'asset/images/sounds_image/Lawnmower.png',
+      'asset/images/sounds_image/Washer.png',
+      'asset/images/sounds_image/Ocean.png',
+    ];
     if (mounted) {
-      WidgetsBinding.instance.addPersistentFrameCallback((timeStamp) {
-        ref.read(addProvider).initialised(textUrl);
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        ref.read(addProvider).initialisedNameList(textUrl);
       });
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -68,12 +73,12 @@ class _SoundEditScreenState extends ConsumerState<SoundEditScreen> {
         title: 'Edit My Sounds',
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Container(
                 height: 60,
                 margin: const EdgeInsets.all(8),
                 color: secondaryWhiteColor2,
@@ -82,7 +87,9 @@ class _SoundEditScreenState extends ConsumerState<SoundEditScreen> {
                   title: TextField(
                     controller: searchController,
                     decoration: const InputDecoration(
-                        hintText: 'Search music', border: InputBorder.none),
+                        hintStyle: TextStyle(color: blackColorA0,fontSize: 14,fontWeight: FontWeight.w400),
+                        hintText: 'Search music', border: InputBorder.none
+                    ),
                     // onChanged: (text) {
                     //   if (text.length > 0) {
                     //     searching = true;
@@ -102,32 +109,28 @@ class _SoundEditScreenState extends ConsumerState<SoundEditScreen> {
                     //   }
                     // },
                   ),
-                  trailing: IconButton(
-                    icon: const Icon(
-                      Icons.search,
-                      size: 30,
-                    ),
-                    onPressed: () {
-                      // searchController.clear();
-                      // searching = false;
-                      // filtered.value = [];
-                      // if (searchFocus.hasFocus) searchFocus.unfocus();
-                    },
-                  ),
+                    trailing: GestureDetector(onTap:(){},child: const CustomSvg(svg: "asset/images/search_icon.svg",)),
                 ),
               ),
-              Column(
-                  children: List.generate(
-                ref.watch(addProvider).nameList.length,
-                (index) => imageList(
-                    imageLink: imageUrl[index],
-                    textLink: ref.watch(addProvider).nameList[index],
-                    context: context),
-              )),
-              const SizedBox(
-                height: 10,
+            ),
+            ref.watch(addProvider).nameList.isNotEmpty?Column(
+                children: List.generate(
+              ref.watch(addProvider).nameList.length,
+              (index) => Container(
+                color: index % 2 == 0?Colors.white:pinkLightColor,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: imageList(
+                      imageLink: imageUrl[index],
+                      textLink: ref.watch(addProvider).nameList[index],
+                      context: context),
+                ),
               ),
-              Column(
+            )):const SizedBox(),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Column(
                   children: List.generate(
                 mixedSong.length,
                 (index) => imageList(
@@ -136,8 +139,11 @@ class _SoundEditScreenState extends ConsumerState<SoundEditScreen> {
                     alart: true,
                     context: context),
               )),
-            ],
-          ),
+            ),
+            const SizedBox(
+              height: 30,
+            ),
+          ],
         ),
       ),
     );
@@ -153,7 +159,10 @@ class _SoundEditScreenState extends ConsumerState<SoundEditScreen> {
       children: [
         Row(
           children: [
-            CustomImage(imageUrl: imageLink),
+            Padding(
+              padding: const EdgeInsets.only(top: 5.0),
+              child: CustomImage(imageUrl: imageLink),
+            ),
             const SizedBox(
               width: 10,
             ),
@@ -166,18 +175,16 @@ class _SoundEditScreenState extends ConsumerState<SoundEditScreen> {
                   _showDialog(context);
                 },
                 child: Container(
-                  height: 30,
-                  width: 30,
-                  decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        scale: 2,
-                        image: AssetImage(
-                          'asset/images/icon_png/delete.png',
-                        ),
-                      ),
-                      shape: BoxShape.circle,
-                      color: secondaryAwashColor),
+                  decoration:const BoxDecoration(
+                    color: secondaryAwashColor,
+                    shape: BoxShape.circle
+                  ),
+                  child: const Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: CustomSvg(svg: deleteSvg),
+                  ),
                 ),
+
               )
             : const SizedBox(),
       ],
@@ -219,6 +226,8 @@ class _SoundEditScreenState extends ConsumerState<SoundEditScreen> {
                     )
                   ],
                 ),
+                actionsAlignment: MainAxisAlignment.center,
+                actionsPadding: const EdgeInsets.only(bottom: 30),
                 actions: <Widget>[
                   OutLineButton(
                     height: height * .05,

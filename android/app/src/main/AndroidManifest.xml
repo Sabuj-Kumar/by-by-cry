@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.bye_bye_cry_new">
+    <uses-permission android:name="android.permission.INTERNET"/>
    <application
         android:label="bye_bye_cry_new"
         android:name="${applicationName}"

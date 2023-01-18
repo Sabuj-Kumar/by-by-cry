@@ -9,7 +9,8 @@ class CustomBottomSheet{
         Color? barrierColor,
         Color? bottomSheetColor,
         double? bottomSheetHeight,
-        double? bottomSheetWidth
+        double? bottomSheetWidth,
+        bool isDismiss = false
       }){
     showModalBottomSheet(
       shape: const RoundedRectangleBorder(
@@ -19,6 +20,8 @@ class CustomBottomSheet{
       isScrollControlled: true,
       context: context,
       barrierColor: barrierColor,
+      enableDrag: true,
+      isDismissible: isDismiss,
       builder: (context) => Container(
         color: bottomSheetColor,
         height: bottomSheetHeight,

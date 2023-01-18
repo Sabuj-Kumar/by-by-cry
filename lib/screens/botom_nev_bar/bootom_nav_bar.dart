@@ -10,10 +10,10 @@ class CustomBottomAppBar extends StatefulWidget {
       : super(key: key);
 
   @override
-  State<CustomBottomAppBar> createState() => _CustomBottomAppBarState();
+  State<CustomBottomAppBar> createState() => CustomBottomAppBarState();
 }
 
-class _CustomBottomAppBarState extends State<CustomBottomAppBar> {
+class CustomBottomAppBarState extends State<CustomBottomAppBar> {
   int currentIndex = 0;
 
   @override

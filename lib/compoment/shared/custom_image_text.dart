@@ -25,20 +25,13 @@ class CustomImageText extends StatelessWidget {
                   fit: BoxFit.fill, image: AssetImage(imageUrl)),
             boxShadow: [
               BoxShadow(
-                offset: Offset(2, 3),
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 1,
-                spreadRadius: 1
-              ),
-              BoxShadow(
-                offset: Offset(2,1),
-                color: Colors.black.withOpacity(0.1),
-                  blurRadius: 1,
-                  spreadRadius: 1
+                offset: const Offset(4,4),
+                color: Colors.black.withOpacity(0.23),
+                blurRadius: 5,
+                spreadRadius: 0.1
               ),
             ]
           ),
-
         ),
         const SizedBox(
           height: 10,

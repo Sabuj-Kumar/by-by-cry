@@ -3,8 +3,13 @@ import 'package:bye_bye_cry_new/compoment/shared/custom_text.dart';
 import 'package:flutter/material.dart';
 
 import '../compoment/shared/custom_app_bar.dart';
+import '../compoment/shared/custom_navigation.dart';
+import '../compoment/shared/custom_svg.dart';
 import '../compoment/shared/screen_size.dart';
 import '../compoment/utils/color_utils.dart';
+import '../compoment/utils/image_link.dart';
+import 'add_to_playlist.dart';
+import 'now_palying_screen.dart';
 
 class PlayListScreen extends StatefulWidget {
   const PlayListScreen({Key? key}) : super(key: key);
@@ -29,7 +34,7 @@ class _PlayListScreenState extends State<PlayListScreen> {
     ];
     return Scaffold(
       appBar: const CustomAppBar(
-        title: 'My Sounds',
+        title: 'My Playlist',
         actionTitle: 'Edit',
       ),
       body: SingleChildScrollView(
@@ -47,7 +52,9 @@ class _PlayListScreenState extends State<PlayListScreen> {
                   title: TextField(
                     controller: searchController,
                     decoration: const InputDecoration(
-                        hintText: 'Search music', border: InputBorder.none),
+                        hintStyle: TextStyle(color: blackColorA0,fontSize: 14,fontWeight: FontWeight.w400),
+                        hintText: 'Search music', border: InputBorder.none
+                    ),
                     // onChanged: (text) {
                     //   if (text.length > 0) {
                     //     searching = true;
@@ -67,56 +74,48 @@ class _PlayListScreenState extends State<PlayListScreen> {
                     //   }
                     // },
                   ),
-                  trailing: IconButton(
-                    icon: const Icon(
-                      Icons.search,
-                      size: 30,
-                    ),
-                    onPressed: () {
-                      // searchController.clear();
-                      // searching = false;
-                      // filtered.value = [];
-                      // if (searchFocus.hasFocus) searchFocus.unfocus();
-                    },
-                  ),
+                  trailing: GestureDetector(onTap:(){},child: const CustomSvg(svg: "asset/images/search_icon.svg",)),
                 ),
               ),
             ),
             Column(
               children: List.generate(
                 textList.length,
-                (index) => musicList(musicName: textList[index]),
+                (index) => Container(
+                    color: index % 2 == 0?Colors.transparent:pinkLightColor,
+                    child: musicList(musicName: textList[index])),
               ),
             ),
             const SizedBox(
               height: 10,
             ),
-            Container(
-              height: height * .07,
-              color: primaryPinkColor,
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  left: 20.0,
-                  right: 20,
-                ),
-                child: Row(
-                  children: [
-                    IconButton(
-                      iconSize: 40,
-                      icon: const Icon(
-                        Icons.add,
+            GestureDetector(
+              onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context) => const AddToPlayListPage()));},
+              child: Container(
+              //  height: height * .07,
+                color: pinkLightColor,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 5),
+                  child: Row(
+                    children: [
+                      IconButton(
+                        iconSize: 40,
+                        icon: const Icon(
+                          Icons.add,
+                        ),
+                        onPressed: () {},
                       ),
-                      onPressed: () {},
-                    ),
-                    SizedBox(
-                      width: height * .05,
-                    ),
-                    const CustomText(
-                      text: 'Add Playlist',
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ],
+                      SizedBox(
+                        width: height * .05,
+                      ),
+                      const CustomText(
+                        text: 'Add Playlist',
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: blackColor2,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -153,9 +152,24 @@ class _PlayListScreenState extends State<PlayListScreen> {
               ),
             ],
           ),
-          const CustomImage(imageUrl: 'asset/images/icon_png/playlist.png',
-          height: 30,
-            width: 30,
+          GestureDetector(
+            onTap: (){
+              Navigation.navigatePages(context, const NowPlayingScreen());
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.black.withOpacity(0.1)
+              ),
+              child: const Padding(
+                padding: EdgeInsets.all(1.0),
+                child: CustomImage(
+                  imageUrl: playButton,
+                  height: 30,
+                  width: 30,
+                ),
+              ),
+            ),
           ),
         ],
       ),
