@@ -6,7 +6,7 @@ final addProvider = ChangeNotifierProvider((ref) => AddMusicProvider());
 class AddMusicProvider extends ChangeNotifier {
   List<String> nameList = [];
   List<String> nameListTemp = [];
-
+  bool homePage = true;
   addString(String name) {
     nameList.add(name);
     notifyListeners();
@@ -17,6 +17,10 @@ class AddMusicProvider extends ChangeNotifier {
     /*for(int index = 0; index < nameList2.length; index++){
       nameList.add(nameList2[index]);
     }*/
+    notifyListeners();
+  }
+  changeHomePage(){
+    homePage = false;
     notifyListeners();
   }
 }

@@ -1,4 +1,6 @@
+import 'package:bye_bye_cry_new/screens/provider/add_music_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../compoment/shared/custom_image.dart';
 import '../compoment/shared/custom_image_text.dart';
@@ -8,14 +10,14 @@ import '../compoment/shared/screen_size.dart';
 import '../compoment/utils/color_utils.dart';
 import 'home_page_again.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  ConsumerState<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends ConsumerState<HomePage> {
   List<String> imageUrl = [
     'asset/images/blowdryer.png',
     'asset/images/chainshaw.png',
@@ -40,16 +42,16 @@ class _HomePageState extends State<HomePage> {
     'asset/images/icon_png/insta.png',
   ];
 
-  bool subscription = false;
+  bool subscription = true;
   @override
   Widget build(BuildContext context) {
     final width = ScreenSize(context).width;
     final height = ScreenSize(context).height;
 
-    return subscription?HomePageAgain(
+    return ref.watch(addProvider).homePage?HomePageAgain(
       onTap: (){
         setState(() {
-          subscription = !subscription;
+          ref.read(addProvider).changeHomePage();
         });
       },
     ):Scaffold(
@@ -61,20 +63,13 @@ class _HomePageState extends State<HomePage> {
             SizedBox(
               height: height * .04,
             ),
-            GestureDetector(
-              onTap: (){
-                setState(() {
-                  subscription = !subscription;
-                });
-              },
-              child: Container(
-                color: primaryWhiteColor,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20.0),
-                  child: CustomImage(
-                    imageUrl: 'asset/images/logo_png.png',
-                    height: height * .12,
-                  ),
+            Container(
+              color: primaryWhiteColor,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20.0),
+                child: CustomImage(
+                  imageUrl: 'asset/images/logo_png.png',
+                  height: height * .12,
                 ),
               ),
             ),
