@@ -4,7 +4,6 @@ import 'package:bye_bye_cry_new/compoment/shared/custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import '../compoment/shared/custom_image.dart';
 import '../compoment/shared/outline_button.dart';
 import '../compoment/shared/screen_size.dart';
@@ -87,7 +86,6 @@ class _HomePageAgainPageState extends ConsumerState<HomePageAgain> {
                       );
                     },
                   ),
-
                   GestureDetector(
                     onTap: widget.onTap,
                     child: Container(
@@ -130,7 +128,7 @@ class _HomePageAgainPageState extends ConsumerState<HomePageAgain> {
               textFontSize: 24,
               textFontWeight: FontWeight.w600,
               borderRadius: 40,
-              onPressed: () {},
+              onPressed: widget.onTap!,
               textPaddingVerticalTop: 5,
               textPaddingHorizontal: 57,
             ),

@@ -40,7 +40,7 @@ class _HomePageState extends State<HomePage> {
     'asset/images/icon_png/insta.png',
   ];
 
-  bool subscription = false;
+  bool subscription = true;
   @override
   Widget build(BuildContext context) {
     final width = ScreenSize(context).width;
@@ -61,20 +61,13 @@ class _HomePageState extends State<HomePage> {
             SizedBox(
               height: height * .04,
             ),
-            GestureDetector(
-              onTap: (){
-                setState(() {
-                  subscription = !subscription;
-                });
-              },
-              child: Container(
-                color: primaryWhiteColor,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20.0),
-                  child: CustomImage(
-                    imageUrl: 'asset/images/logo_png.png',
-                    height: height * .12,
-                  ),
+            Container(
+              color: primaryWhiteColor,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20.0),
+                child: CustomImage(
+                  imageUrl: 'asset/images/logo_png.png',
+                  height: height * .12,
                 ),
               ),
             ),
