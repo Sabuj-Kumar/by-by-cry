@@ -423,7 +423,7 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
                                                 children: const [
                                                   CustomSvg(svg: volume),
                                                   Padding(
-                                                    padding:  EdgeInsets.all(10.0),
+                                                    padding:  EdgeInsets.all(20.0),
                                                     child: CustomText(text: "20%",fontSize: 12,fontWeight: FontWeight.w600,color: blackColor50),
                                                   ),
                                                 ],

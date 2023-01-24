@@ -45,7 +45,7 @@ class _PlayListScreenState extends State<PlayListScreen> {
                   left: 20.0, right: 20, top: 10, bottom: 10),
               child: Container(
                 height: 60,
-                margin: const EdgeInsets.all(8),
+                margin: const EdgeInsets.all(16),
                 color: secondaryWhiteColor2,
                 child: ListTile(
                   dense: true,
