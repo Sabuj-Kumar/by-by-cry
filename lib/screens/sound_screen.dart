@@ -164,7 +164,7 @@ class SoundScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: GestureDetector(
             onTap: (){
-              Navigation.navigatePages(context, const NowPlayingScreen(),);
+              Navigation.navigatePages(context, NowPlayingScreen(url: '',));
             },
             child: Container(
               decoration: BoxDecoration(
