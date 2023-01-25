@@ -154,7 +154,7 @@ class _PlayListScreenState extends State<PlayListScreen> {
           ),
           GestureDetector(
             onTap: (){
-              Navigation.navigatePages(context, const NowPlayingScreen());
+              Navigation.navigatePages(context, NowPlayingScreen(url: ''));
             },
             child: Container(
               decoration: BoxDecoration(

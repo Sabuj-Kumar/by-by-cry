@@ -1,20 +1,21 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:bye_bye_cry_new/compoment/shared/custom_image.dart';
 import 'package:bye_bye_cry_new/compoment/shared/custom_svg.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../compoment/bottom_sheet.dart';
 import '../compoment/shared/custom_app_bar.dart';
 import '../compoment/shared/custom_text.dart';
-import '../compoment/shared/outline_button.dart';
 import '../compoment/shared/screen_size.dart';
 import '../compoment/utils/color_utils.dart';
 import '../compoment/utils/image_link.dart';
 
-class NowPlayingScreen extends StatefulWidget {
-  const NowPlayingScreen({Key? key}) : super(key: key);
+class NowPlayingScreen extends ConsumerStatefulWidget {
+  final String url;
+  const NowPlayingScreen({Key? key,required this.url}) : super(key: key);
 
   @override
-  State<NowPlayingScreen> createState() => _NowPlayingScreenState();
+  ConsumerState<NowPlayingScreen> createState() => _NowPlayingScreenState();
 }
 
 int _value = 1;
@@ -29,7 +30,48 @@ List<String> times = [
   "120 min",
   "150 min",
 ];
-class _NowPlayingScreenState extends State<NowPlayingScreen> {
+class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with TickerProviderStateMixin{
+
+  late AnimationController _animationIconController1;
+  AudioCache audioCache = AudioCache();
+  AudioPlayer audioPlayer = AudioPlayer();
+  Duration _duration = Duration.zero;
+  Duration _position = Duration.zero;
+  Duration _slider = new Duration(seconds: 0);
+  double durationvalue = 0;
+  bool issongplaying = false;
+
+  @override
+  void initState() {
+    _position = _slider;
+    _animationIconController1 = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 750),
+      reverseDuration: const Duration(milliseconds: 750),
+    );
+    audioCache.prefix = "asset";
+    audioPlayer.onPlayerStateChanged.listen((state) {
+      setState(() {
+        issongplaying = state == PlayerState.playing;
+      });
+    });
+    audioPlayer.onDurationChanged.listen((newDuration) {
+      setState(() {
+        _duration = newDuration;
+      });
+    });
+    audioPlayer.onPositionChanged.listen((newPositions) {
+      setState(() {
+        _position = newPositions;
+      });
+    });
+    super.initState();
+  }
+  @override
+  void dispose() {
+    audioPlayer.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     final height = ScreenSize(context).height;
@@ -134,15 +176,15 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 30.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
+              children: [
                 CustomText(
-                  text: '2:50',
+                  text: '${_position.inSeconds ~/ 60} : ${(_position.inSeconds % 60).toInt()}',
                   fontSize: 10,
                   color: blackColor2,
                   fontWeight: FontWeight.w700,
                 ),
                 CustomText(
-                  text: '1:30',
+                  text: '${_duration.inSeconds ~/ 60} : ${(_duration.inSeconds % 60).toInt()}',
                   fontSize: 10,
                   color: blackColor2,
                   fontWeight: FontWeight.w700,
@@ -158,16 +200,17 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
                   trackShape: RectangularSliderTrackShape(),
                   thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10)),
               child: Slider(
-                  value: _value.toDouble(),
-                  min: 1.0,
-                  max: 20.0,
+                  value: _position.inSeconds.toDouble(),
+                  min: 0,
+                  max: _duration.inSeconds.toDouble(),
                   divisions: 100,
                   activeColor: primaryPinkColor,
                   inactiveColor: primaryGreyColor2,
-                  onChanged: (double newValue) {
-                    setState(() {
-                      _value = newValue.round();
-                    });
+                  onChanged: (double newValue) async{
+                    _value = newValue.round();
+                    await audioPlayer.seek(Duration(seconds: newValue.toInt()));
+                    await audioPlayer.resume();
+                    setState(() {});
                   },
                   semanticFormatterCallback: (double newValue) {
                     return '${newValue.round()} dollars';
@@ -201,11 +244,22 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
                         )
                       ]
                     ),
-                    child: const Padding(
-                      padding:  EdgeInsets.all(22),
-                      child:  CustomSvg(
-                        //color: Colors.blue,
-                        svg:pouseButton,
+                    child: Padding(
+                      padding: const EdgeInsets.all(22),
+                      child:  GestureDetector(
+                        onTap: ()async{
+                         await audioPlayer.setVolume(0.5);
+                          if(issongplaying){
+                           await audioPlayer.pause();
+                          }else{
+                            String url = "babyCry/Fanr3.wav";
+                            await audioPlayer.play(AssetSource(url));
+                          }
+                        },
+                        child: const CustomSvg(
+                          //color: Colors.blue,
+                          svg:pouseButton,
+                        ),
                       ),
                     ),
                   ),
