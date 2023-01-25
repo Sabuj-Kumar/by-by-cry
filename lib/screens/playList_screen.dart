@@ -1,6 +1,8 @@
 import 'package:bye_bye_cry_new/compoment/shared/custom_image.dart';
 import 'package:bye_bye_cry_new/compoment/shared/custom_text.dart';
+import 'package:bye_bye_cry_new/screens/provider/add_music_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../compoment/shared/custom_app_bar.dart';
 import '../compoment/shared/custom_navigation.dart';
@@ -9,16 +11,17 @@ import '../compoment/shared/screen_size.dart';
 import '../compoment/utils/color_utils.dart';
 import '../compoment/utils/image_link.dart';
 import 'add_to_playlist.dart';
+import 'models/music_models.dart';
 import 'now_palying_screen.dart';
 
-class PlayListScreen extends StatefulWidget {
+class PlayListScreen extends ConsumerStatefulWidget {
   const PlayListScreen({Key? key}) : super(key: key);
 
   @override
-  State<PlayListScreen> createState() => _PlayListScreenState();
+  ConsumerState<PlayListScreen> createState() => _PlayListScreenState();
 }
 
-class _PlayListScreenState extends State<PlayListScreen> {
+class _PlayListScreenState extends ConsumerState<PlayListScreen> {
   @override
   Widget build(BuildContext context) {
     TextEditingController searchController = TextEditingController();
@@ -154,7 +157,7 @@ class _PlayListScreenState extends State<PlayListScreen> {
           ),
           GestureDetector(
             onTap: (){
-              Navigation.navigatePages(context, NowPlayingScreen(url: ''));
+              Navigation.navigatePages(context, NowPlayingScreen(musicModel: ref.watch(addProvider).musicList[0],));
             },
             child: Container(
               decoration: BoxDecoration(

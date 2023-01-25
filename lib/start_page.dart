@@ -5,26 +5,37 @@ import 'package:bye_bye_cry_new/screens/home_screen.dart';
 import 'package:bye_bye_cry_new/screens/mix_screen.dart';
 import 'package:bye_bye_cry_new/screens/now_palying_screen.dart';
 import 'package:bye_bye_cry_new/screens/playList_screen.dart';
+import 'package:bye_bye_cry_new/screens/provider/add_music_provider.dart';
 import 'package:bye_bye_cry_new/screens/sound_edit_screen.dart';
 import 'package:bye_bye_cry_new/screens/sound_screen.dart';
 import 'package:flutter/material.dart';
-class StartPage extends StatefulWidget {
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+class StartPage extends ConsumerStatefulWidget {
   const StartPage({Key? key}) : super(key: key);
 
   @override
-  State<StartPage> createState() => _StartPageState();
+  ConsumerState<StartPage> createState() => _StartPageState();
 }
 
-class _StartPageState extends State<StartPage> {
+class _StartPageState extends ConsumerState<StartPage> {
   var selectedIndex = 0;
   List<Widget> pageList = [];
 
   @override
   void initState() {
+    addMusic();
     initialized();
     super.initState();
   }
 
+  addMusic(){
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      ref.read(addProvider).addMusic();
+      if(mounted){
+        setState(() {});
+      }
+    });
+  }
   initialized(){
       pageList = [
         const HomePage(),

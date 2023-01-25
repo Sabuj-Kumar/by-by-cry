@@ -9,10 +9,11 @@ import '../compoment/shared/custom_text.dart';
 import '../compoment/shared/screen_size.dart';
 import '../compoment/utils/color_utils.dart';
 import '../compoment/utils/image_link.dart';
+import 'models/music_models.dart';
 
 class NowPlayingScreen extends ConsumerStatefulWidget {
-  final String url;
-  const NowPlayingScreen({Key? key,required this.url}) : super(key: key);
+  final MusicModel musicModel;
+  const NowPlayingScreen({Key? key,required this.musicModel}) : super(key: key);
 
   @override
   ConsumerState<NowPlayingScreen> createState() => _NowPlayingScreenState();
@@ -37,7 +38,7 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
   AudioPlayer audioPlayer = AudioPlayer();
   Duration _duration = Duration.zero;
   Duration _position = Duration.zero;
-  Duration _slider = new Duration(seconds: 0);
+  Duration _slider = Duration(seconds: 0);
   double durationvalue = 0;
   bool issongplaying = false;
 
@@ -51,9 +52,7 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
     );
     audioCache.prefix = "asset";
     audioPlayer.onPlayerStateChanged.listen((state) {
-      setState(() {
         issongplaying = state == PlayerState.playing;
-      });
     });
     audioPlayer.onDurationChanged.listen((newDuration) {
       setState(() {
@@ -98,10 +97,10 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
             ],
           ),
           CustomImage(
-            imageUrl: 'asset/images/chainsaw_now_playing.png',
+            imageUrl: widget.musicModel.image,
             height: width * .8,
             width: width * .8,
-            boxFit: BoxFit.cover,
+            boxFit: BoxFit.fill,
           ),
           const SizedBox(
             height: 20,
@@ -118,14 +117,14 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const[
+                  children: [
                      CustomText(
-                      text: 'Chainsaw',
+                      text: widget.musicModel.musicName,
                       fontSize: 20,
                       fontWeight: FontWeight.w400,
                       color: secondaryBlackColor,
                     ),
-                    SizedBox( height:8,child: CustomSvg(svg: down_arrow)),
+                    const SizedBox( height:8,child: CustomSvg(svg: down_arrow)),
                   ],
                 ),
               ),
@@ -252,13 +251,13 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                           if(issongplaying){
                            await audioPlayer.pause();
                           }else{
-                            String url = "babyCry/Fanr3.wav";
+                            String url = widget.musicModel.musicFile;
                             await audioPlayer.play(AssetSource(url));
                           }
                         },
-                        child: const CustomSvg(
+                        child: CustomSvg(
                           //color: Colors.blue,
-                          svg:pouseButton,
+                          svg:issongplaying?pouseButton:playButtonSvg,
                         ),
                       ),
                     ),

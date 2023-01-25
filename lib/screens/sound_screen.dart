@@ -1,31 +1,40 @@
 import 'package:bye_bye_cry_new/compoment/shared/custom_image.dart';
 import 'package:bye_bye_cry_new/compoment/shared/custom_svg.dart';
 import 'package:bye_bye_cry_new/compoment/shared/custom_text.dart';
+import 'package:bye_bye_cry_new/screens/provider/add_music_provider.dart';
 import 'package:bye_bye_cry_new/screens/sound_edit_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../compoment/shared/custom_app_bar.dart';
 import '../compoment/shared/custom_navigation.dart';
 import '../compoment/utils/color_utils.dart';
 import '../compoment/utils/image_link.dart';
+import 'models/music_models.dart';
 import 'now_palying_screen.dart';
 
-class SoundScreen extends StatelessWidget {
+class SoundScreen extends ConsumerStatefulWidget {
   const SoundScreen({Key? key}) : super(key: key);
 
+  @override
+  ConsumerState<SoundScreen> createState() => _SoundScreenState();
+}
+
+class _SoundScreenState extends ConsumerState<SoundScreen> {
   @override
   Widget build(BuildContext context) {
     TextEditingController searchController = TextEditingController();
     List<String> imageUrl = [
-      'asset/images/sounds_image/Chainsaw.png',
-      'asset/images/sounds_image/Vaccum.png',
-      'asset/images/sounds_image/Jackhammer.png',
-      'asset/images/sounds_image/Blowdryer.png',
-      'asset/images/sounds_image/Lawnmower.png',
-      'asset/images/sounds_image/Washer.png',
-      'asset/images/sounds_image/Ocean.png',
-      'asset/images/sounds_image/dummy.png',
-      'asset/images/sounds_image/dummy2.png',
+      chainsaw,
+      vaccum,
+      jackhammer,
+      blowdryer,
+      lawnmower,
+      washer,
+      ocean,
+      dummy,
+      dummy,
+      dummy,
     ];
     List<String> textUrl = [
       'Chainshaw',
@@ -90,7 +99,7 @@ class SoundScreen extends StatelessWidget {
               ),
               Column(
                   children: List.generate(
-                imageUrl.length,
+                ref.watch(addProvider).musicList.isNotEmpty?10:ref.watch(addProvider).musicList.length,
                 (index) => Column(
                   children: [
                     Container(
@@ -98,8 +107,7 @@ class SoundScreen extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15.0),
                         child: imageList(
-                          context: context,
-                            imageLink: imageUrl[index],textLink: textUrl[index]),
+                          context: context,musicModel: ref.watch(addProvider).musicList[index]),
                       ),
                     ),// const SizedBox(height: 5,)
                   ],
@@ -144,7 +152,7 @@ class SoundScreen extends StatelessWidget {
         ));
   }
 
-  Widget imageList({required String imageLink, required String textLink,required BuildContext context}) {
+  Widget imageList({required MusicModel musicModel,required BuildContext context,}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -152,19 +160,19 @@ class SoundScreen extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.only(top: 5.0),
-              child: CustomImage(imageUrl: imageLink),
+              child: CustomImage(imageUrl: musicModel.image),
             ),
             const SizedBox(
               width: 10,
             ),
-            CustomText(text: textLink,color: blackColor50,fontWeight: FontWeight.w600,fontSize: 20,),
+            CustomText(text: musicModel.musicName,color: blackColor50,fontWeight: FontWeight.w600,fontSize: 20,),
           ],
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: GestureDetector(
             onTap: (){
-              Navigation.navigatePages(context, NowPlayingScreen(url: '',));
+              Navigation.navigatePages(context, NowPlayingScreen(musicModel: musicModel));
             },
             child: Container(
               decoration: BoxDecoration(
