@@ -1,3 +1,4 @@
+import 'package:bye_bye_cry_new/start_page.dart';
 import 'package:flutter/material.dart';
 
 import '../../../compoment/shared/custom_input.dart';
@@ -95,7 +96,9 @@ class _SignUpState extends State<SignUp> {
                           Container(
                             padding: const EdgeInsets.all(10),
                             child: OutLineButton(text: 'Sign Up',
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=>const StartPage()));
+                              },
                               height: 50,
                               width: double.infinity,
                               textFontWeight: FontWeight.w700,

@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Bye Bye Cry',
       theme: ThemeData(fontFamily: 'Neue Einstellung'),
       //home: const StartPage(),
       home: const SignIn(),
