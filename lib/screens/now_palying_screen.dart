@@ -52,7 +52,10 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
     );
     audioCache.prefix = "asset";
     audioPlayer.onPlayerStateChanged.listen((state) {
-        issongplaying = state == PlayerState.playing;
+      issongplaying = state == PlayerState.playing;
+      if(mounted){
+        setState(() {});
+      }
     });
     audioPlayer.onDurationChanged.listen((newDuration) {
       setState(() {
