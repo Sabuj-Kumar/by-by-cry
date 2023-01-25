@@ -162,7 +162,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                       fontWeight: FontWeight.w600,
                       color: secondaryBlackColor,
                       text:
-                          '“ByeByeCry completely changed our lives. It turned nap time/feeding time from a dearded activity into one that my sin and I can finally enjoy together. I ams so happy he’s happy!” '),
+                          '“ByeByeCry completely changed our lives. It turned nap time/feeding time from a dearded activity into one that my sin and I can finally enjoy together. I am so happy he’s happy!” '),
                   const SizedBox(
                     height: 20,
                   ),
@@ -216,7 +216,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       childAspectRatio: 1,
                       mainAxisSpacing: 20,
-                      crossAxisSpacing:0,
+                      crossAxisSpacing: 0,
                       crossAxisCount: 3),
                   itemBuilder: (BuildContext context, int index) {
                     return CustomImageText(
@@ -351,7 +351,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                     BoxShadow(
                       color: Colors.black.withOpacity(0.2),
                       blurRadius: 5,
-                      spreadRadius: 1
+                      spreadRadius: 1,
                     )
                   ]
                 ),
@@ -407,7 +407,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               otherTextPaddingHorizontal: 10,
               otherTextPaddingVerticalBottom: 05,
             ),
-            SizedBox(height: width * 0.15),
+            SizedBox(height: width * 0.5),
             Container(
               height: height * .25,
               padding: const EdgeInsets.all(20),
