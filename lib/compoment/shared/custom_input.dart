@@ -19,6 +19,7 @@ class CustomTextInputField extends StatefulWidget {
   final int? hintMaxLine;
   final bool readOnly;
   final Color borderColor;
+  final double borderRadius;
   const CustomTextInputField({
     Key? key,
     required this.textEditingController,
@@ -35,7 +36,8 @@ class CustomTextInputField extends StatefulWidget {
     this.hintColor,
     this.hintMaxLine,
     this.readOnly = false,
-    this.borderColor = Colors.white
+    this.borderColor = Colors.white,
+    this.borderRadius = 5,
   }) : super(key: key);
 
   @override
@@ -63,7 +65,7 @@ class _CustomTextInputFieldState extends State<CustomTextInputField> {
           boxShadow: [
             BoxShadow(
                 color: Colors.grey.withOpacity(0.1),
-                spreadRadius: 2,
+                spreadRadius: 0,
                 blurRadius: 2// changes position of shadow
             ),
           ]
@@ -101,31 +103,31 @@ class _CustomTextInputFieldState extends State<CustomTextInputField> {
           }, icon: const Icon(Icons.visibility),):null,
           //contentPadding: widget.obscure? EdgeInsets.only(top: widget.obscurePadding!?25:10,left: 8,):widget.prefixImageLink != null?const EdgeInsets.only(top: 35):const EdgeInsets.all(10),
           border:OutlineInputBorder(
-              borderRadius: BorderRadius.circular(borderRadius),
+              borderRadius: BorderRadius.circular(widget.borderRadius),
               borderSide: BorderSide(
                 color: Colors.grey.withOpacity(0.4),
               )
           ),
           errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(borderRadius),
+              borderRadius: BorderRadius.circular(widget.borderRadius),
               borderSide: const BorderSide(
                 color:Colors.red,
               )
           ),
           focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(borderRadius),
+              borderRadius: BorderRadius.circular(widget.borderRadius),
               borderSide: BorderSide(
                 color: Colors.grey.withOpacity(0.4),
               )
           ),
           enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(borderRadius),
+              borderRadius: BorderRadius.circular(widget.borderRadius),
               borderSide: BorderSide(
                 color: Colors.grey.withOpacity(0.4),
               )
           ),
           focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(borderRadius),
+              borderRadius: BorderRadius.circular(widget.borderRadius),
               borderSide: const BorderSide(
                   color: Colors.red
               )
