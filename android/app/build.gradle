@@ -1,5 +1,5 @@
 def localProperties = new Properties()
-def keystoreProperties = rootProject.file('key.properties')
+def keystoreProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
 
 if (localPropertiesFile.exists()) {
@@ -57,20 +57,20 @@ android {
 
     signingConfigs {
         release {
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
-            storePassword keystoreProperties['storePassword']
+            keyAlias "byebyebabycry"
+            keyPassword "@ByeByeCry@Key"
+            storeFile file('byebabycry.jks')
+            storePassword "@ByeByeCry@Key"
         }
         debug {
-            keyAlias keystoreProperties['keyAlias']
+            keyAlias "byebyebabycry"
+            keyPassword "@ByeByeCry@Key"
+            storeFile file('byebabycry.jks')
+            storePassword "@ByeByeCry@Key"
+           /* keyAlias keystoreProperties['keyAlias']
             keyPassword keystoreProperties['keyPassword']
             storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
-            storePassword keystoreProperties['storePassword']
-            /*storeFile file('swoop-news.jks')
-            storePassword 'android'
-            keyAlias 'swoopnews'
-            keyPassword 'android'*/
+            storePassword keystoreProperties['storePassword']*/
         }
     }
     buildTypes {
