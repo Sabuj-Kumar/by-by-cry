@@ -1,7 +1,6 @@
 import 'package:bye_bye_cry_new/screens/provider/add_music_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import '../compoment/shared/custom_app_bar.dart';
 import '../compoment/shared/custom_image.dart';
 import '../compoment/shared/custom_svg.dart';
@@ -60,7 +59,7 @@ class _SoundEditScreenState extends ConsumerState<SoundEditScreen> {
     ];
     if (mounted) {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        ref.read(addProvider).initialisedNameList(textUrl);
+        //ref.read(addProvider).initialisedNameList(textUrl);
       });
     }
   }

@@ -1,24 +1,26 @@
+
+import 'package:bye_bye_cry_new/screens/provider/add_music_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../compoment/shared/screen_size.dart';
 import '../../compoment/utils/color_utils.dart';
 
-class CustomBottomAppBar extends StatefulWidget {
+class CustomBottomAppBar extends ConsumerStatefulWidget {
   final Function(int) onPressed;
   final int? index;
   const CustomBottomAppBar({Key? key, required this.onPressed, this.index})
       : super(key: key);
 
   @override
-  State<CustomBottomAppBar> createState() => CustomBottomAppBarState();
+  ConsumerState<CustomBottomAppBar> createState() => CustomBottomAppBarState();
 }
 
-class CustomBottomAppBarState extends State<CustomBottomAppBar> {
-  int currentIndex = 0;
+class CustomBottomAppBarState extends ConsumerState<CustomBottomAppBar> {
 
   @override
   void initState() {
-    currentIndex = widget.index ?? 0;
+
     super.initState();
   }
 
@@ -57,7 +59,7 @@ class CustomBottomAppBarState extends State<CustomBottomAppBar> {
                   //     : navigationBarFirstImage,
                   scale: 1.4,
                   color:
-                      currentIndex == 0 ? primaryGreenColor : primaryGreyColor,
+                  ref.watch(addProvider).pageNumber == 0 ? primaryGreenColor : primaryGreyColor,
                 ),
               ),
               label: "Home"),
@@ -71,7 +73,7 @@ class CustomBottomAppBarState extends State<CustomBottomAppBar> {
                   //     : navigationBarSecondImage,
                   scale: 1.4,
                   color:
-                      currentIndex == 1 ? primaryGreenColor : primaryGreyColor,
+                  ref.watch(addProvider).pageNumber == 1 ? primaryGreenColor : primaryGreyColor,
                 ),
               ),
               label: "Sounds"),
@@ -84,7 +86,7 @@ class CustomBottomAppBarState extends State<CustomBottomAppBar> {
                 //     ? navigationBarThirdImageS
                 //     : navigationBarThirdImage,
                 scale: 1.4,
-                color: currentIndex == 2 ? primaryGreenColor : primaryGreyColor,
+                color: ref.watch(addProvider).pageNumber == 2 ? primaryGreenColor : primaryGreyColor,
               ),
             ),
             label: "Mix",
@@ -94,7 +96,7 @@ class CustomBottomAppBarState extends State<CustomBottomAppBar> {
                 padding: const EdgeInsets.all(6.0),
                 child: Image.asset(
                   // navigationBarForthImageS,
-                  currentIndex == 3
+                  ref.watch(addProvider).pageNumber == 3
                       ? navigationBarForthImage
                       : navigationBarForthImageS,
                   scale: 1.3,
@@ -112,7 +114,7 @@ class CustomBottomAppBarState extends State<CustomBottomAppBar> {
                   //     : navigationBarFifthImage,
                   scale: 1.4,
                   color:
-                      currentIndex == 4 ? primaryGreenColor : primaryGreyColor,
+                  ref.watch(addProvider).pageNumber == 4 ? primaryGreenColor : primaryGreyColor,
                 ),
               ),
               label: "Blog"),
@@ -128,12 +130,12 @@ class CustomBottomAppBarState extends State<CustomBottomAppBar> {
             const TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
         onTap: (index) {
           setState(() {
-            currentIndex = index;
+            ref.read(addProvider).changePage(index);
             widget.onPressed(index);
           });
           print("$index");
         },
-        currentIndex: currentIndex,
+        currentIndex: ref.watch(addProvider).pageNumber,
       ),
     );
   }

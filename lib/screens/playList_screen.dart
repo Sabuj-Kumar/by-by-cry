@@ -11,7 +11,6 @@ import '../compoment/shared/screen_size.dart';
 import '../compoment/utils/color_utils.dart';
 import '../compoment/utils/image_link.dart';
 import 'add_to_playlist.dart';
-import 'models/music_models.dart';
 import 'now_palying_screen.dart';
 
 class PlayListScreen extends ConsumerStatefulWidget {
@@ -83,10 +82,10 @@ class _PlayListScreenState extends ConsumerState<PlayListScreen> {
             ),
             Column(
               children: List.generate(
-                textList.length,
+                ref.watch(addProvider).playList.length,
                 (index) => Container(
                     color: index % 2 == 0?Colors.transparent:pinkLightColor,
-                    child: musicList(musicName: textList[index])),
+                    child: musicList(musicName: ref.watch(addProvider).playList[index].musicName)),
               ),
             ),
             const SizedBox(

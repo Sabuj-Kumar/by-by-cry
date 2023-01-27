@@ -1,4 +1,5 @@
 import 'package:bye_bye_cry_new/screens/authentication/sign_in/sign_in.dart';
+import 'package:bye_bye_cry_new/start_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,8 +22,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Bye Bye Cry',
       theme: ThemeData(fontFamily: 'Neue Einstellung'),
-      //home: const StartPage(),
-      home: const SignIn(),
+      home:  const StartPage(),
+      //home: const SignIn(),
     );
   }
 }

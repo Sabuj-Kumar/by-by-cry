@@ -32,8 +32,12 @@ class _StartPageState extends ConsumerState<StartPage> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       ref.read(addProvider).addMusic();
       if(mounted){
-        setState(() {});
+        ref.read(addProvider).combination();
       }
+      if(mounted){
+        ref.read(addProvider).assignAllPlaylist();
+      }
+      setState((){});
     });
   }
   initialized(){

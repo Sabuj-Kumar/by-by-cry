@@ -99,7 +99,7 @@ class _SoundScreenState extends ConsumerState<SoundScreen> {
               ),
               Column(
                   children: List.generate(
-                ref.watch(addProvider).musicList.isNotEmpty?10:ref.watch(addProvider).musicList.length,
+                ref.watch(addProvider).musicList.isEmpty?0:ref.watch(addProvider).musicList.length,
                 (index) => Column(
                   children: [
                     Container(

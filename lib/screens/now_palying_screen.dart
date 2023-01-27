@@ -1,8 +1,13 @@
+import 'dart:async';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:bye_bye_cry_new/compoment/shared/custom_image.dart';
 import 'package:bye_bye_cry_new/compoment/shared/custom_svg.dart';
+import 'package:bye_bye_cry_new/screens/provider/add_music_provider.dart';
+import 'package:bye_bye_cry_new/start_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:perfect_volume_control/perfect_volume_control.dart';
 import '../compoment/bottom_sheet.dart';
 import '../compoment/shared/custom_app_bar.dart';
 import '../compoment/shared/custom_text.dart';
@@ -20,7 +25,7 @@ class NowPlayingScreen extends ConsumerStatefulWidget {
 }
 
 int _value = 1;
-int _value2 = 1;
+double _value2 = 1;
 List<String> times = [
   "0",
   "5 min",
@@ -39,11 +44,58 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
   Duration _duration = Duration.zero;
   Duration _position = Duration.zero;
   Duration _slider = Duration(seconds: 0);
-  double durationvalue = 0;
+  double currentVolume = 0.0;
   bool issongplaying = false;
+  double brightness = 0.5;
+  late StreamSubscription<double> _subscription;
 
   @override
   void initState() {
+    startPlayer();
+    changeVolume();
+    //brightNess();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    audioPlayer.dispose();
+    _subscription.cancel();
+    super.dispose();
+  }
+
+  changeVolume(){
+    PerfectVolumeControl.hideUI = false;
+    Future.delayed(Duration.zero, () async {
+      currentVolume = await PerfectVolumeControl.getVolume();
+     /* currentvol2 = await PerfectVolumeControl.getVolume();*/
+      setState(() {
+        //refresh UI
+      });
+    });
+
+    _subscription = PerfectVolumeControl.stream.listen((volume) {
+      currentVolume = volume;
+      if(mounted){
+        setState(() {});
+      }
+    });
+  }
+  /*brightNess()async{
+    Future.delayed(Duration.zero,() async { //there is await function, so we use Future.delayed
+      brightness = await Screen.brightness; //get the current screen brightness
+      if(brightness > 1){
+        brightness = brightness / 10;
+        // sometime it gives value ranging 0.0 - 10.0, so convert it to range 0.0 - 1.0
+      }
+      print(brightness);
+      setState(() {
+        brightness = brightness;
+        //change the variable value and update screen UI
+      });
+    });
+  }*/
+  startPlayer()async{
     _position = _slider;
     _animationIconController1 = AnimationController(
       vsync: this,
@@ -54,6 +106,7 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
     audioPlayer.onPlayerStateChanged.listen((state) {
       issongplaying = state == PlayerState.playing;
       if(mounted){
+        print("in method $issongplaying");
         setState(() {});
       }
     });
@@ -67,12 +120,9 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
         _position = newPositions;
       });
     });
-    super.initState();
-  }
-  @override
-  void dispose() {
-    audioPlayer.dispose();
-    super.dispose();
+   if(mounted){
+     setState(() {});
+   }
   }
   @override
   Widget build(BuildContext context) {
@@ -91,10 +141,18 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Padding(
-                padding: EdgeInsets.only(right: width * .07),
-                child: const CustomImage(
-                  imageUrl: 'asset/images/icon_png/now_playing_icon/Sun.png',
+              Container(
+                color: Colors.transparent,
+                child: GestureDetector(
+                  onTap: (){
+                    _showDialogBrightNess(context);
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.only(right: width * .07),
+                    child: const CustomImage(
+                      imageUrl: 'asset/images/icon_png/now_playing_icon/Sun.png',
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -142,12 +200,16 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Row(
-                  children: const [
-                    CustomImage(imageUrl: 'asset/images/icon_png/love.png'),
-                    SizedBox(
+                  children:  [
+                    GestureDetector(
+                        onTap: (){
+                            ref.read(addProvider).addOrRemovePlayList(id:  widget.musicModel.id);
+                        },
+                        child: CustomImage(imageUrl: 'asset/images/icon_png/love.png',color: ref.watch(addProvider).playListIds.contains(widget.musicModel.id)? Colors.red:null,)),
+                    const SizedBox(
                       width: 10,
                     ),
-                    CustomText(
+                    const CustomText(
                       text: 'Add To Playlist',
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
@@ -155,16 +217,25 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                   ],
                 ),
                 Row(
-                  children: const [
-                    CustomImage(
+                  children: [
+                    const CustomImage(
                         imageUrl: 'asset/images/icon_png/another_sound.png'),
-                    SizedBox(
+                    const SizedBox(
                       width: 10,
                     ),
-                    CustomText(
-                      text: 'Mix Another\n Sound ',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
+                    Container(
+                      color: Colors.transparent,
+                      child: GestureDetector(
+                        onTap: (){
+                          ref.watch(addProvider).changePage(2);
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const StartPage()));
+                        },
+                        child: const CustomText(
+                          text: 'Mix Another\n Sound',
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -210,8 +281,18 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                   inactiveColor: primaryGreyColor2,
                   onChanged: (double newValue) async{
                     _value = newValue.round();
+                    print("slider");
+                    if(_position.inSeconds.toInt()>=_duration.inSeconds.toInt()){
+                      String url = widget.musicModel.musicFile;
+                      await audioPlayer.play(AssetSource(url));
+                    }
                     await audioPlayer.seek(Duration(seconds: newValue.toInt()));
                     await audioPlayer.resume();
+                    if(_position.inSeconds.toInt()<_duration.inSeconds.toInt()){
+                      String url = widget.musicModel.musicFile;
+                      await audioPlayer.play(AssetSource(url));
+                      print("play less");
+                    }
                     setState(() {});
                   },
                   semanticFormatterCallback: (double newValue) {
@@ -228,8 +309,22 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children:  [
-                  const CustomSvg(svg: volume),
-                  const CustomSvg(svg: left_shift),
+                  GestureDetector(
+                      onTap: (){
+                        print("valume");
+                        PerfectVolumeControl.setVolume(currentVolume);
+                      },
+                      child: Container(child: const CustomSvg(svg: volume))),
+                  GestureDetector(
+                      onTap: ()async{
+                        if(_position.inSeconds.toInt() - 5 > 0){
+                          await audioPlayer.seek(Duration(seconds: _position.inSeconds.toInt() - 5));
+                          String url = widget.musicModel.musicFile;
+                          await audioPlayer.play(AssetSource(url));
+                          print('click');
+                        }
+                      },
+                      child: const CustomSvg(svg: left_shift)),
                   Container(
                    // color: Colors.red,
                     height: width * 0.18,
@@ -253,9 +348,11 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                          await audioPlayer.setVolume(0.5);
                           if(issongplaying){
                            await audioPlayer.pause();
+                           print("pause");
                           }else{
                             String url = widget.musicModel.musicFile;
                             await audioPlayer.play(AssetSource(url));
+                            print("play");
                           }
                         },
                         child: CustomSvg(
@@ -265,7 +362,20 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                       ),
                     ),
                   ),
-                  const CustomSvg(svg: right_shift),
+                  GestureDetector(
+                      onTap: ()async{
+
+                          //await audioPlayer.pause();
+                          await audioPlayer.seek(Duration(seconds: _position.inSeconds.toInt() + 5));
+                          await audioPlayer.resume();
+                          print('click');
+
+                          if(_position.inSeconds.toInt()>=_duration.inSeconds.toInt()){
+                            await audioPlayer.pause();
+                          }
+
+                      },
+                      child: const CustomSvg(svg: right_shift)),
                   GestureDetector(
                       onTap: (){
                         _showDialog(context);
@@ -285,6 +395,78 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
           )
         ],
       ),
+    );
+  }
+  void _showDialogBrightNess(BuildContext context) {
+    final height = ScreenSize(context).height;
+    final width = ScreenSize(context).width;
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, void Function(void Function()) updateState) { return Align(
+            alignment: Alignment.topCenter,
+            child: Wrap(
+              children: [
+                Container(
+                  color: Colors.transparent,
+                  height: width * 0.27,
+                  child: AlertDialog(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15)
+                    ),
+                    backgroundColor: Colors.white,
+                    contentPadding: EdgeInsets.zero,
+                    content: SizedBox(
+                      height: width * 0.25,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: SliderTheme(
+                              data: const SliderThemeData(
+                                  trackShape: RectangularSliderTrackShape(),
+                                  thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10)),
+                              child: Slider(
+                                  value: brightness,
+                                  min: 0.0,
+                                  max: 1.0,
+                                  divisions: 100,
+                                  activeColor: primaryPinkColor,
+                                  inactiveColor: primaryGreyColor2,
+                                  onChanged: (double newValue) {
+                                    updateState(() {
+                                     // Screen.setBrightness(newValue);
+                                      brightness = newValue;
+                                      print("$brightness");
+                                    });
+                                  },
+                                  semanticFormatterCallback: (double newValue) {
+                                    return '${newValue.round()} dollars';
+                                  }
+                                 ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 10),
+                            child: Container(
+                              color: Colors.transparent,
+                              height: width * 0.1,
+                              child: const CustomImage(
+                                boxFit: BoxFit.fill,
+                                imageUrl: 'asset/images/icon_png/now_playing_icon/Sun.png',
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );  },
+        );
+      },
     );
   }
   void _showDialog(BuildContext context) {
@@ -332,7 +514,7 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                             trackShape: RectangularSliderTrackShape(),
                             thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10)),
                         child: Slider(
-                            value: _value2.toDouble(),
+                            value: _value.toDouble(),
                             min: 0.0,
                             max: 150.0,
                             divisions: 100,
@@ -340,7 +522,7 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                             inactiveColor: primaryGreyColor2,
                             onChanged: (double newValue) {
                               updateState(() {
-                                _value2 = newValue.round();
+                                _value = newValue.round();
                               });
                             },
                             semanticFormatterCallback: (double newValue) {

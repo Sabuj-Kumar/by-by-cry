@@ -1,6 +1,8 @@
 
 import 'package:bye_bye_cry_new/compoment/shared/custom_image.dart';
+import 'package:bye_bye_cry_new/screens/provider/add_music_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../compoment/shared/custom_app_bar.dart';
 import '../compoment/shared/custom_text.dart';
 import '../compoment/shared/outline_button.dart';
@@ -8,21 +10,21 @@ import '../compoment/shared/screen_size.dart';
 import '../compoment/utils/color_utils.dart';
 import 'package:perfect_volume_control/perfect_volume_control.dart';
 
-class MixScreen extends StatefulWidget {
+class MixScreen extends ConsumerStatefulWidget {
   final VoidCallback? onPressed;
   const MixScreen({Key? key,this.onPressed}) : super(key: key);
 
   @override
-  State<MixScreen> createState() => _MixScreenState();
+  ConsumerState<MixScreen> createState() => _MixScreenState();
 }
 
-class _MixScreenState extends State<MixScreen> {
+class _MixScreenState extends ConsumerState<MixScreen> {
   double currentvol = 1;
   double currentvol2 = 1;
 
   @override
   void initState() {
-    PerfectVolumeControl.hideUI = false;
+   /* PerfectVolumeControl.hideUI = false;
     Future.delayed(Duration.zero, () async {
       currentvol = await PerfectVolumeControl.getVolume();
       currentvol2 = await PerfectVolumeControl.getVolume();
@@ -40,7 +42,7 @@ class _MixScreenState extends State<MixScreen> {
       setState(() {
         currentvol2 = volume2;
       });
-    });
+    });*/
     super.initState();
   }
 
@@ -70,137 +72,135 @@ class _MixScreenState extends State<MixScreen> {
           SizedBox(
             height: height * .03,
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    CustomImage(
-                      imageUrl: 'asset/images/chainsaw_mix_new.png',
-                      height: width * .35,
-                      width: width * .35,
-                      boxFit: BoxFit.cover,
-                    ),
-                    Icon(
-                      Icons.add,
-                      size: height * .05,
-                      color: primaryPinkColor,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 10.0),
-                      child: Container(
-                        height: width * .35,
-                        width: width * .35,
-                        decoration: const BoxDecoration(
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: List.generate(ref.watch(addProvider).combinationList.length,(index) => Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          CustomImage(
+                            imageUrl: ref.watch(addProvider).combinationList[index].first.image,
+                            height: width * .35,
+                            width: width * .35,
+                            boxFit: BoxFit.cover,
+                          ),
+                          Icon(
+                            Icons.add,
+                            size: height * .05,
                             color: primaryPinkColor,
-                            borderRadius: BorderRadius.all(Radius.circular(20))),
-                        child: const CustomImage(
-                            imageUrl: 'asset/images/icon_png/music.png'),
+                          ),
+                          CustomImage(
+                            imageUrl: ref.watch(addProvider).combinationList[index].second.image,
+                            height: width * .35,
+                            width: width * .35,
+                            boxFit: BoxFit.cover,
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    const CustomText(
-                      text: 'Chainsaw',
-                      textAlign: TextAlign.center,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w400,
-                      color: primaryGreyColor,
-                    ),
-                    const SizedBox(),
-                    GestureDetector(
-                      onTap:widget.onPressed,
-                      child: Container(
-                        color: Colors.transparent,
-                        child: const CustomText(
-                          text: 'Add a sound',
-                          fontSize: 20,
-                          fontWeight: FontWeight.w400,
-                          color: primaryGreyColor,
-                        ),
+                      const SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          CustomText(
+                            text: ref.watch(addProvider).combinationList[index].first.musicName,
+                            textAlign: TextAlign.center,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w400,
+                            color: primaryGreyColor,
+                          ),
+                          const SizedBox(),
+                          GestureDetector(
+                            onTap:widget.onPressed,
+                            child: Container(
+                              color: Colors.transparent,
+                              child: CustomText(
+                                text: ref.watch(addProvider).combinationList[index].second.musicName,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w400,
+                                color: primaryGreyColor,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                width: width * .45,
+                                child: Slider(
+                                    value: 5,
+                                    min: 1.0,
+                                    max: 20.0,
+                                    divisions: 100,
+                                    activeColor: primaryPinkColor,
+                                    inactiveColor: primaryGreyColor2,
+                                    onChanged: (double newValue) {
+                                      setState(() {
+                                        //_value = newValue.round();
+                                      });
+                                    },
+                                    semanticFormatterCallback: (double newValue) {
+                                      return '${newValue.round()} dollars';
+                                    }),
+                              ),
+                              const Padding(
+                                padding:  EdgeInsets.symmetric(horizontal: 15.0),
+                                child: CustomText(
+                                  text: 'Set sound ${5} volume',
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 16,
+                                ),
+                              )
+                            ],
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                width: width * .45,
+                                child: Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Slider(
+                                      value: 5,
+                                      min: 1.0,
+                                      max: 20.0,
+                                      divisions: 100,
+                                      activeColor: primaryPinkColor,
+                                      inactiveColor: primaryGreyColor2,
+                                      onChanged: (double newValue) {
+                                        setState(() {
+                                          _value2 = newValue.round();
+                                        });
+                                      },
+                                      semanticFormatterCallback: (double newValue) {
+                                        return '${newValue.round()} dollars';
+                                      }),
+                                ),
+                              ),
+                              const Padding(
+                                padding:  EdgeInsets.symmetric(horizontal: 15.0),
+                                child: CustomText(
+                                  text: 'Set sound ${5} volume',
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 16,
+                                ),
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  )),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          width: width * .45,
-                          child: Slider(
-                              value: _value.toDouble(),
-                              min: 1.0,
-                              max: 20.0,
-                              divisions: 100,
-                              activeColor: primaryPinkColor,
-                              inactiveColor: primaryGreyColor2,
-                              onChanged: (double newValue) {
-                                setState(() {
-                                  _value = newValue.round();
-                                });
-                              },
-                              semanticFormatterCallback: (double newValue) {
-                                return '${newValue.round()} dollars';
-                              }),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                          child: CustomText(
-                            text: 'Set sound ${_value} volume',
-                            fontWeight: FontWeight.w400,
-                            fontSize: 16,
-                          ),
-                        )
-                      ],
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          width: width * .45,
-                          child: Align(
-                            alignment: Alignment.topLeft,
-                            child: Slider(
-                                value: _value2.toDouble(),
-                                min: 1.0,
-                                max: 20.0,
-                                divisions: 100,
-                                activeColor: primaryPinkColor,
-                                inactiveColor: primaryGreyColor2,
-                                onChanged: (double newValue) {
-                                  setState(() {
-                                    _value2 = newValue.round();
-                                  });
-                                },
-                                semanticFormatterCallback: (double newValue) {
-                                  return '${newValue.round()} dollars';
-                                }),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                          child: CustomText(
-                            text: 'Set sound ${_value2} volume',
-                            fontWeight: FontWeight.w400,
-                            fontSize: 16,
-                          ),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-              ],
+              ),
             ),
           ),
           CustomImage(

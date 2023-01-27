@@ -17,8 +17,8 @@ class AddToPlayListPage extends StatefulWidget {
 }
 
 class _AddToPlayListPageState extends State<AddToPlayListPage> {
- // double currentvol = 1;
-  //double currentvol2 = 1;
+  double currentvol = 1;
+  double currentvol2 = 1;
   @override
   void initState() {
     /*PerfectVolumeControl.hideUI = false;
