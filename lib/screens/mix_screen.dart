@@ -8,7 +8,9 @@ import '../compoment/shared/custom_text.dart';
 import '../compoment/shared/outline_button.dart';
 import '../compoment/shared/screen_size.dart';
 import '../compoment/utils/color_utils.dart';
-import 'package:perfect_volume_control/perfect_volume_control.dart';
+
+
+import '../compoment/utils/image_link.dart';
 
 class MixScreen extends ConsumerStatefulWidget {
   final VoidCallback? onPressed;
@@ -77,13 +79,134 @@ class _MixScreenState extends ConsumerState<MixScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: SingleChildScrollView(
                 child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        CustomImage(
+                          imageUrl: "${ref.watch(addProvider).musicModelFirst?.image}",
+                          height: width * .35,
+                          width: width * .35,
+                          boxFit: BoxFit.cover,
+                        ),
+                        Icon(
+                          Icons.add,
+                          size: height * .05,
+                          color: primaryPinkColor,
+                        ),
+                        CustomImage(
+                          imageUrl: ref.watch(addProvider).musicModelSecond?.image ?? music,
+                          height: width * .35,
+                          width: width * .35,
+                          boxFit: BoxFit.cover,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        CustomText(
+                          text: "${ref.watch(addProvider).musicModelFirst?.musicName}",
+                          textAlign: TextAlign.center,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w400,
+                          color: primaryGreyColor,
+                        ),
+                        const SizedBox(),
+                        GestureDetector(
+                          onTap:widget.onPressed,
+                          child: Container(
+                            color: Colors.transparent,
+                            child: CustomText(
+                              text: ref.watch(addProvider).musicModelSecond?.musicName ?? "Add a Sound",
+                              fontSize: 20,
+                              fontWeight: FontWeight.w400,
+                              color: primaryGreyColor,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: width * .45,
+                              child: Slider(
+                                  value: 5,
+                                  min: 1.0,
+                                  max: 20.0,
+                                  divisions: 100,
+                                  activeColor: primaryPinkColor,
+                                  inactiveColor: primaryGreyColor2,
+                                  onChanged: (double newValue) {
+                                    setState(() {
+                                      //_value = newValue.round();
+                                    });
+                                  },
+                                  semanticFormatterCallback: (double newValue) {
+                                    return '${newValue.round()} dollars';
+                                  }),
+                            ),
+                            const Padding(
+                              padding:  EdgeInsets.symmetric(horizontal: 15.0),
+                              child: CustomText(
+                                text: 'Set sound ${5} volume',
+                                fontWeight: FontWeight.w400,
+                                fontSize: 16,
+                              ),
+                            )
+                          ],
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: width * .45,
+                              child: Align(
+                                alignment: Alignment.topLeft,
+                                child: Slider(
+                                    value: 5,
+                                    min: 1.0,
+                                    max: 20.0,
+                                    divisions: 100,
+                                    activeColor: primaryPinkColor,
+                                    inactiveColor: primaryGreyColor2,
+                                    onChanged: (double newValue) {
+                                      setState(() {
+                                        _value2 = newValue.round();
+                                      });
+                                    },
+                                    semanticFormatterCallback: (double newValue) {
+                                      return '${newValue.round()} dollars';
+                                    }),
+                              ),
+                            ),
+                            const Padding(
+                              padding:  EdgeInsets.symmetric(horizontal: 15.0),
+                              child: CustomText(
+                                text: 'Set sound ${5} volume',
+                                fontWeight: FontWeight.w400,
+                                fontSize: 16,
+                              ),
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),/*Column(
                   children: List.generate(ref.watch(addProvider).combinationList.length,(index) => Column(
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           CustomImage(
-                            imageUrl: ref.watch(addProvider).combinationList[index].first.image,
+                            imageUrl: ref.watch(addProvider).combinationList[index].first!.image,
                             height: width * .35,
                             width: width * .35,
                             boxFit: BoxFit.cover,
@@ -94,7 +217,7 @@ class _MixScreenState extends ConsumerState<MixScreen> {
                             color: primaryPinkColor,
                           ),
                           CustomImage(
-                            imageUrl: ref.watch(addProvider).combinationList[index].second.image,
+                            imageUrl: ref.watch(addProvider).combinationList[index].second!.image,
                             height: width * .35,
                             width: width * .35,
                             boxFit: BoxFit.cover,
@@ -106,7 +229,7 @@ class _MixScreenState extends ConsumerState<MixScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           CustomText(
-                            text: ref.watch(addProvider).combinationList[index].first.musicName,
+                            text: ref.watch(addProvider).combinationList[index].first!.musicName,
                             textAlign: TextAlign.center,
                             fontSize: 20,
                             fontWeight: FontWeight.w400,
@@ -118,7 +241,7 @@ class _MixScreenState extends ConsumerState<MixScreen> {
                             child: Container(
                               color: Colors.transparent,
                               child: CustomText(
-                                text: ref.watch(addProvider).combinationList[index].second.musicName,
+                                text: ref.watch(addProvider).combinationList[index].second!.musicName,
                                 fontSize: 20,
                                 fontWeight: FontWeight.w400,
                                 color: primaryGreyColor,
@@ -199,7 +322,7 @@ class _MixScreenState extends ConsumerState<MixScreen> {
                       ),
                     ],
                   )),
-                ),
+                ),*/
               ),
             ),
           ),

@@ -47,10 +47,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               Icons.arrow_back_ios,
               color: secondaryBlackColor,
             ),
-            onPressed: () {
-              //SystemNavigator.pop();
-              Navigator.of(context).pop();
-            },
+            onPressed: onPressed,
           ),
         ),
       ),
@@ -66,7 +63,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             padding: const EdgeInsets.only(right: 15.0),
             child: Center(
               child: InkWell(
-                onTap: onPressed,
+                onTap: onPressedButton,
                 child: CustomText(
                   text: actionTitle!,
                   fontSize: 14,

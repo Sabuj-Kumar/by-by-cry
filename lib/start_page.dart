@@ -3,10 +3,8 @@ import 'package:bye_bye_cry_new/screens/blog_screen.dart';
 import 'package:bye_bye_cry_new/screens/botom_nev_bar/bootom_nav_bar.dart';
 import 'package:bye_bye_cry_new/screens/home_screen.dart';
 import 'package:bye_bye_cry_new/screens/mix_screen.dart';
-import 'package:bye_bye_cry_new/screens/now_palying_screen.dart';
 import 'package:bye_bye_cry_new/screens/playList_screen.dart';
 import 'package:bye_bye_cry_new/screens/provider/add_music_provider.dart';
-import 'package:bye_bye_cry_new/screens/sound_edit_screen.dart';
 import 'package:bye_bye_cry_new/screens/sound_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -63,12 +61,13 @@ class _StartPageState extends ConsumerState<StartPage> {
         onPressed: (index) {
           setState(() {
             selectedIndex = index;
+            ref.watch(addProvider).changePage(index);
             print('${selectedIndex}');
           });
         },
         index: selectedIndex,
       ),
-      body: pageList.isEmpty?const SizedBox():pageList[selectedIndex],
+      body: pageList.isEmpty?const SizedBox():pageList[ref.watch(addProvider).pageNumber],
     );
   }
 }

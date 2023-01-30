@@ -1,9 +1,9 @@
 
 class MixMusicModel{
 
-  MusicModel first;
-  MusicModel second;
-  MixMusicModel({required this.first,required this.second});
+  MusicModel? first;
+  MusicModel? second;
+  MixMusicModel({this.first,this.second});
 
   factory MixMusicModel.fromJson(Map<String,dynamic> json){
     return MixMusicModel(

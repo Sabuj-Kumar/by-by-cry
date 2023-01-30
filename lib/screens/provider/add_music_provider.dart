@@ -12,15 +12,14 @@ class AddMusicProvider extends ChangeNotifier {
   List<String> nameList = [];
   List<String> playListIds = [];
   List<MusicModel> musicList = [];
+  MusicModel? musicModelFirst,musicModelSecond;
   List<MixMusicModel> combinationList = [];
+  MixMusicModel mixMusicModel = MixMusicModel();
   bool homePage = true;
   List<MusicModel> playList = [];
   int pageNumber = 0;
 
-  /*addString(String name) {
-    nameList.add(name);
-    notifyListeners();
-  }*/
+
   changePage(int pageNum){
     pageNumber = pageNum;
     notifyListeners();
@@ -41,13 +40,6 @@ class AddMusicProvider extends ChangeNotifier {
     print("music add ${musicList.length}");
     notifyListeners();
   }
-  /*initialisedNameList(List<String> nameList2) {
-    nameList = List.from(nameList2);
-    *//*for(int index = 0; index < nameList2.length; index++){
-      nameList.add(nameList2[index]);
-    }*//*
-    notifyListeners();
-  }*/
 
   changeHomePage(){
     homePage = false;
@@ -93,5 +85,18 @@ class AddMusicProvider extends ChangeNotifier {
       }
     }
     notifyListeners();
+  }
+
+  mixFirstMusic(MusicModel firstMixMusicModel){
+    musicModelFirst = firstMixMusicModel;
+    notifyListeners();
+  }
+  mixSecondMusic(MusicModel secondMixMusicModel){
+    musicModelSecond = secondMixMusicModel;
+    notifyListeners();
+  }
+  createMix(MixMusicModel mixMusicModel){
+
+
   }
 }

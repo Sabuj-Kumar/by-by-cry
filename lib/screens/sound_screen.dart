@@ -21,34 +21,45 @@ class SoundScreen extends ConsumerStatefulWidget {
 }
 
 class _SoundScreenState extends ConsumerState<SoundScreen> {
+
+  TextEditingController searchController = TextEditingController();
+  bool changeToPlayNow = false;
+  MusicModel? music;
+  List<String> imageUrl = [
+    chainsaw,
+    vaccum,
+    jackhammer,
+    blowdryer,
+    lawnmower,
+    washer,
+    ocean,
+    dummy,
+    dummy,
+    dummy,
+  ];
+  List<String> textUrl = [
+    'Chainshaw',
+    'Vaccum',
+    'Jackhammer',
+    'Blowdryer',
+    'Lawnmower',
+    'Washer',
+    'Ocean',
+    'Ocean + Rain',
+    'Lawnmower + Ocean',
+    'Mix Two Sounds'
+  ];
+
   @override
   Widget build(BuildContext context) {
-    TextEditingController searchController = TextEditingController();
-    List<String> imageUrl = [
-      chainsaw,
-      vaccum,
-      jackhammer,
-      blowdryer,
-      lawnmower,
-      washer,
-      ocean,
-      dummy,
-      dummy,
-      dummy,
-    ];
-    List<String> textUrl = [
-      'Chainshaw',
-      'Vaccum',
-      'Jackhammer',
-      'Blowdryer',
-      'Lawnmower',
-      'Washer',
-      'Ocean',
-      'Ocean + Rain',
-      'Lawnmower + Ocean',
-      'Mix Two Sounds'
-    ];
-    return Scaffold(
+    return changeToPlayNow?NowPlayingScreen(
+        musicModel: music!,
+        onPressed: (){
+          setState(() {
+            changeToPlayNow = false;
+          });
+        },
+    ):Scaffold(
         appBar: CustomAppBar(
             title: 'My Sounds',
             actionTitle: 'Edit',
@@ -172,7 +183,11 @@ class _SoundScreenState extends ConsumerState<SoundScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: GestureDetector(
             onTap: (){
-              Navigation.navigatePages(context, NowPlayingScreen(musicModel: musicModel));
+             // Navigation.navigatePages(context, NowPlayingScreen(musicModel: musicModel));
+             setState(() {
+               music = musicModel;
+               changeToPlayNow = true;
+             });
             },
             child: Container(
               decoration: BoxDecoration(
