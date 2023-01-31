@@ -62,7 +62,6 @@ class _AddToPlayListPageState extends State<AddToPlayListPage> {
                     const SizedBox(height: 20),
                     CustomText(text: "Sound Set ${index+1}",fontWeight: FontWeight.w600,fontSize: 20,color: primaryGreyColor),
                     const SizedBox(height: 20),
-
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
