@@ -237,6 +237,7 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                       child: GestureDetector(
                         onTap: (){
                           ref.read(addProvider).changePage(2);
+                          ref.read(addProvider).clearMixMusics();
                           ref.read(addProvider).mixFirstMusic(widget.musicModel);
                          // Navigator.push(context, MaterialPageRoute(builder: (context) => const StartPage()));
                         },
@@ -357,7 +358,6 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                       padding: const EdgeInsets.all(22),
                       child:  GestureDetector(
                         onTap: ()async{
-                         await audioPlayer.setVolume(0.5);
                           if(issongplaying){
                            await audioPlayer.pause();
                            print("pause");

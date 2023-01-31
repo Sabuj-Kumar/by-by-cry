@@ -84,7 +84,7 @@ class _AddToPlayListPageState extends State<AddToPlayListPage> {
                         ),
                         Column(
                           children: [
-                            const CustomText(text: "Ocean",fontSize: 20,fontWeight: FontWeight.w600,color: blackColor77,),
+                            const CustomText(text: "Ocean",fontSize: 20,fontWeight: FontWeight.w600,color: blackColor77),
                             Padding(
                               padding: const EdgeInsets.only(right: 10.0,top: 10),
                               child: Container(

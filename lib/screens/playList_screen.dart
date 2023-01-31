@@ -27,13 +27,6 @@ class _PlayListScreenState extends ConsumerState<PlayListScreen> {
 
     final height = ScreenSize(context).height;
 
-    List<String> textList = [
-      'Witching Hour',
-      'Goodbye CO',
-      'Yard Work',
-      'Beach Naps',
-      'Grandma’s House',
-    ];
     return Scaffold(
       appBar: const CustomAppBar(
         title: 'My Playlist',

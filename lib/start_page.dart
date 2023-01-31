@@ -30,7 +30,7 @@ class _StartPageState extends ConsumerState<StartPage> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       ref.read(addProvider).addMusic();
       if(mounted){
-        ref.read(addProvider).combination();
+        ref.read(addProvider).assignMixAllPlaylist();
       }
       if(mounted){
         ref.read(addProvider).assignAllPlaylist();

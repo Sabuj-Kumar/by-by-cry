@@ -1,17 +1,20 @@
 
 class MixMusicModel{
 
+  String id;
   MusicModel? first;
   MusicModel? second;
-  MixMusicModel({this.first,this.second});
+  MixMusicModel({this.first,this.second,required this.id});
 
   factory MixMusicModel.fromJson(Map<String,dynamic> json){
     return MixMusicModel(
+        id:json['id'] ,
         first: MusicModel.fromJson(json['first']),
         second: MusicModel.fromJson(json['second'])
     );
   }
   Map<String,dynamic> toJson() => {
+    "id":id,
     "first":first,
     "second":second
   };

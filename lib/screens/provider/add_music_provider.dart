@@ -11,19 +11,21 @@ final addProvider = ChangeNotifierProvider((ref) => AddMusicProvider());
 class AddMusicProvider extends ChangeNotifier {
   List<String> nameList = [];
   List<String> playListIds = [];
+  List<String> mixPlayListIds = [];
   List<MusicModel> musicList = [];
   MusicModel? musicModelFirst,musicModelSecond;
   List<MixMusicModel> combinationList = [];
-  MixMusicModel mixMusicModel = MixMusicModel();
+  MixMusicModel? mixMusicModel;
   bool homePage = true;
   List<MusicModel> playList = [];
   int pageNumber = 0;
+  bool showAddPlaylist = false;
 
-
-  changePage(int pageNum){
-    pageNumber = pageNum;
+  showPlusPlaylist({bool playlistPlusBottom = false}){
+    showAddPlaylist = playlistPlusBottom;
     notifyListeners();
   }
+
   addMusic(){
 
     musicList.add(MusicModel(musicName: 'Canon blended', musicFile: "babyCry/Canon_blended.wav", id: '1', image: chainsaw));
@@ -45,15 +47,8 @@ class AddMusicProvider extends ChangeNotifier {
     homePage = false;
     notifyListeners();
   }
-  combination()async{
-    final prefs = await SharedPreferences.getInstance();
-    if(musicList.isNotEmpty){
-      for(int index = 0; index < musicList.length; index++){
-          for(int nextIndex = index + 1; nextIndex < musicList.length; nextIndex++){
-            combinationList.add(MixMusicModel(first: musicList[index], second: musicList[nextIndex]));
-          }
-      }
-    }
+  changePage(int pageNum){
+    pageNumber = pageNum;
     notifyListeners();
   }
 
@@ -62,6 +57,14 @@ class AddMusicProvider extends ChangeNotifier {
     playListIds = [];
     for(int index = 0; index < playList.length;index++){
       playListIds.add(playList[index].id);
+    }
+    notifyListeners();
+  }
+  assignMixAllPlaylist()async{
+    combinationList = await LocalDB.getMixPlayListItem() ?? [];
+    mixPlayListIds = [];
+    for(int index = 0; index < combinationList.length;index++){
+      mixPlayListIds.add(combinationList[index].id);
     }
     notifyListeners();
   }
@@ -86,7 +89,11 @@ class AddMusicProvider extends ChangeNotifier {
     }
     notifyListeners();
   }
-
+  clearMixMusics(){
+    musicModelFirst = null;
+    musicModelSecond = null;
+    notifyListeners();
+  }
   mixFirstMusic(MusicModel firstMixMusicModel){
     musicModelFirst = firstMixMusicModel;
     notifyListeners();
@@ -95,8 +102,22 @@ class AddMusicProvider extends ChangeNotifier {
     musicModelSecond = secondMixMusicModel;
     notifyListeners();
   }
-  createMix(MixMusicModel mixMusicModel){
-
-
-  }
+  createMix(MixMusicModel mixMusicModel)async{
+      int index = combinationList.indexWhere((element) => element.id == mixMusicModel.id);
+      if(!mixPlayListIds.contains(mixMusicModel.id)) {
+        if(index < 0) {
+          combinationList.add(mixMusicModel);
+          playListIds.add(mixMusicModel.id);
+          await LocalDB.setMixPlayListItem(combinationList);
+          print('added mix ${mixMusicModel.id}');
+        }
+      }else {
+        if(index >= 0) {
+          playList.remove(musicList[index]);
+          playListIds.remove(mixMusicModel.id);
+          await LocalDB.setMixPlayListItem(combinationList);
+          print('remove');
+        }
+      }
+    }
 }
