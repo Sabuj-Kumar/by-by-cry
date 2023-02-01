@@ -360,7 +360,7 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                         onTap: ()async{
                           if(issongplaying){
                            await audioPlayer.pause();
-                           print("pause");
+                           print("pause solution");
                           }else{
                             String url = widget.musicModel.musicFile;
                             await audioPlayer.play(AssetSource(url));
