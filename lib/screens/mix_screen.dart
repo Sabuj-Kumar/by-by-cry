@@ -118,6 +118,9 @@ class _MixScreenState extends ConsumerState<MixScreen> {
       await audioPlayer.play(AssetSource(url));
       print("play");
     }
+    if(mounted){
+      setState(() {});
+    }
   }
   @override
   void dispose() {

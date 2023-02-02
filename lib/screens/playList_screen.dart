@@ -21,13 +21,15 @@ class PlayListScreen extends ConsumerStatefulWidget {
 }
 
 class _PlayListScreenState extends ConsumerState<PlayListScreen> {
+
+  bool goMixPlayList = false;
   @override
   Widget build(BuildContext context) {
     TextEditingController searchController = TextEditingController();
 
     final height = ScreenSize(context).height;
 
-    return Scaffold(
+    return goMixPlayList?const AddToPlayListPage():Scaffold(
       appBar: const CustomAppBar(
         title: 'My Playlist',
         actionTitle: 'Edit',
@@ -85,7 +87,11 @@ class _PlayListScreenState extends ConsumerState<PlayListScreen> {
               height: 10,
             ),
             GestureDetector(
-              onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context) => const AddToPlayListPage()));},
+              onTap: (){
+                setState(() {
+                  goMixPlayList = true;
+                });
+              },
               child: Container(
               //  height: height * .07,
                 color: pinkLightColor,
