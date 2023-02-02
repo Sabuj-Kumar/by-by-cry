@@ -254,7 +254,7 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
             ),
           ),
           SizedBox(
-            height: width * .2,
+            height: width * 0.1,
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 30.0),
@@ -326,7 +326,7 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                       },
                       icon: Container(
                           color: Colors.transparent,
-                          child: const CustomSvg(svg: volume))),
+                          child: const CustomSvg(svg: volume,color: blackColor2))),
                   IconButton(
                       padding: EdgeInsets.zero,
                       onPressed: ()async{
@@ -337,7 +337,7 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                           print('click');
                         }
                       },
-                      icon: const CustomSvg(svg: left_shift)),
+                      icon: const CustomSvg(svg: left_shift,color: primaryPinkColor)),
                   Container(
                    // color: Colors.red,
                     height: width * 0.18,
@@ -354,21 +354,21 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                         )
                       ]
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(22),
-                      child:  GestureDetector(
-                        onTap: ()async{
-                          if(issongplaying){
-                           await audioPlayer.pause();
-                           print("pause solution");
-                          }else{
-                            String url = widget.musicModel.musicFile;
-                            await audioPlayer.play(AssetSource(url));
-                            print("play");
-                          }
-                        },
-                        child: CustomSvg(
-                          //color: Colors.blue,
+                    child: GestureDetector(
+                      onTap: ()async {
+                        if (issongplaying) {
+                          await audioPlayer.pause();
+                          print("pause solution");
+                        } else {
+                          String url = widget.musicModel.musicFile;
+                          await audioPlayer.play(AssetSource(url));
+                          print("play");
+                        }
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(22),
+                        child:  CustomSvg(
+                          color: primaryPinkColor,
                           svg:issongplaying?pouseButton:playButtonSvg,
                         ),
                       ),
@@ -377,7 +377,6 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                   IconButton(
                       padding: EdgeInsets.zero,
                       onPressed: ()async{
-
                           //await audioPlayer.pause();
                           await audioPlayer.seek(Duration(seconds: _position.inSeconds.toInt() + 5));
                           await audioPlayer.resume();
@@ -387,7 +386,7 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                             await audioPlayer.pause();
                           }
                       },
-                      icon: const CustomSvg(svg: right_shift)),
+                      icon: const CustomSvg(svg: right_shift,color: primaryPinkColor)),
                   IconButton(
                       padding: EdgeInsets.zero,
                       onPressed: (){
@@ -397,12 +396,12 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                           color: Colors.transparent,
                           child: const Padding(
                             padding:  EdgeInsets.symmetric(vertical: 8.0),
-                            child: CustomSvg(svg: timer),
+                            child: CustomSvg(svg: timer,color: blackColor2,),
                           ))),
                 ],
               ),
             ),
-          )
+          ),
         ],
       ),
     );
