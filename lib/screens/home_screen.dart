@@ -1,3 +1,4 @@
+import 'package:bye_bye_cry_new/compoment/shared/custom_svg.dart';
 import 'package:bye_bye_cry_new/screens/provider/add_music_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,6 +9,7 @@ import '../compoment/shared/custom_text.dart';
 import '../compoment/shared/outline_button.dart';
 import '../compoment/shared/screen_size.dart';
 import '../compoment/utils/color_utils.dart';
+import '../compoment/utils/image_link.dart';
 import 'home_page_again.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -68,8 +70,10 @@ class _HomePageState extends ConsumerState<HomePage> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20.0),
                 child: CustomImage(
-                  imageUrl: 'asset/images/logo_png.png',
+                  boxFit: BoxFit.fill,
+                  imageUrl: logo,
                   height: height * .12,
+                  width: double.infinity,
                 ),
               ),
             ),

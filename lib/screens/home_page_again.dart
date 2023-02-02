@@ -29,7 +29,7 @@ class _HomePageAgainPageState extends ConsumerState<HomePageAgain> {
           child: Column(
             children: [
               SizedBox(
-                height: height * .04,
+                height: height * .02,
               ),
               Container(
                 color: Colors.white,
@@ -41,8 +41,10 @@ class _HomePageAgainPageState extends ConsumerState<HomePageAgain> {
                       child: Container(
                         color: primaryWhiteColor,
                         child: CustomImage(
-                          imageUrl: 'asset/images/logo_png.png',
-                          height: height * .12,
+                          boxFit: BoxFit.fill,
+                          imageUrl: logo,
+                          height: height * .15,
+                          width: double.infinity,
                         ),
                       ),
                     ),
