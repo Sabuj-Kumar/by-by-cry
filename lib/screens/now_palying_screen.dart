@@ -386,7 +386,6 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                           if(_position.inSeconds.toInt()>=_duration.inSeconds.toInt()){
                             await audioPlayer.pause();
                           }
-
                       },
                       icon: const CustomSvg(svg: right_shift)),
                   IconButton(
