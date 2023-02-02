@@ -144,268 +144,267 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
         onPressedButton: null,
         onPressed: widget.onPressed,
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Container(
-                color: Colors.transparent,
-                child: GestureDetector(
-                  onTap: (){
-                    _showDialogBrightNess(context);
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.only(right: width * .07),
-                    child:  CustomImage(
-                      imageUrl: 'asset/images/icon_png/now_playing_icon/Sun.png',
-                      color: Colors.orangeAccent.shade100,
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                  color: Colors.transparent,
+                  child: GestureDetector(
+                    onTap: (){
+                      _showDialogBrightNess(context);
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.only(right: width * .07),
+                      child:  CustomImage(
+                        imageUrl: 'asset/images/icon_png/now_playing_icon/Sun.png',
+                        color: Colors.orangeAccent.shade100,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
-          ),
-          CustomImage(
-            imageUrl: widget.musicModel.image,
-            height: width * .8,
-            width: width * .8,
-            boxFit: BoxFit.fill,
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          GestureDetector(
-            onTap: (){
-              CustomBottomSheet.bottomSheet(context, isDismiss: true,child: StatefulBuilder(builder: (BuildContext context, void Function(void Function()) updateState) {
-                return bottomSheet(context);
-              },));
-            },
-            child: Container(
-              color: Colors.transparent,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                     CustomText(
-                      text: widget.musicModel.musicName,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w400,
-                      color: secondaryBlackColor,
-                    ),
-                    const SizedBox( height:8,child: CustomSvg(svg: down_arrow,color: blackColorA0,)),
-                  ],
-                ),
-              ),
+              ],
             ),
-          ),
-          SizedBox(
-            height: width * 0.07,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children:  [
-                    GestureDetector(
-                        onTap: (){
-                            ref.read(addProvider).addOrRemovePlayList(id:  widget.musicModel.id);
-                        },
-                        child: CustomImage(imageUrl: 'asset/images/icon_png/love.png',color: ref.watch(addProvider).playListIds.contains(widget.musicModel.id)? Colors.red:blackColorA0,)),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    const CustomText(
-                      text: 'Add To Playlist',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    const CustomImage(
-                        imageUrl: 'asset/images/icon_png/another_sound.png',
-                        color: blackColorA0,
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Container(
-                      color: Colors.transparent,
-                      child: GestureDetector(
-                        onTap: (){
-                          ref.read(addProvider).changePage(2);
-                          ref.read(addProvider).clearMixMusics();
-                          ref.read(addProvider).mixFirstMusic(widget.musicModel);
-                         // Navigator.push(context, MaterialPageRoute(builder: (context) => const StartPage()));
-                        },
-                        child: const CustomText(
-                          text: 'Mix Another\n Sound',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                        ),
+            CustomImage(
+              imageUrl: widget.musicModel.image,
+              height: width * .7,
+              width: width * .9,
+              boxFit: BoxFit.fill,
+            ),
+            GestureDetector(
+              onTap: (){
+                CustomBottomSheet.bottomSheet(context, isDismiss: true,child: StatefulBuilder(builder: (BuildContext context, void Function(void Function()) updateState) {
+                  return bottomSheet(context);
+                },));
+              },
+              child: Container(
+                color: Colors.transparent,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                       CustomText(
+                        text: widget.musicModel.musicName,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w400,
+                        color: secondaryBlackColor,
                       ),
-                    ),
-                  ],
+                      const SizedBox( height:8,child: CustomSvg(svg: down_arrow,color: blackColorA0,)),
+                    ],
+                  ),
                 ),
-              ],
+              ),
             ),
-          ),
-          SizedBox(
-            height: width * 0.1,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                CustomText(
-                  text: '${_position.inSeconds ~/ 60} : ${(_position.inSeconds % 60).toInt()}',
-                  fontSize: 10,
-                  color: blackColor2,
-                  fontWeight: FontWeight.w700,
-                ),
-                CustomText(
-                  text: '${_duration.inSeconds ~/ 60} : ${(_duration.inSeconds % 60).toInt()}',
-                  fontSize: 10,
-                  color: blackColor2,
-                  fontWeight: FontWeight.w700,
-                ),
-              ],
+            SizedBox(
+              height: width * 0.06,
             ),
-          ),
-          SizedBox(
-            //color: Colors.green,
-            width: width * .95,
-            child: SliderTheme(
-              data: const SliderThemeData(
-                  trackShape: RectangularSliderTrackShape(),
-                  thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10)),
-              child: Slider(
-                  value: _position.inSeconds.toDouble(),
-                  min: 0,
-                  max: _duration.inSeconds.toDouble(),
-                  divisions: 100,
-                  activeColor: primaryPinkColor,
-                  inactiveColor: primaryGreyColor2,
-                  onChanged: (double newValue) async{
-                    _value = newValue.round();
-                    print("slider");
-                    if(_position.inSeconds.toInt()>=_duration.inSeconds.toInt()){
-                      String url = widget.musicModel.musicFile;
-                      await audioPlayer.play(AssetSource(url));
-                    }
-                    await audioPlayer.seek(Duration(seconds: newValue.toInt()));
-                    await audioPlayer.resume();
-                    if(_position.inSeconds.toInt()<_duration.inSeconds.toInt()){
-                      String url = widget.musicModel.musicFile;
-                      await audioPlayer.play(AssetSource(url));
-                      print("play less");
-                    }
-                    setState(() {});
-                  },
-                  semanticFormatterCallback: (double newValue) {
-                    return '${newValue.round()} dollars';
-                  }),
-            ),
-          ),
-          Container(
-            color: Colors.transparent,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 20.0,right: 20),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children:  [
-                  IconButton(
-                    padding: const EdgeInsets.only(left: 10),
-                      onPressed: (){
-                        _showDialogVolume(context);
-                      },
-                      icon: Container(
-                          color: Colors.transparent,
-                          child: const CustomSvg(svg: volume,color: blackColor2))),
-                  IconButton(
-                      padding: EdgeInsets.zero,
-                      onPressed: ()async{
-                        if(_position.inSeconds.toInt() - 5 > 0){
-                          await audioPlayer.seek(Duration(seconds: _position.inSeconds.toInt() - 5));
-                          String url = widget.musicModel.musicFile;
-                          await audioPlayer.play(AssetSource(url));
-                          print('click');
-                        }
-                      },
-                      icon: const CustomSvg(svg: left_shift,color: primaryPinkColor)),
-                  Container(
-                   // color: Colors.red,
-                    height: width * 0.18,
-                    width: width * 0.18,
-                    clipBehavior: Clip.hardEdge,
-                    decoration: BoxDecoration(
-                      color: secondaryWhiteColor2,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.transparent,width:0),
-                      boxShadow: const [
-                        BoxShadow(
-                          blurRadius: 10,
-                          color:secondaryWhiteColor2
-                        )
-                      ]
-                    ),
-                    child: GestureDetector(
-                      onTap: ()async {
-                        if (issongplaying) {
-                          await audioPlayer.pause();
-                          print("pause solution");
-                        } else {
-                          String url = widget.musicModel.musicFile;
-                          await audioPlayer.play(AssetSource(url));
-                          print("play");
-                        }
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(22),
-                        child:  CustomSvg(
-                          color: primaryPinkColor,
-                          svg:issongplaying?pouseButton:playButtonSvg,
+                children: [
+                  Row(
+                    children:  [
+                      GestureDetector(
+                          onTap: (){
+                              ref.read(addProvider).addOrRemovePlayList(id:  widget.musicModel.id);
+                          },
+                          child: CustomImage(imageUrl: 'asset/images/icon_png/love.png',color: ref.watch(addProvider).playListIds.contains(widget.musicModel.id)? Colors.red:blackColorA0,)),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      const CustomText(
+                        text: 'Add To Playlist',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      const CustomImage(
+                          imageUrl: 'asset/images/icon_png/another_sound.png',
+                          color: blackColorA0,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Container(
+                        color: Colors.transparent,
+                        child: GestureDetector(
+                          onTap: (){
+                            ref.read(addProvider).changePage(2);
+                            ref.read(addProvider).clearMixMusics();
+                            ref.read(addProvider).mixFirstMusic(widget.musicModel);
+                           // Navigator.push(context, MaterialPageRoute(builder: (context) => const StartPage()));
+                          },
+                          child: const CustomText(
+                            text: 'Mix Another\n Sound',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
-                  IconButton(
-                      padding: EdgeInsets.zero,
-                      onPressed: ()async{
-                          //await audioPlayer.pause();
-                          await audioPlayer.seek(Duration(seconds: _position.inSeconds.toInt() + 5));
-                          await audioPlayer.resume();
-                          print('click');
-
-                          if(_position.inSeconds.toInt()>=_duration.inSeconds.toInt()){
-                            await audioPlayer.pause();
-                          }
-                      },
-                      icon: const CustomSvg(svg: right_shift,color: primaryPinkColor)),
-                  IconButton(
-                      padding: EdgeInsets.zero,
-                      onPressed: (){
-                        _showDialog(context);
-                      },
-                      icon: Container(
-                          color: Colors.transparent,
-                          child: const Padding(
-                            padding:  EdgeInsets.symmetric(vertical: 8.0),
-                            child: CustomSvg(svg: timer,color: blackColor2,),
-                          ))),
                 ],
               ),
             ),
-          ),
-        ],
+            SizedBox(
+              height: width * 0.1,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CustomText(
+                    text: '${_position.inSeconds ~/ 60} : ${(_position.inSeconds % 60).toInt()}',
+                    fontSize: 10,
+                    color: blackColor2,
+                    fontWeight: FontWeight.w700,
+                  ),
+                  CustomText(
+                    text: '${_duration.inSeconds ~/ 60} : ${(_duration.inSeconds % 60).toInt()}',
+                    fontSize: 10,
+                    color: blackColor2,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              //color: Colors.green,
+              width: width * .95,
+              child: SliderTheme(
+                data: const SliderThemeData(
+                    trackShape: RectangularSliderTrackShape(),
+                    thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10)),
+                child: Slider(
+                    value: _position.inSeconds.toDouble(),
+                    min: 0,
+                    max: _duration.inSeconds.toDouble(),
+                    divisions: 100,
+                    activeColor: primaryPinkColor,
+                    inactiveColor: primaryGreyColor2,
+                    onChanged: (double newValue) async{
+                      _value = newValue.round();
+                      print("slider");
+                      if(_position.inSeconds.toInt()>=_duration.inSeconds.toInt()){
+                        String url = widget.musicModel.musicFile;
+                        await audioPlayer.play(AssetSource(url));
+                      }
+                      await audioPlayer.seek(Duration(seconds: newValue.toInt()));
+                      await audioPlayer.resume();
+                      if(_position.inSeconds.toInt()<_duration.inSeconds.toInt()){
+                        String url = widget.musicModel.musicFile;
+                        await audioPlayer.play(AssetSource(url));
+                        print("play less");
+                      }
+                      setState(() {});
+                    },
+                    semanticFormatterCallback: (double newValue) {
+                      return '${newValue.round()} dollars';
+                    }),
+              ),
+            ),
+            Container(
+              color: Colors.transparent,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 20.0,right: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children:  [
+                    IconButton(
+                      padding: const EdgeInsets.only(left: 10),
+                        onPressed: (){
+                          _showDialogVolume(context);
+                        },
+                        icon: Container(
+                            color: Colors.transparent,
+                            child: const CustomSvg(svg: volume,color: blackColor2))),
+                    IconButton(
+                        padding: EdgeInsets.zero,
+                        onPressed: ()async{
+                          if(_position.inSeconds.toInt() - 5 > 0){
+                            await audioPlayer.seek(Duration(seconds: _position.inSeconds.toInt() - 5));
+                            String url = widget.musicModel.musicFile;
+                            await audioPlayer.play(AssetSource(url));
+                            print('click');
+                          }
+                        },
+                        icon: const CustomSvg(svg: left_shift,color: primaryPinkColor)),
+                    Container(
+                     // color: Colors.red,
+                      height: width * 0.18,
+                      width: width * 0.18,
+                      clipBehavior: Clip.hardEdge,
+                      decoration: BoxDecoration(
+                        color: secondaryWhiteColor2,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.transparent,width:0),
+                        boxShadow: const [
+                          BoxShadow(
+                            blurRadius: 10,
+                            color:secondaryWhiteColor2
+                          )
+                        ]
+                      ),
+                      child: GestureDetector(
+                        onTap: ()async {
+                          if (issongplaying) {
+                            await audioPlayer.pause();
+                            print("pause solution");
+                          } else {
+                            String url = widget.musicModel.musicFile;
+                            await audioPlayer.play(AssetSource(url));
+                            print("play");
+                          }
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(22),
+                          child:  CustomSvg(
+                            color: primaryPinkColor,
+                            svg:issongplaying?pouseButton:playButtonSvg,
+                          ),
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                        padding: EdgeInsets.zero,
+                        onPressed: ()async{
+                            //await audioPlayer.pause();
+                            await audioPlayer.seek(Duration(seconds: _position.inSeconds.toInt() + 5));
+                            await audioPlayer.resume();
+                            print('click');
+
+                            if(_position.inSeconds.toInt()>=_duration.inSeconds.toInt()){
+                              await audioPlayer.pause();
+                            }
+                        },
+                        icon: const CustomSvg(svg: right_shift,color: primaryPinkColor)),
+                    IconButton(
+                        padding: EdgeInsets.zero,
+                        onPressed: (){
+                          _showDialog(context);
+                        },
+                        icon: Container(
+                            color: Colors.transparent,
+                            child: const Padding(
+                              padding:  EdgeInsets.symmetric(vertical: 8.0),
+                              child: CustomSvg(svg: timer,color: blackColor2,),
+                            ))),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
