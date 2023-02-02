@@ -158,8 +158,9 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                   },
                   child: Padding(
                     padding: EdgeInsets.only(right: width * .07),
-                    child: const CustomImage(
+                    child:  CustomImage(
                       imageUrl: 'asset/images/icon_png/now_playing_icon/Sun.png',
+                      color: Colors.orangeAccent.shade100,
                     ),
                   ),
                 ),
@@ -194,7 +195,7 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                       fontWeight: FontWeight.w400,
                       color: secondaryBlackColor,
                     ),
-                    const SizedBox( height:8,child: CustomSvg(svg: down_arrow)),
+                    const SizedBox( height:8,child: CustomSvg(svg: down_arrow,color: blackColorA0,)),
                   ],
                 ),
               ),
@@ -214,7 +215,7 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                         onTap: (){
                             ref.read(addProvider).addOrRemovePlayList(id:  widget.musicModel.id);
                         },
-                        child: CustomImage(imageUrl: 'asset/images/icon_png/love.png',color: ref.watch(addProvider).playListIds.contains(widget.musicModel.id)? Colors.red:null,)),
+                        child: CustomImage(imageUrl: 'asset/images/icon_png/love.png',color: ref.watch(addProvider).playListIds.contains(widget.musicModel.id)? Colors.red:blackColorA0,)),
                     const SizedBox(
                       width: 10,
                     ),
@@ -228,7 +229,9 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                 Row(
                   children: [
                     const CustomImage(
-                        imageUrl: 'asset/images/icon_png/another_sound.png'),
+                        imageUrl: 'asset/images/icon_png/another_sound.png',
+                        color: blackColorA0,
+                    ),
                     const SizedBox(
                       width: 10,
                     ),
@@ -464,6 +467,7 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                               child: const CustomImage(
                                 boxFit: BoxFit.fill,
                                 imageUrl: 'asset/images/icon_png/now_playing_icon/Sun.png',
+                                color: primaryPinkColor,
                               ),
                             ),
                           ),
