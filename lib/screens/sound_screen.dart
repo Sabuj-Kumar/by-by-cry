@@ -1,7 +1,9 @@
 import 'package:bye_bye_cry_new/compoment/shared/custom_image.dart';
 import 'package:bye_bye_cry_new/compoment/shared/custom_svg.dart';
 import 'package:bye_bye_cry_new/compoment/shared/custom_text.dart';
+import 'package:bye_bye_cry_new/compoment/shared/screen_size.dart';
 import 'package:bye_bye_cry_new/screens/provider/add_music_provider.dart';
+import 'package:bye_bye_cry_new/screens/provider/mix_music_provider.dart';
 import 'package:bye_bye_cry_new/screens/sound_edit_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,6 +12,7 @@ import '../compoment/shared/custom_app_bar.dart';
 import '../compoment/shared/custom_navigation.dart';
 import '../compoment/utils/color_utils.dart';
 import '../compoment/utils/image_link.dart';
+import 'listen_mix_sound.dart';
 import 'models/music_models.dart';
 import 'now_palying_screen.dart';
 
@@ -24,8 +27,9 @@ class _SoundScreenState extends ConsumerState<SoundScreen> {
 
   TextEditingController searchController = TextEditingController();
   bool changeToPlayNow = false;
+  bool changeToMixPlayNow = false;
   MusicModel? music;
-  MixMusicModel? mixMusic;
+  String mixMusicId = '';
   List<String> imageUrl = [
     chainsaw,
     vaccum,
@@ -60,7 +64,7 @@ class _SoundScreenState extends ConsumerState<SoundScreen> {
             changeToPlayNow = false;
           });
         },
-    ):Scaffold(
+    ):changeToMixPlayNow?ListenMixSound(mixMusicModelId: mixMusicId,onPressed: (){},):Scaffold(
         appBar: CustomAppBar(
             title: 'My Sounds',
             actionTitle: 'Edit',
@@ -107,7 +111,7 @@ class _SoundScreenState extends ConsumerState<SoundScreen> {
               )),
               Column(
                   children: List.generate(
-                    ref.watch(addProvider).combinationList.isEmpty?0:ref.watch(addProvider).combinationList.length,
+                    ref.watch(mixMusicProvider).combinationList.isEmpty?0:ref.watch(mixMusicProvider).combinationList.length,
                         (index) => Column(
                       children: [
                         Container(
@@ -115,7 +119,7 @@ class _SoundScreenState extends ConsumerState<SoundScreen> {
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 15.0),
                             child: mixImageList(
-                                context: context,mixMusicModel: ref.watch(addProvider).combinationList[index]),
+                                context: context,mixMusicModel: ref.watch(mixMusicProvider).combinationList[index]),
                           ),
                         ),// const SizedBox(height: 5,)
                       ],
@@ -166,6 +170,8 @@ class _SoundScreenState extends ConsumerState<SoundScreen> {
         setState(() {
           music = musicModel;
           changeToPlayNow = true;
+
+          print("change");
         });
       },
       child: Row(
@@ -211,7 +217,7 @@ class _SoundScreenState extends ConsumerState<SoundScreen> {
                     child: GestureDetector(
                       onTap: (){
                         ref.read(addProvider).changePage(2);
-                        ref.read(addProvider).mixSecondMusic(musicModel);
+                        ref.read(mixMusicProvider).mixSecondMusic(musicModel);
                         ref.read(addProvider).showPlusPlaylist(playlistPlusBottom: false);
                       },
                       child: const Padding(
@@ -228,18 +234,19 @@ class _SoundScreenState extends ConsumerState<SoundScreen> {
       ),
     );
   }
-  Widget mixImageList({required MixMusicModel mixMusicModel,required BuildContext context,}) {
+  Widget mixImageList({required MixMusicModel mixMusicModel,required BuildContext context}) {
     return GestureDetector(
       onTap: (){
         setState(() {
-          mixMusic = mixMusicModel;
-          changeToPlayNow = true;
+          mixMusicId = mixMusicModel.id;
+          changeToMixPlayNow = true;
         });
       },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
               const Padding(
                 padding: EdgeInsets.only(top: 5.0),
@@ -248,7 +255,12 @@ class _SoundScreenState extends ConsumerState<SoundScreen> {
               const SizedBox(
                 width: 10,
               ),
-              CustomText(text: "${mixMusicModel.first?.musicName} + ${mixMusicModel.second?.musicName}",color: blackColor50,fontWeight: FontWeight.w600,fontSize: 20,),
+              Flexible(
+                  fit: FlexFit.loose,
+                  child: Container(
+                      color: Colors.transparent,
+                      width: ScreenSize(context).width * 0.55,
+                      child: CustomText(text: "${mixMusicModel.first?.musicName} + ${mixMusicModel.second?.musicName}",color: blackColor50,fontWeight: FontWeight.w600,fontSize: 20,))),
             ],
           ),
           Padding(

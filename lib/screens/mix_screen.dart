@@ -3,6 +3,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:bye_bye_cry_new/compoment/shared/custom_image.dart';
 import 'package:bye_bye_cry_new/compoment/shared/custom_snackbar.dart';
 import 'package:bye_bye_cry_new/screens/provider/add_music_provider.dart';
+import 'package:bye_bye_cry_new/screens/provider/mix_music_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../compoment/shared/custom_app_bar.dart';
@@ -44,13 +45,13 @@ class _MixScreenState extends ConsumerState<MixScreen> {
   addMixList(){
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if(mounted){
-        if(ref.watch(addProvider).musicModelFirst != null){
-          musicList.add(ref.watch(addProvider).musicModelFirst!);
+        if(ref.watch(mixMusicProvider).musicModelFirst != null){
+          musicList.add(ref.watch(mixMusicProvider).musicModelFirst!);
         }
       }
       if(mounted){
-        if(ref.watch(addProvider).musicModelSecond != null){
-          musicList.add(ref.watch(addProvider).musicModelSecond!);
+        if(ref.watch(mixMusicProvider).musicModelSecond != null){
+          musicList.add(ref.watch(mixMusicProvider).musicModelSecond!);
         }
       }
     });
@@ -158,7 +159,7 @@ class _MixScreenState extends ConsumerState<MixScreen> {
               ],
             ),
           ),
-          ref.watch(addProvider).musicModelFirst?.image == null && ref.watch(addProvider).musicModelSecond?.image == null?const SizedBox():Column(
+          ref.watch(mixMusicProvider).musicModelFirst?.image == null && ref.watch(mixMusicProvider).musicModelSecond?.image == null?const SizedBox():Column(
             children: [
               Column(
                 children: [
@@ -166,7 +167,7 @@ class _MixScreenState extends ConsumerState<MixScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       CustomImage(
-                        imageUrl: "${ref.watch(addProvider).musicModelFirst?.image}",
+                        imageUrl: "${ref.watch(mixMusicProvider).musicModelFirst?.image}",
                         height: width * .35,
                         width: width * .35,
                         boxFit: BoxFit.cover,
@@ -177,7 +178,7 @@ class _MixScreenState extends ConsumerState<MixScreen> {
                         color: primaryPinkColor,
                       ),
                       CustomImage(
-                        imageUrl: ref.watch(addProvider).musicModelSecond?.image ?? music,
+                        imageUrl: ref.watch(mixMusicProvider).musicModelSecond?.image ?? music,
                         height: width * .35,
                         width: width * .35,
                         boxFit: BoxFit.cover,
@@ -191,7 +192,7 @@ class _MixScreenState extends ConsumerState<MixScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   CustomText(
-                    text: "${ref.watch(addProvider).musicModelFirst?.musicName}",
+                    text: "${ref.watch(mixMusicProvider).musicModelFirst?.musicName}",
                     textAlign: TextAlign.center,
                     fontSize: 20,
                     fontWeight: FontWeight.w400,
@@ -200,7 +201,7 @@ class _MixScreenState extends ConsumerState<MixScreen> {
                   const SizedBox(),
                   GestureDetector(
                     onTap:(){
-                      if(ref.watch(addProvider).musicModelSecond?.musicName == null){
+                      if(ref.watch(mixMusicProvider).musicModelSecond?.musicName == null){
                         ref.read(addProvider).showPlusPlaylist(playlistPlusBottom:true);
                         ref.read(addProvider).changePage(1);
                       }
@@ -208,7 +209,7 @@ class _MixScreenState extends ConsumerState<MixScreen> {
                     child: Container(
                       color: Colors.transparent,
                       child: CustomText(
-                        text: ref.watch(addProvider).musicModelSecond?.musicName ?? "Add a Sound",
+                        text: ref.watch(mixMusicProvider).musicModelSecond?.musicName ?? "Add a Sound",
                         fontSize: 20,
                         fontWeight: FontWeight.w400,
                         color: primaryGreyColor,
@@ -329,7 +330,7 @@ class _MixScreenState extends ConsumerState<MixScreen> {
                textFontWeight: FontWeight.w600,
                borderRadius: 50,
                onPressed: () {
-                 _showDialog(context,firstMusicName: ref.watch(addProvider).musicModelFirst?.musicName??"", secondMusicName: ref.watch(addProvider).musicModelSecond?.musicName ?? "");
+                 _showDialog(context,firstMusicName: ref.watch(mixMusicProvider).musicModelFirst?.musicName??"", secondMusicName: ref.watch(mixMusicProvider).musicModelSecond?.musicName ?? "");
                },
              ),
              const SizedBox(
@@ -395,7 +396,7 @@ class _MixScreenState extends ConsumerState<MixScreen> {
                     onPressed: () {
                       if(musicList.isNotEmpty && musicList.length > 1){
                         print("mix add hocche");
-                        ref.read(addProvider).createMix(MixMusicModel(id: "${musicList[0].id}${musicList[1].id}",first: musicList[0],second: musicList[1]));
+                        ref.read(mixMusicProvider).createMix(MixMusicModel(id: "${musicList[0].id}${musicList[1].id}",first: musicList[0],second: musicList[1]));
                         Navigator.pop(context);
                       }else{
                         ShowSnackBar.toastSnackBar(context: context, seconds: 2, text: "Add At least 2 music",color: Colors.white);

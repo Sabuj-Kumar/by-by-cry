@@ -1,8 +1,6 @@
 import 'package:bye_bye_cry_new/local_db/local_db.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../compoment/utils/image_link.dart';
 import '../models/music_models.dart';
 
@@ -11,11 +9,7 @@ final addProvider = ChangeNotifierProvider((ref) => AddMusicProvider());
 class AddMusicProvider extends ChangeNotifier {
   List<String> nameList = [];
   List<String> playListIds = [];
-  List<String> mixPlayListIds = [];
   List<MusicModel> musicList = [];
-  MusicModel? musicModelFirst,musicModelSecond;
-  List<MixMusicModel> combinationList = [];
-  MixMusicModel? mixMusicModel;
   bool homePage = true;
   List<MusicModel> playList = [];
   int pageNumber = 0;
@@ -42,7 +36,6 @@ class AddMusicProvider extends ChangeNotifier {
     print("music add ${musicList.length}");
     notifyListeners();
   }
-
   changeHomePage(){
     homePage = false;
     notifyListeners();
@@ -51,20 +44,11 @@ class AddMusicProvider extends ChangeNotifier {
     pageNumber = pageNum;
     notifyListeners();
   }
-
   assignAllPlaylist()async{
     playList = await LocalDB.getPlayListItem() ?? [];
     playListIds = [];
     for(int index = 0; index < playList.length;index++){
       playListIds.add(playList[index].id);
-    }
-    notifyListeners();
-  }
-  assignMixAllPlaylist()async{
-    combinationList = await LocalDB.getMixPlayListItem() ?? [];
-    mixPlayListIds = [];
-    for(int index = 0; index < combinationList.length;index++){
-      mixPlayListIds.add(combinationList[index].id);
     }
     notifyListeners();
   }
@@ -89,35 +73,4 @@ class AddMusicProvider extends ChangeNotifier {
     }
     notifyListeners();
   }
-  clearMixMusics(){
-    musicModelFirst = null;
-    musicModelSecond = null;
-    notifyListeners();
-  }
-  mixFirstMusic(MusicModel firstMixMusicModel){
-    musicModelFirst = firstMixMusicModel;
-    notifyListeners();
-  }
-  mixSecondMusic(MusicModel secondMixMusicModel){
-    musicModelSecond = secondMixMusicModel;
-    notifyListeners();
-  }
-  createMix(MixMusicModel mixMusicModel)async{
-      int index = combinationList.indexWhere((element) => element.id == mixMusicModel.id);
-      if(!mixPlayListIds.contains(mixMusicModel.id)) {
-        if(index < 0) {
-          combinationList.add(mixMusicModel);
-          playListIds.add(mixMusicModel.id);
-          await LocalDB.setMixPlayListItem(combinationList);
-          print('added mix ${mixMusicModel.id}');
-        }
-      }else {
-        if(index >= 0) {
-          playList.remove(musicList[index]);
-          playListIds.remove(mixMusicModel.id);
-          await LocalDB.setMixPlayListItem(combinationList);
-          print('remove');
-        }
-      }
-    }
 }

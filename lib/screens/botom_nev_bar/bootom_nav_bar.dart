@@ -51,7 +51,7 @@ class CustomBottomAppBarState extends ConsumerState<CustomBottomAppBar> {
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
               icon: Padding(
-                padding: const EdgeInsets.all(6.0),
+                padding: const EdgeInsets.only(bottom: 5.0),
                 child: Image.asset(
                   navigationBarFirstImageS,
                   // currentIndex == 0
@@ -65,7 +65,7 @@ class CustomBottomAppBarState extends ConsumerState<CustomBottomAppBar> {
               label: "Home"),
           BottomNavigationBarItem(
               icon: Padding(
-                padding: const EdgeInsets.all(6.0),
+                padding: const EdgeInsets.only(bottom: 5.0),
                 child: Image.asset(
                   navigationBarSecondImageS,
                   // currentIndex == 1
@@ -79,7 +79,7 @@ class CustomBottomAppBarState extends ConsumerState<CustomBottomAppBar> {
               label: "Sounds"),
           BottomNavigationBarItem(
             icon: Padding(
-              padding: const EdgeInsets.all(6.0),
+              padding: const EdgeInsets.only(bottom: 5.0),
               child: Image.asset(
                 navigationBarThirdImageS,
                 // currentIndex == 2
@@ -93,7 +93,7 @@ class CustomBottomAppBarState extends ConsumerState<CustomBottomAppBar> {
           ),
           BottomNavigationBarItem(
               icon: Padding(
-                padding: const EdgeInsets.all(6.0),
+                padding: const EdgeInsets.only(bottom: 5.0),
                 child: Image.asset(
                   // navigationBarForthImageS,
                   ref.watch(addProvider).pageNumber == 3
@@ -106,7 +106,7 @@ class CustomBottomAppBarState extends ConsumerState<CustomBottomAppBar> {
               label: "Playlist"),
           BottomNavigationBarItem(
               icon: Padding(
-                padding: const EdgeInsets.all(6.0),
+                padding: const EdgeInsets.only(bottom: 5.0),
                 child: Image.asset(
                   navigationBarFifthImageS,
                   // currentIndex == 4

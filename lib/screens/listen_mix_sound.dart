@@ -1,11 +1,10 @@
 import 'dart:async';
-
 import 'package:audioplayers/audioplayers.dart';
 import 'package:bye_bye_cry_new/compoment/shared/custom_image.dart';
 import 'package:bye_bye_cry_new/compoment/shared/custom_svg.dart';
+import 'package:bye_bye_cry_new/screens/models/music_models.dart';
 import 'package:bye_bye_cry_new/screens/provider/add_music_provider.dart';
 import 'package:bye_bye_cry_new/screens/provider/mix_music_provider.dart';
-import 'package:bye_bye_cry_new/start_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,18 +16,17 @@ import '../compoment/shared/custom_text.dart';
 import '../compoment/shared/screen_size.dart';
 import '../compoment/utils/color_utils.dart';
 import '../compoment/utils/image_link.dart';
-import 'models/music_models.dart';
 
-class NowPlayingScreen extends ConsumerStatefulWidget {
-  final MusicModel musicModel;
+class ListenMixSound extends ConsumerStatefulWidget {
+  final String?  mixMusicModelId;
   final VoidCallback? onPressed;
-  const NowPlayingScreen({Key? key,required this.musicModel,this.onPressed}) : super(key: key);
+  const ListenMixSound({Key? key,required this.mixMusicModelId,this.onPressed}) : super(key: key);
 
   @override
-  ConsumerState<NowPlayingScreen> createState() => _NowPlayingScreenState();
+  ConsumerState<ListenMixSound> createState() => _ListenMixSoundState();
 }
 
-class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with TickerProviderStateMixin{
+class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProviderStateMixin{
 
   int _value = 1;
   double _value2 = 1;
@@ -51,9 +49,14 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
   bool issongplaying = false;
   double brightness = 0.5;
   late StreamSubscription<double> _subscription;
+  int musicIndex = 0;
+  List<MusicModel> musicList = [];
+  int index = 0;
+
 
   @override
   void initState() {
+    initialization();
     startPlayer();
     changeVolume();
     initPlatformState();
@@ -113,6 +116,32 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
       issongplaying = state == PlayerState.playing;
       if(mounted){
         print("in method $issongplaying");
+        if(!issongplaying){
+          print("ses");
+          if(_duration.inSeconds.toInt() == _position.inSeconds.toInt() || (_duration.inSeconds.toInt() - 1 == _position.inSeconds.toInt())){
+            print("ses check");
+            if(mounted){
+              if(index < musicList.length-1){
+                setState(() {
+                  index++;
+                });
+                pausePlayMethod();
+                print("Index increase");
+              }
+              //print("Index increase");
+            }else{
+              if(mounted){
+                setState(() {
+                  index = 0;
+                });
+                print("Index 0");
+              }
+            }
+          }else{
+            print("else duration ${_duration.inSeconds.toInt()}");
+            print("else position ${_position.inSeconds.toInt()}");
+          }
+        }
         setState(() {});
       }
     });
@@ -128,11 +157,58 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
         setState(() {});
       }
     });
-   if(mounted){
-     setState(() {});
-   }
+    if(mounted){
+      setState(() {});
+    }
   }
 
+  initialization(){
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      //ref.read(mixMusicProvider);
+      musicIndex = ref.read(mixMusicProvider).combinationList.indexWhere((element) => element.id == widget.mixMusicModelId);
+      if(mounted){
+        if(musicIndex >= 0){
+          musicList = [];
+          musicList.add(ref.watch(mixMusicProvider).combinationList[musicIndex].first!);
+          musicList.add(ref.watch(mixMusicProvider).combinationList[musicIndex].second!);
+          setState(() {});
+        }
+      }
+    });
+  }
+  changeIndex({bool changeIndex = false}){
+    print("change index");
+      if(changeIndex){
+        musicIndex = (musicIndex + 1) % ref.watch(mixMusicProvider).combinationList.length;
+      }else{
+        musicIndex = (musicIndex - 1);
+        if(musicIndex < 0){
+          musicIndex = ref.watch(mixMusicProvider).combinationList.length-1;
+        }
+      }
+      print('new index $musicIndex');
+      if(mounted){
+        musicList = [];
+        musicList.add(ref.watch(mixMusicProvider).combinationList[musicIndex].first!);
+        musicList.add(ref.watch(mixMusicProvider).combinationList[musicIndex].second!);
+        index = 0;
+        setState((){});
+      }
+  }
+
+  pausePlayMethod()async{
+    if(issongplaying){
+      await audioPlayer.pause();
+      print("pause");
+    }else{
+      String url = musicList[index].musicFile;
+      await audioPlayer.play(AssetSource(url));
+      print("play");
+    }
+    if(mounted){
+      setState(() {});
+    }
+  }
   @override
   Widget build(BuildContext context) {
     final height = ScreenSize(context).height;
@@ -169,26 +245,34 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                 ),
               ],
             ),
-            CustomImage(
-              imageUrl: widget.musicModel.image,
+            musicList.isEmpty?const SizedBox():CustomImage(
+              imageUrl: musicList[index].image,
               height: width * .7,
               width: width * .9,
               boxFit: BoxFit.fill,
             ),
-            Container(
-              color: Colors.transparent,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                     CustomText(
-                      text: widget.musicModel.musicName,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w400,
-                      color: secondaryBlackColor,
-                    ),
-                  ],
+            GestureDetector(
+              onTap: (){
+                CustomBottomSheet.bottomSheet(context, isDismiss: true,child: StatefulBuilder(builder: (BuildContext context, void Function(void Function()) updateState) {
+                  return bottomSheet(context);
+                },));
+              },
+              child: Container(
+                color: Colors.transparent,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CustomText(
+                        text: musicList.isEmpty?"":musicList[index].musicName,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w400,
+                        color: secondaryBlackColor,
+                      ),
+                      const SizedBox( height:8,child: CustomSvg(svg: down_arrow,color: blackColorA0,)),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -202,9 +286,9 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                     children:  [
                       GestureDetector(
                           onTap: (){
-                              ref.read(addProvider).addOrRemovePlayList(id:  widget.musicModel.id);
+                            ref.read(mixMusicProvider).addOrRemoveMixPlayList(id: ref.watch(mixMusicProvider).combinationList[musicIndex].id);
                           },
-                          child: CustomImage(imageUrl: 'asset/images/icon_png/love.png',color: ref.watch(addProvider).playListIds.contains(widget.musicModel.id)? Colors.red:blackColorA0,)),
+                          child: CustomImage(imageUrl: 'asset/images/icon_png/love.png',color: ref.watch(mixMusicProvider).mixPlayListIds.contains(ref.watch(mixMusicProvider).combinationList[musicIndex].id)? Colors.red:blackColorA0,)),
                       const SizedBox(
                         width: 10,
                       ),
@@ -215,11 +299,11 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                       ),
                     ],
                   ),
-                  Row(
+                /*  Row(
                     children: [
                       const CustomImage(
-                          imageUrl: 'asset/images/icon_png/another_sound.png',
-                          color: blackColorA0,
+                        imageUrl: 'asset/images/icon_png/another_sound.png',
+                        color: blackColorA0,
                       ),
                       const SizedBox(
                         width: 10,
@@ -229,9 +313,9 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                         child: GestureDetector(
                           onTap: (){
                             ref.read(addProvider).changePage(2);
-                            ref.read(mixMusicProvider).clearMixMusics();
-                            ref.read(mixMusicProvider).mixFirstMusic(widget.musicModel);
-                           // Navigator.push(context, MaterialPageRoute(builder: (context) => const StartPage()));
+                            ref.read(addProvider).clearMixMusics();
+                            ref.read(addProvider).mixFirstMusic(widget.musicModel);
+                            // Navigator.push(context, MaterialPageRoute(builder: (context) => const StartPage()));
                           },
                           child: const CustomText(
                             text: 'Mix Another\n Sound',
@@ -241,11 +325,13 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                         ),
                       ),
                     ],
-                  ),
+                  ),*/
                 ],
               ),
             ),
-            SizedBox(height: width * 0.1),
+            SizedBox(
+              height: width * 0.1,
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30.0),
               child: Row(
@@ -282,15 +368,15 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                     inactiveColor: primaryGreyColor2,
                     onChanged: (double newValue) async{
                       _value = newValue.round();
-                      print("slider");
+                      /*print("slider");
                       if(_position.inSeconds.toInt()>=_duration.inSeconds.toInt()){
-                        String url = widget.musicModel.musicFile;
+                        String url = ref.watch(mixMusicProvider).combinationList[musicIndex].first!.musicFile;
                         await audioPlayer.play(AssetSource(url));
-                      }
+                      }*/
                       await audioPlayer.seek(Duration(seconds: newValue.toInt()));
                       await audioPlayer.resume();
                       if(_position.inSeconds.toInt()<_duration.inSeconds.toInt()){
-                        String url = widget.musicModel.musicFile;
+                        String url = musicList[index].musicFile;
                         await audioPlayer.play(AssetSource(url));
                         print("play less");
                       }
@@ -310,7 +396,7 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children:  [
                     IconButton(
-                      padding: const EdgeInsets.only(left: 10),
+                        padding: const EdgeInsets.only(left: 10),
                         onPressed: (){
                           _showDialogVolume(context);
                         },
@@ -320,29 +406,41 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                     IconButton(
                         padding: EdgeInsets.zero,
                         onPressed: ()async{
-                          if(_position.inSeconds.toInt() - 5 > 0){
+                          changeIndex(changeIndex: false);
+                          if(mounted){
+                            String url = musicList[index].musicFile;
+                            await audioPlayer.seek(const Duration(seconds:0));
+                            await audioPlayer.play(AssetSource(url));
+                          }
+                          if(_position.inSeconds.toInt()>=_duration.inSeconds.toInt()-1){
+                            await audioPlayer.pause();
+                          }
+                          if(mounted){
+                            setState(() {});
+                          }
+                         /* if(_position.inSeconds.toInt() - 5 > 0){
                             await audioPlayer.seek(Duration(seconds: _position.inSeconds.toInt() - 5));
-                            String url = widget.musicModel.musicFile;
+                            String url = ref.watch(mixMusicProvider).combinationList[musicIndex].first!.musicFile;
                             await audioPlayer.play(AssetSource(url));
                             print('click');
-                          }
+                          }*/
                         },
                         icon: const CustomSvg(svg: left_shift,color: primaryPinkColor)),
                     Container(
-                     // color: Colors.red,
+                      // color: Colors.red,
                       height: width * 0.18,
                       width: width * 0.18,
                       clipBehavior: Clip.hardEdge,
                       decoration: BoxDecoration(
-                        color: secondaryWhiteColor2,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.transparent,width:0),
-                        boxShadow: const [
-                          BoxShadow(
-                            blurRadius: 10,
-                            color:secondaryWhiteColor2
-                          )
-                        ]
+                          color: secondaryWhiteColor2,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.transparent,width:0),
+                          boxShadow: const [
+                            BoxShadow(
+                                blurRadius: 10,
+                                color:secondaryWhiteColor2
+                            )
+                          ]
                       ),
                       child: GestureDetector(
                         onTap: ()async {
@@ -350,7 +448,7 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                             await audioPlayer.pause();
                             print("pause solution");
                           } else {
-                            String url = widget.musicModel.musicFile;
+                            String url = musicList[index].musicFile;
                             await audioPlayer.play(AssetSource(url));
                             print("play");
                           }
@@ -367,14 +465,20 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                     IconButton(
                         padding: EdgeInsets.zero,
                         onPressed: ()async{
-                            //await audioPlayer.pause();
-                            await audioPlayer.seek(Duration(seconds: _position.inSeconds.toInt() + 5));
-                            await audioPlayer.resume();
-                            print('click');
+                          changeIndex(changeIndex: true);
+                          if(mounted){
+                            String url = musicList[index].musicFile;
+                            await audioPlayer.seek(const Duration(seconds:0));
+                            await audioPlayer.play(AssetSource(url));
+                          }
+                          print('click');
 
-                            if(_position.inSeconds.toInt()>=_duration.inSeconds.toInt()){
-                              await audioPlayer.pause();
-                            }
+                          if(_position.inSeconds.toInt()>=_duration.inSeconds.toInt()-1){
+                            await audioPlayer.pause();
+                          }
+                          if(mounted){
+                            setState(() {});
+                          }
                         },
                         icon: const CustomSvg(svg: right_shift,color: primaryPinkColor)),
                     IconButton(
@@ -435,7 +539,7 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                                   inactiveColor: primaryGreyColor2,
                                   onChanged: (double newValue) async{
                                     updateState(() {
-                                     // Screen.setBrightness(newValue);
+                                      // Screen.setBrightness(newValue);
                                       brightness = newValue;
                                       print("$brightness");
                                     });
@@ -444,7 +548,7 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                                   semanticFormatterCallback: (double newValue) {
                                     return '${newValue.round()} dollars';
                                   }
-                                 ),
+                              ),
                             ),
                           ),
                           Padding(
@@ -491,8 +595,8 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                   contentPadding: EdgeInsets.zero,
                   content: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10)
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10)
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -522,7 +626,7 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                               });
                               await PerfectVolumeControl.setVolume(currentVolume);
                             },
-                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -613,7 +717,7 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                           height: 13,
                           width: 13,
                           decoration: BoxDecoration(
-                            border: Border.all(color: primaryPinkColor,width: 2)
+                              border: Border.all(color: primaryPinkColor,width: 2)
                           ),
                         ),
                         SizedBox(width: width * 0.02),
@@ -627,6 +731,200 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
           );  },
         );
       },
+    );
+  }
+  Widget bottomSheet(BuildContext context){
+    final width = ScreenSize(context).width;
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      child: Wrap(
+        children: [
+          Container(
+            color: Colors.transparent,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: primaryPinkColor
+                            ),
+                            child: const Padding(
+                              padding: EdgeInsets.all(1.0),
+                              child: CustomImage(
+                                imageUrl: playButton,
+                                height: 30,
+                                width: 30,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: const [
+                                CustomText(text: "Witching Hour",fontWeight: FontWeight.w600,fontSize: 20,color: blackColor50),
+                                SizedBox(height: 5),
+                                CustomText(text: "chainsaw + Ocean is playing",fontWeight: FontWeight.w400,fontSize: 14,color: blackColor50)
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                      const CustomSvg(svg: arrow_foreword),
+                    ],
+                  ),
+                ),
+                Container(height: 2, color: blackColorD9),
+                SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: List.generate(3, (index) => Container(
+                        color: Colors.white,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                CustomText(text: "Sound Set ${index+1}",fontSize: 16,fontWeight: FontWeight.w600,color: blackColor50),
+                                SizedBox(height: width * 0.05),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          color: Colors.transparent,
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            children: [
+                                              SizedBox(
+                                                width: width * 0.35,
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                  children: [
+                                                    SizedBox(
+                                                        height: width * 0.1,
+                                                        width: width * 0.1,
+                                                        child: const CustomImage(imageUrl: "asset/images/chainshaw.png",boxFit: BoxFit.fill,)),
+                                                    const Padding(
+                                                      padding:  EdgeInsets.all(10.0),
+                                                      child: CustomText(text: "Chainsaw",fontSize: 16,fontWeight: FontWeight.w600,color: blackColor50),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                children: const [
+                                                  CustomSvg(svg: volume),
+                                                  Padding(
+                                                    padding:  EdgeInsets.all(20.0),
+                                                    child: CustomText(text: "20%",fontSize: 12,fontWeight: FontWeight.w600,color: blackColor50),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(height: width * 0.03),
+                                        Container(
+                                          color: Colors.transparent,
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            children: [
+                                              SizedBox(
+                                                width: width * 0.35,
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                  children: [
+                                                    SizedBox(
+                                                        height: width * 0.1,
+                                                        width: width * 0.1,
+                                                        child: const CustomImage(imageUrl: "asset/images/chainshaw.png",boxFit: BoxFit.fill)),
+                                                    const Padding(
+                                                      padding:  EdgeInsets.all(10.0),
+                                                      child: CustomText(text: "Ocean",fontSize: 16,fontWeight: FontWeight.w600,color: blackColor50),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                children: const [
+                                                  CustomSvg(svg: volume),
+                                                  Padding(
+                                                    padding:  EdgeInsets.all(10.0),
+                                                    child: CustomText(text: "60%",fontSize: 12,fontWeight: FontWeight.w600,color: blackColor50),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        //CustomImage(imageUrl: "asset/images/chainsaw_now_playing.png")
+                                      ],
+                                    ),
+                                    Row(
+                                      children: const [
+                                        CustomSvg(svg: timer),
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(horizontal: 8.0),
+                                          child: CustomText(text: "8 min",fontWeight: FontWeight.w600,fontSize: 12,color: primaryGreyColor,),
+                                        )
+                                      ],
+                                    ),
+                                    Container(
+                                      clipBehavior: Clip.hardEdge,
+                                      decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Colors.black.withOpacity(0.1)
+                                      ),
+                                      child: Padding(
+                                          padding: const EdgeInsets.all(1.0),
+                                          child: index % 2 == 0?const CustomImage(
+                                            imageUrl: playButton,
+                                            height: 30,
+                                            width: 30,
+                                            color: blackColor97,
+                                          ): const Padding(
+                                            padding: EdgeInsets.all(10.0),
+                                            child: CustomSvg(svg: pouseButton,height: 15,
+                                              width: 15,
+                                              color: blackColor97,),
+                                          )
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            index < 2?const SizedBox(height: 10):const SizedBox(),
+                            index < 2?Container(width: width,height: 1.5,color: blackColorD9,):const SizedBox(),
+                            const SizedBox(height: 20)
+                          ],
+                        ),
+                      )),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
