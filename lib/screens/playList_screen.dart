@@ -1,6 +1,7 @@
 import 'package:bye_bye_cry_new/compoment/shared/custom_image.dart';
 import 'package:bye_bye_cry_new/compoment/shared/custom_text.dart';
 import 'package:bye_bye_cry_new/screens/provider/add_music_provider.dart';
+import 'package:bye_bye_cry_new/screens/provider/mix_music_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -83,6 +84,14 @@ class _PlayListScreenState extends ConsumerState<PlayListScreen> {
                     child: musicList(musicName: ref.watch(addProvider).playList[index].musicName)),
               ),
             ),
+            Column(
+              children: List.generate(
+                ref.watch(mixMusicProvider).mixPlaylist.length,
+                    (index) => Container(
+                    color: index % 2 == 0?Colors.transparent:pinkLightColor,
+                    child: musicList(musicName: "${ref.watch(mixMusicProvider).mixPlaylist[index].first?.musicName}+${ref.watch(mixMusicProvider).mixPlaylist[index].second?.musicName}")),
+              ),
+            ),
             const SizedBox(
               height: 10,
             ),
@@ -155,7 +164,7 @@ class _PlayListScreenState extends ConsumerState<PlayListScreen> {
           ),
           GestureDetector(
             onTap: (){
-              Navigation.navigatePages(context, NowPlayingScreen(musicModel: ref.watch(addProvider).musicList[0],));
+              //Navigation.navigatePages(context, NowPlayingScreen(musicModel: ref.watch(addProvider).musicList[0],));
             },
             child: Container(
               decoration: BoxDecoration(

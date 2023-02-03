@@ -14,7 +14,6 @@ class MixMusicProvider extends ChangeNotifier{
   List<MixMusicModel> mixPlaylist = [];
   MixMusicModel? mixMusicModel;
 
-
   clearMixMusics(){
     musicModelFirst = null;
     musicModelSecond = null;
@@ -29,30 +28,36 @@ class MixMusicProvider extends ChangeNotifier{
     notifyListeners();
   }
   createMix(MixMusicModel mixMusicModel)async{
-    int index = combinationList.indexWhere((element) => element.id == mixMusicModel.id);
+    combinationList.add(mixMusicModel);
+    await LocalDB.setMixMusicListItem(combinationList);
+    print('added mix ${mixMusicModel.id}');
+    /*int index = combinationList.indexWhere((element) => element.id == mixMusicModel.id);
     if(!mixPlayListIds.contains(mixMusicModel.id)) {
       if(index < 0) {
         combinationList.add(mixMusicModel);
-        mixPlayListIds.add(mixMusicModel.id);
-        await LocalDB.setMixPlayListItem(combinationList);
+      *//*  mixPlayListIds.add(mixMusicModel.id);
+        await LocalDB.setMixPlayListItem(combinationList);*//*
         print('added mix ${mixMusicModel.id}');
       }
     }else {
       if(index >= 0) {
         combinationList.remove(mixMusicModel);
-        mixPlayListIds.remove(mixMusicModel.id);
-        await LocalDB.setMixPlayListItem(combinationList);
+       *//* mixPlayListIds.remove(mixMusicModel.id);
+        await LocalDB.setMixPlayListItem(combinationList);*//*
         print('remove');
       }
-    }
+    }*/
   }
   assignMixAllPlaylist()async{
-    combinationList = await LocalDB.getMixPlayListItem() ?? [];
+    mixPlaylist = await LocalDB.getMixPlayListItem()??[];
     mixPlayListIds = [];
-    for(int index = 0; index < combinationList.length;index++){
-      mixPlayListIds.add(combinationList[index].id);
+    for(int index = 0; index < mixPlaylist.length;index++){
+      mixPlayListIds.add(mixPlaylist[index].id);
     }
     notifyListeners();
+  }
+  assignMixMusicList()async{
+    combinationList = await LocalDB.getMixMusicListItem()??[];
   }
   addOrRemoveMixPlayList({required String id})async{
     if(combinationList.isNotEmpty){
