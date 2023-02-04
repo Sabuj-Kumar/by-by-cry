@@ -39,7 +39,7 @@ class CustomBottomAppBarState extends ConsumerState<CustomBottomAppBar> {
   Widget build(BuildContext context) {
     final width = ScreenSize(context).width;
     return Container(
-      height: width * 0.18,
+      height: width * 0.25,
       decoration: BoxDecoration(boxShadow: [
         BoxShadow(
             color: Colors.grey.withOpacity(0.1), blurRadius: 6, spreadRadius: 6)
