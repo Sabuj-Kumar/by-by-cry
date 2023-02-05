@@ -1,4 +1,3 @@
-
 import 'package:bye_bye_cry_new/screens/provider/add_music_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,10 +16,8 @@ class CustomBottomAppBar extends ConsumerStatefulWidget {
 }
 
 class CustomBottomAppBarState extends ConsumerState<CustomBottomAppBar> {
-
   @override
   void initState() {
-
     super.initState();
   }
 
@@ -42,7 +39,7 @@ class CustomBottomAppBarState extends ConsumerState<CustomBottomAppBar> {
   Widget build(BuildContext context) {
     final width = ScreenSize(context).width;
     return Container(
-      height: width * 0.18,
+      height: width * 0.25,
       decoration: BoxDecoration(boxShadow: [
         BoxShadow(
             color: Colors.grey.withOpacity(0.1), blurRadius: 6, spreadRadius: 6)
@@ -58,8 +55,9 @@ class CustomBottomAppBarState extends ConsumerState<CustomBottomAppBar> {
                   //     ? navigationBarFirstImageS
                   //     : navigationBarFirstImage,
                   scale: 1.4,
-                  color:
-                  ref.watch(addProvider).pageNumber == 0 ? primaryGreenColor : primaryGreyColor,
+                  color: ref.watch(addProvider).pageNumber == 0
+                      ? primaryGreenColor
+                      : primaryGreyColor,
                 ),
               ),
               label: "Home"),
@@ -72,8 +70,9 @@ class CustomBottomAppBarState extends ConsumerState<CustomBottomAppBar> {
                   //     ? navigationBarSecondImageS
                   //     : navigationBarSecondImage,
                   scale: 1.4,
-                  color:
-                  ref.watch(addProvider).pageNumber == 1 ? primaryGreenColor : primaryGreyColor,
+                  color: ref.watch(addProvider).pageNumber == 1
+                      ? primaryGreenColor
+                      : primaryGreyColor,
                 ),
               ),
               label: "Sounds"),
@@ -86,7 +85,9 @@ class CustomBottomAppBarState extends ConsumerState<CustomBottomAppBar> {
                 //     ? navigationBarThirdImageS
                 //     : navigationBarThirdImage,
                 scale: 1.4,
-                color: ref.watch(addProvider).pageNumber == 2 ? primaryGreenColor : primaryGreyColor,
+                color: ref.watch(addProvider).pageNumber == 2
+                    ? primaryGreenColor
+                    : primaryGreyColor,
               ),
             ),
             label: "Mix",
@@ -100,7 +101,7 @@ class CustomBottomAppBarState extends ConsumerState<CustomBottomAppBar> {
                       ? navigationBarForthImage
                       : navigationBarForthImageS,
                   scale: 1.3,
-                 // color: currentIndex == 3 ? primaryGreenColor : null,
+                  // color: currentIndex == 3 ? primaryGreenColor : null,
                 ),
               ),
               label: "Playlist"),
@@ -113,8 +114,9 @@ class CustomBottomAppBarState extends ConsumerState<CustomBottomAppBar> {
                   //     ? navigationBarFifthImageS
                   //     : navigationBarFifthImage,
                   scale: 1.4,
-                  color:
-                  ref.watch(addProvider).pageNumber == 4 ? primaryGreenColor : primaryGreyColor,
+                  color: ref.watch(addProvider).pageNumber == 4
+                      ? primaryGreenColor
+                      : primaryGreyColor,
                 ),
               ),
               label: "Blog"),
