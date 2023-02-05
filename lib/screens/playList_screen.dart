@@ -115,9 +115,7 @@ class _PlayListScreenState extends ConsumerState<PlayListScreen> {
                         ),
                         onPressed: () {},
                       ),
-                      SizedBox(
-                        width: height * .05,
-                      ),
+                      SizedBox(width: height * .05),
                       const CustomText(
                         text: 'Add Playlist',
                         fontSize: 20,
@@ -152,9 +150,7 @@ class _PlayListScreenState extends ConsumerState<PlayListScreen> {
                     color: primaryPinkColor,
                     borderRadius: BorderRadius.all(Radius.circular(10))),
               ),
-              const SizedBox(
-                width: 20,
-              ),
+              const SizedBox(width: 20),
               CustomText(
                 text: musicName,
                 fontSize: 18,

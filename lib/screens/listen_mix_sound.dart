@@ -3,7 +3,6 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:bye_bye_cry_new/compoment/shared/custom_image.dart';
 import 'package:bye_bye_cry_new/compoment/shared/custom_svg.dart';
 import 'package:bye_bye_cry_new/screens/models/music_models.dart';
-import 'package:bye_bye_cry_new/screens/provider/add_music_provider.dart';
 import 'package:bye_bye_cry_new/screens/provider/mix_music_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -28,8 +27,7 @@ class ListenMixSound extends ConsumerStatefulWidget {
 
 class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProviderStateMixin{
 
-  int _value = 1;
-  double _value2 = 1;
+
   List<String> times = [
     "0",
     "5 min",
@@ -44,7 +42,6 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
   AudioPlayer audioPlayer = AudioPlayer();
   Duration _duration = Duration.zero;
   Duration _position = Duration.zero;
-  Duration _slider = Duration(seconds: 0);
   double currentVolume = 0.0;
   bool issongplaying = false;
   double brightness = 0.5;
@@ -52,7 +49,9 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
   int musicIndex = 0;
   List<MusicModel> musicList = [];
   int index = 0;
-
+  Timer? _timer;
+  TextEditingController minController = TextEditingController();
+  TextEditingController secController = TextEditingController();
 
   @override
   void initState() {
@@ -67,6 +66,7 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
   void dispose() {
     audioPlayer.dispose();
     _subscription.cancel();
+    _timer!.cancel();
     super.dispose();
   }
 
@@ -110,7 +110,7 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
     if (!mounted) return;
   }
   startPlayer()async{
-    _position = _slider;
+    //_position = _slider;
     audioCache.prefix = "asset";
     audioPlayer.onPlayerStateChanged.listen((state) {
       issongplaying = state == PlayerState.playing;
@@ -209,6 +209,7 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
       setState(() {});
     }
   }
+
   @override
   Widget build(BuildContext context) {
     final height = ScreenSize(context).height;
@@ -329,9 +330,7 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
                 ],
               ),
             ),
-            SizedBox(
-              height: width * 0.1,
-            ),
+            SizedBox(height: width * 0.1),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30.0),
               child: Row(
@@ -367,7 +366,6 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
                     activeColor: primaryPinkColor,
                     inactiveColor: primaryGreyColor2,
                     onChanged: (double newValue) async{
-                      _value = newValue.round();
                       /*print("slider");
                       if(_position.inSeconds.toInt()>=_duration.inSeconds.toInt()){
                         String url = ref.watch(mixMusicProvider).combinationList[musicIndex].first!.musicFile;
@@ -646,7 +644,22 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
       context: context,
       builder: (BuildContext context) {
         return StatefulBuilder(
-          builder: (BuildContext context, void Function(void Function()) updateState) { return  Align(
+          builder: (BuildContext context, void Function(void Function()) state) {
+            if(mounted) {
+              _timer =
+                  Timer.periodic(const Duration(milliseconds: 500), (timer) async{
+                    if(mounted){
+                      state(() {});
+                    }
+                  });
+            }
+
+            if(mounted){
+              if(_position.inSeconds.toDouble() == _duration.inSeconds.toDouble() -1){
+                _timer!.cancel();
+              }
+            }
+            return  Align(
             alignment: Alignment.center,
             child: Wrap(
               children: [
@@ -665,35 +678,80 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
                   content: Column(
                     children: [
                       Container(
+                        width: width * 0.2,
+                        height: width * 0.1,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
                           color: greyEC,
                         ),
-                        child:  Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 9),
-                          child: CustomText(
-                            text: '${(_value2 ~/ 60).toString().padLeft(2,'0')}:${(_value2 % 60).toString().padLeft(2,'0')}',
-                            fontSize: 20,
-                            color: secondaryBlackColor,
-                            fontWeight: FontWeight.w400,
-                          ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 9),
+                                child: TextFormField(
+                                  controller: minController,
+                                  maxLines: 1,
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: [
+                                    LengthLimitingTextInputFormatter(1)
+                                  ],
+                                  decoration: const InputDecoration(
+                                    border: InputBorder.none,
+                                  ),
+                                )/*CustomText(
+                                  text: '${(_position.inSeconds.toDouble() ~/ 60).toString().padLeft(2,'0')}:${(_position.inSeconds % 60).toString().padLeft(2,'0')}',
+                                  fontSize: 20,
+                                  color: secondaryBlackColor,
+                                  fontWeight: FontWeight.w400,
+                                )*///minController
+                              ),
+                            ),
+                            const CustomText(text: ":"),
+                            Expanded(
+                              flex: 3,
+                              child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 9),
+                                  child: TextFormField(
+                                    controller: secController,
+                                    keyboardType: TextInputType.number,
+                                    inputFormatters: [
+                                      LengthLimitingTextInputFormatter(2)
+                                    ],
+                                    decoration: const InputDecoration(
+                                      border: InputBorder.none,
+                                    ),
+                                  )/*CustomText(
+                                  text: '${(_position.inSeconds.toDouble() ~/ 60).toString().padLeft(2,'0')}:${(_position.inSeconds % 60).toString().padLeft(2,'0')}',
+                                  fontSize: 20,
+                                  color: secondaryBlackColor,
+                                  fontWeight: FontWeight.w400,
+                                )*///minController
+                              ),
+                            ),
+                          ],
                         ),
                       ),
+
                       SliderTheme(
                         data: const SliderThemeData(
                             trackShape: RectangularSliderTrackShape(),
                             thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10)),
                         child: Slider(
-                            value: _value.toDouble(),
+                            value: _position.inSeconds.toDouble(),
                             min: 0.0,
-                            max: 150.0,
+                            max: _duration.inSeconds.toDouble(),
                             divisions: 100,
                             activeColor: primaryPinkColor,
                             inactiveColor: primaryGreyColor2,
-                            onChanged: (double newValue) {
-                              updateState(() {
-                                _value = newValue.round();
-                              });
+                            onChanged: (double newValue) async{
+
+                              await audioPlayer.seek(Duration(seconds: newValue.toInt()));
+                              await audioPlayer.resume();
+                              print("dialog update");
+                              state(() {});
+                              setState(() {});
                             },
                             semanticFormatterCallback: (double newValue) {
                               return '${newValue.round()} dollars';
@@ -731,7 +789,15 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
           );  },
         );
       },
-    );
+    ).then((value) {
+      _timer!.cancel();
+      if(mounted){
+        setState(() {
+          print("asche ");
+        });
+
+      }
+    });
   }
   Widget bottomSheet(BuildContext context){
     final width = ScreenSize(context).width;
