@@ -50,6 +50,7 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
   List<MusicModel> musicList = [];
   int index = 0;
   Timer? _timer;
+  bool check = false;
   TextEditingController minController = TextEditingController();
   TextEditingController secController = TextEditingController();
 
@@ -208,6 +209,38 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
     if(mounted){
       setState(() {});
     }
+  }
+
+  startTimer(void Function(void Function()) state)async{
+    _timer =
+        Timer.periodic(const Duration(milliseconds: 500),(timer){
+          if(mounted){
+            if(_position.inSeconds.toDouble() == _duration.inSeconds.toDouble() -1){
+              _timer!.cancel();
+            }
+            if(!ref.watch(mixMusicProvider).alertDiaLog){
+              _timer!.cancel();
+            }
+            if(mounted) {
+              if (ref
+                  .watch(mixMusicProvider)
+                  .alertDiaLog) {
+                if(mounted){
+                  if(issongplaying){
+                    if(mounted){
+                      state(() {});
+                    }
+                  }else{
+                    if(mounted){
+                      _timer!.cancel();
+                      state(() {});
+                    }
+                  }
+                }
+              }
+            }
+          }
+        });
   }
 
   @override
@@ -482,7 +515,13 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
                     IconButton(
                         padding: EdgeInsets.zero,
                         onPressed: (){
-                          _showDialog(context);
+                          ref.read(mixMusicProvider).alertDialogStart();
+                          if(mounted){
+                            setState(()  {
+                              check = false;
+                            });
+                            _showDialog(context);
+                          }
                         },
                         icon: Container(
                             color: Colors.transparent,
@@ -512,7 +551,7 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
               children: [
                 Container(
                   color: Colors.transparent,
-                  height: width * 0.27,
+                  height: width * 0.24,
                   child: AlertDialog(
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15)
@@ -646,17 +685,9 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
         return StatefulBuilder(
           builder: (BuildContext context, void Function(void Function()) state) {
             if(mounted) {
-              _timer =
-                  Timer.periodic(const Duration(milliseconds: 500), (timer) async{
-                    if(mounted){
-                      state(() {});
-                    }
-                  });
-            }
-
-            if(mounted){
-              if(_position.inSeconds.toDouble() == _duration.inSeconds.toDouble() -1){
-                _timer!.cancel();
+              startTimer(state);
+              if(mounted){
+                state((){});
               }
             }
             return  Align(
@@ -668,18 +699,25 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
                       borderRadius: BorderRadius.circular(15)
                   ),
                   backgroundColor: Colors.white,
-                  title: const CustomText(
-                    text: 'Select Duration',
-                    textAlign: TextAlign.center,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: primaryGreyColor,
+                  title: Column(
+                    children: const [
+                       CustomText(
+                        text: 'Select Duration',
+                        textAlign: TextAlign.center,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: primaryGreyColor,
+                      ),
+                      SizedBox(height: 20),
+                    ],
                   ),
+                  contentPadding: EdgeInsets.zero,
                   content: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
-                        width: width * 0.2,
-                        height: width * 0.1,
+                        width: width * 0.22,
+                        height: width * 0.07,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
                           color: greyEC,
@@ -689,51 +727,50 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
                             Expanded(
                               flex: 3,
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 9),
-                                child: TextFormField(
-                                  controller: minController,
-                                  maxLines: 1,
-                                  keyboardType: TextInputType.number,
-                                  inputFormatters: [
-                                    LengthLimitingTextInputFormatter(1)
-                                  ],
-                                  decoration: const InputDecoration(
-                                    border: InputBorder.none,
+                                padding: const EdgeInsets.only(left: 8.0,right: 8,bottom: 3),
+                                child: Container(
+                                  color: Colors.transparent,
+                                  child: TextFormField(
+                                    textInputAction: TextInputAction.next,
+                                    cursorColor: primaryPinkColor,
+                                    controller: minController,
+                                    maxLines: 1,
+                                    keyboardType: TextInputType.number,
+                                    inputFormatters: [
+                                      LengthLimitingTextInputFormatter(2)
+                                    ],
+                                    decoration: const InputDecoration(
+                                      border: InputBorder.none
+                                    ),
                                   ),
-                                )/*CustomText(
-                                  text: '${(_position.inSeconds.toDouble() ~/ 60).toString().padLeft(2,'0')}:${(_position.inSeconds % 60).toString().padLeft(2,'0')}',
-                                  fontSize: 20,
-                                  color: secondaryBlackColor,
-                                  fontWeight: FontWeight.w400,
-                                )*///minController
+                                ),
                               ),
                             ),
                             const CustomText(text: ":"),
                             Expanded(
                               flex: 3,
                               child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 9),
+                                padding: const EdgeInsets.only(left: 12.0,right: 5,bottom: 3),
+                                child: Container(
+                                  color: Colors.transparent,
                                   child: TextFormField(
-                                    controller: secController,
-                                    keyboardType: TextInputType.number,
-                                    inputFormatters: [
-                                      LengthLimitingTextInputFormatter(2)
-                                    ],
-                                    decoration: const InputDecoration(
-                                      border: InputBorder.none,
+                                      cursorColor: primaryPinkColor ,
+                                      controller: secController,
+                                      textInputAction: TextInputAction.done,
+                                      keyboardType: TextInputType.number,
+                                      inputFormatters: [
+                                        LengthLimitingTextInputFormatter(2)
+                                      ],
+                                      decoration: const InputDecoration(
+                                        border: InputBorder.none,
+                                      ),
                                     ),
-                                  )/*CustomText(
-                                  text: '${(_position.inSeconds.toDouble() ~/ 60).toString().padLeft(2,'0')}:${(_position.inSeconds % 60).toString().padLeft(2,'0')}',
-                                  fontSize: 20,
-                                  color: secondaryBlackColor,
-                                  fontWeight: FontWeight.w400,
-                                )*///minController
+                                ),
                               ),
                             ),
                           ],
                         ),
                       ),
-
                       SliderTheme(
                         data: const SliderThemeData(
                             trackShape: RectangularSliderTrackShape(),
@@ -746,7 +783,6 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
                             activeColor: primaryPinkColor,
                             inactiveColor: primaryGreyColor2,
                             onChanged: (double newValue) async{
-
                               await audioPlayer.seek(Duration(seconds: newValue.toInt()));
                               await audioPlayer.resume();
                               print("dialog update");
@@ -758,12 +794,13 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
                             }),
                       ),
                       SizedBox(
-                        width: width * 0.5,
+                        width: width * 0.59,
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: List.generate(times.length, (index) => CustomText(text: times[index],fontWeight: FontWeight.w400,fontSize: 6,color: secondaryBlackColor) ),
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: List.generate(times.length, (index) => CustomText(text: times[index],fontWeight: FontWeight.w400,fontSize: 8,color: secondaryBlackColor) ),
                         ),
-                      )
+                      ),
+                      const SizedBox(height: 15),
                     ],
                   ),
                   actionsAlignment: MainAxisAlignment.start,
@@ -771,15 +808,31 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
                   actions: <Widget>[
                     Row(
                       children: [
-                        Container(
-                          height: 13,
-                          width: 13,
-                          decoration: BoxDecoration(
-                              border: Border.all(color: primaryPinkColor,width: 2)
-                          ),
-                        ),
-                        SizedBox(width: width * 0.02),
-                        const CustomText(text: "continuous play",fontSize: 16,fontWeight: FontWeight.w400,color: primaryGreyColor,)
+                        Checkbox(
+                            side: const BorderSide(color: blackColorA0),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            activeColor: primaryPinkColor,
+                            value: check,
+                            onChanged: (newValue){
+                              state(() {
+                                check = newValue!;
+                              });
+                        }),
+                        TextButton(onPressed: check?() async{
+                          int min = int.parse(minController.text);
+                          int sec = int.parse(secController.text);
+                          min = min * 60;
+                          sec = sec + min;
+                          if(_duration.inSeconds.toInt() > sec){
+                            await audioPlayer.seek(Duration(seconds:sec));
+                          }
+                          if(mounted){
+                            Navigator.pop(context);
+                          }
+                        }:null,
+                        child: const CustomText(text: "continuous play",fontSize: 16,fontWeight: FontWeight.w400,color: primaryGreyColor,))
                       ],
                     )
                   ],
@@ -790,12 +843,15 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
         );
       },
     ).then((value) {
-      _timer!.cancel();
       if(mounted){
-        setState(() {
-          print("asche ");
-        });
-
+        ref.read(mixMusicProvider).alertDialogStop();
+       if(mounted){
+         setState(() {
+           secController.text = "";
+           minController.text = "";
+           print("asche");
+         });
+       }
       }
     });
   }

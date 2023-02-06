@@ -13,6 +13,7 @@ class MixMusicProvider extends ChangeNotifier{
   List<MixMusicModel> combinationList = [];
   List<MixMusicModel> mixPlaylist = [];
   MixMusicModel? mixMusicModel;
+  bool alertDiaLog = false;
 
   clearMixMusics(){
     musicModelFirst = null;
@@ -78,6 +79,15 @@ class MixMusicProvider extends ChangeNotifier{
         }
       }
     }
+    notifyListeners();
+  }
+
+  alertDialogStart(){
+    alertDiaLog = true;
+    notifyListeners();
+  }
+  alertDialogStop(){
+    alertDiaLog = false;
     notifyListeners();
   }
 }

@@ -38,107 +38,110 @@ class CustomBottomAppBarState extends ConsumerState<CustomBottomAppBar> {
   @override
   Widget build(BuildContext context) {
     final width = ScreenSize(context).width;
-    return Container(
-      height: width * 0.25,
-      decoration: BoxDecoration(boxShadow: [
-        BoxShadow(
-            color: Colors.grey.withOpacity(0.1), blurRadius: 6, spreadRadius: 6)
-      ]),
-      child: BottomNavigationBar(
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-              icon: Padding(
-                padding: const EdgeInsets.only(bottom: 5.0),
-                child: Image.asset(
-                  navigationBarFirstImageS,
-                  // currentIndex == 0
-                  //     ? navigationBarFirstImageS
-                  //     : navigationBarFirstImage,
-                  scale: 1.4,
-                  color: ref.watch(addProvider).pageNumber == 0
-                      ? primaryGreenColor
-                      : primaryGreyColor,
+    return Wrap(
+      children: [
+        Container(
+          decoration: BoxDecoration(boxShadow: [
+            BoxShadow(
+                color: Colors.grey.withOpacity(0.1), blurRadius: 6, spreadRadius: 6)
+          ]),
+          child: BottomNavigationBar(
+            items: <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                  icon: Padding(
+                    padding: const EdgeInsets.only(bottom: 7.0),
+                    child: Image.asset(
+                      navigationBarFirstImageS,
+                      // currentIndex == 0
+                      //     ? navigationBarFirstImageS
+                      //     : navigationBarFirstImage,
+                      scale: 1.4,
+                      color: ref.watch(addProvider).pageNumber == 0
+                          ? primaryGreenColor
+                          : primaryGreyColor,
+                    ),
+                  ),
+                  label: "Home"),
+              BottomNavigationBarItem(
+                  icon: Padding(
+                    padding: const EdgeInsets.only(bottom: 7.0),
+                    child: Image.asset(
+                      navigationBarSecondImageS,
+                      // currentIndex == 1
+                      //     ? navigationBarSecondImageS
+                      //     : navigationBarSecondImage,
+                      scale: 1.4,
+                      color: ref.watch(addProvider).pageNumber == 1
+                          ? primaryGreenColor
+                          : primaryGreyColor,
+                    ),
+                  ),
+                  label: "Sounds"),
+              BottomNavigationBarItem(
+                icon: Padding(
+                  padding: const EdgeInsets.only(bottom: 7.0),
+                  child: Image.asset(
+                    navigationBarThirdImageS,
+                    // currentIndex == 2
+                    //     ? navigationBarThirdImageS
+                    //     : navigationBarThirdImage,
+                    scale: 1.4,
+                    color: ref.watch(addProvider).pageNumber == 2
+                        ? primaryGreenColor
+                        : primaryGreyColor,
+                  ),
                 ),
+                label: "Mix",
               ),
-              label: "Home"),
-          BottomNavigationBarItem(
-              icon: Padding(
-                padding: const EdgeInsets.only(bottom: 5.0),
-                child: Image.asset(
-                  navigationBarSecondImageS,
-                  // currentIndex == 1
-                  //     ? navigationBarSecondImageS
-                  //     : navigationBarSecondImage,
-                  scale: 1.4,
-                  color: ref.watch(addProvider).pageNumber == 1
-                      ? primaryGreenColor
-                      : primaryGreyColor,
-                ),
-              ),
-              label: "Sounds"),
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: const EdgeInsets.only(bottom: 5.0),
-              child: Image.asset(
-                navigationBarThirdImageS,
-                // currentIndex == 2
-                //     ? navigationBarThirdImageS
-                //     : navigationBarThirdImage,
-                scale: 1.4,
-                color: ref.watch(addProvider).pageNumber == 2
-                    ? primaryGreenColor
-                    : primaryGreyColor,
-              ),
-            ),
-            label: "Mix",
+              BottomNavigationBarItem(
+                  icon: Padding(
+                    padding: const EdgeInsets.only(bottom: 7.0),
+                    child: Image.asset(
+                      // navigationBarForthImageS,
+                      ref.watch(addProvider).pageNumber == 3
+                          ? navigationBarForthImage
+                          : navigationBarForthImageS,
+                      scale: 1.3,
+                      // color: currentIndex == 3 ? primaryGreenColor : null,
+                    ),
+                  ),
+                  label: "Playlist"),
+              BottomNavigationBarItem(
+                  icon: Padding(
+                    padding: const EdgeInsets.only(bottom: 7.0),
+                    child: Image.asset(
+                      navigationBarFifthImageS,
+                      // currentIndex == 4
+                      //     ? navigationBarFifthImageS
+                      //     : navigationBarFifthImage,
+                      scale: 1.4,
+                      color: ref.watch(addProvider).pageNumber == 4
+                          ? primaryGreenColor
+                          : primaryGreyColor,
+                    ),
+                  ),
+                  label: "Blog"),
+            ],
+            type: BottomNavigationBarType.fixed,
+            elevation: 30,
+            backgroundColor: secondaryPinkColor,
+            selectedItemColor: primaryGreenColor,
+            showUnselectedLabels: true,
+            selectedLabelStyle:
+                const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+            unselectedLabelStyle:
+                const TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+            onTap: (index) {
+              setState(() {
+                ref.read(addProvider).changePage(index);
+                widget.onPressed(index);
+              });
+              print("$index");
+            },
+            currentIndex: ref.watch(addProvider).pageNumber,
           ),
-          BottomNavigationBarItem(
-              icon: Padding(
-                padding: const EdgeInsets.only(bottom: 5.0),
-                child: Image.asset(
-                  // navigationBarForthImageS,
-                  ref.watch(addProvider).pageNumber == 3
-                      ? navigationBarForthImage
-                      : navigationBarForthImageS,
-                  scale: 1.3,
-                  // color: currentIndex == 3 ? primaryGreenColor : null,
-                ),
-              ),
-              label: "Playlist"),
-          BottomNavigationBarItem(
-              icon: Padding(
-                padding: const EdgeInsets.only(bottom: 5.0),
-                child: Image.asset(
-                  navigationBarFifthImageS,
-                  // currentIndex == 4
-                  //     ? navigationBarFifthImageS
-                  //     : navigationBarFifthImage,
-                  scale: 1.4,
-                  color: ref.watch(addProvider).pageNumber == 4
-                      ? primaryGreenColor
-                      : primaryGreyColor,
-                ),
-              ),
-              label: "Blog"),
-        ],
-        type: BottomNavigationBarType.fixed,
-        elevation: 30,
-        backgroundColor: secondaryPinkColor,
-        selectedItemColor: primaryGreenColor,
-        showUnselectedLabels: true,
-        selectedLabelStyle:
-            const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
-        unselectedLabelStyle:
-            const TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
-        onTap: (index) {
-          setState(() {
-            ref.read(addProvider).changePage(index);
-            widget.onPressed(index);
-          });
-          print("$index");
-        },
-        currentIndex: ref.watch(addProvider).pageNumber,
-      ),
+        ),
+      ],
     );
   }
 }
