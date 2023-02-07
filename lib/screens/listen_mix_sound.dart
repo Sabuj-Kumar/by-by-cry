@@ -27,7 +27,6 @@ class ListenMixSound extends ConsumerStatefulWidget {
 
 class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProviderStateMixin{
 
-
   List<String> times = [
     "0",
     "5 min",
@@ -38,6 +37,18 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
     "120 min",
     "150 min",
   ];
+  List<int> selectedTimes = [
+    0,
+    5,
+    10,
+    30,
+    60,
+    90,
+    120,
+    150
+  ];
+  int selectedTime = 0;
+  int setDuration = 0;
   AudioCache audioCache = AudioCache();
   AudioPlayer audioPlayer = AudioPlayer();
   Duration _duration = Duration.zero;
@@ -49,7 +60,6 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
   int musicIndex = 0;
   List<MusicModel> musicList = [];
   int index = 0;
-  Timer? _timer;
   bool check = false;
   TextEditingController minController = TextEditingController();
   TextEditingController secController = TextEditingController();
@@ -67,7 +77,6 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
   void dispose() {
     audioPlayer.dispose();
     _subscription.cancel();
-    _timer!.cancel();
     super.dispose();
   }
 
@@ -112,24 +121,26 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
   }
   startPlayer()async{
     //_position = _slider;
-    audioCache.prefix = "asset";
     audioPlayer.onPlayerStateChanged.listen((state) {
       issongplaying = state == PlayerState.playing;
+      if(_duration.inSeconds.toInt() == _position.inSeconds.toInt() || (_duration.inSeconds.toInt() - 1 == _position.inSeconds.toInt())) {
+        if(mounted){
+          setState(() {
+            setDuration -= _duration.inSeconds.toInt();
+            print("set duration change ${setDuration}");
+          });
+        }
+      }
       if(mounted){
-        print("in method $issongplaying");
         if(!issongplaying){
-          print("ses");
           if(_duration.inSeconds.toInt() == _position.inSeconds.toInt() || (_duration.inSeconds.toInt() - 1 == _position.inSeconds.toInt())){
-            print("ses check");
             if(mounted){
               if(index < musicList.length-1){
                 setState(() {
                   index++;
                 });
                 pausePlayMethod();
-                print("Index increase");
               }
-              //print("Index increase");
             }else{
               if(mounted){
                 setState(() {
@@ -140,10 +151,12 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
             }
           }else{
             print("else duration ${_duration.inSeconds.toInt()}");
-            print("else position ${_position.inSeconds.toInt()}");
           }
         }
         setState(() {});
+      }
+      if(mounted){
+        continueMusic();
       }
     });
     audioPlayer.onDurationChanged.listen((newDuration) {
@@ -211,7 +224,16 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
     }
   }
 
-  startTimer(void Function(void Function()) state)async{
+  continueMusic(){
+      if(setDuration > 0){
+        if(!issongplaying){
+          index = 0;
+          pausePlayMethod();
+          print("asasche");
+        }
+      }
+  }
+/*  startTimer(void Function(void Function()) state)async{
     _timer =
         Timer.periodic(const Duration(milliseconds: 500),(timer){
           if(mounted){
@@ -241,7 +263,7 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
             }
           }
         });
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -519,6 +541,7 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
                           if(mounted){
                             setState(()  {
                               check = false;
+                              selectedTime = 0;
                             });
                             _showDialog(context);
                           }
@@ -616,6 +639,7 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
     showDialog(
       context: context,
       builder: (BuildContext context) {
+        final width = ScreenSize(context).width;
         return StatefulBuilder(
           builder: (BuildContext context, void Function(void Function()) updateState) { return Column(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -635,36 +659,62 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(10)
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                    child: Stack(
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 20.0,top:15,right: 0,bottom: 0),
-                          child: Transform(
-                            alignment: Alignment.topCenter,
-                            transform:  Matrix4.identity()..rotateZ(90 * 3.1415927 / 180),
-                            child: const CustomSvg(svg: volume,color: Colors.red,),
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 20.0,top:15,right: 0,bottom: 0),
+                              child: Transform(
+                                alignment: Alignment.topCenter,
+                                transform:  Matrix4.identity()..rotateZ(90 * 3.1415927 / 180),
+                                child: const CustomSvg(svg: volume,color: Colors.red,),
+                              ),
+                            ),
+                            Expanded(
+                              child: Slider(
+                                value: currentVolume,
+                                min: 0.0,
+                                max: 1.0,
+                                divisions: 100,
+                                activeColor: primaryPinkColor,
+                                inactiveColor: primaryGreyColor2,
+                                onChanged: (double newValue) async{
+                                  updateState(() {
+                                    // Screen.setBrightness(newValue);
+                                    currentVolume = newValue;
+                                    print("volume $currentVolume");
+                                  });
+                                  await PerfectVolumeControl.setVolume(currentVolume);
+                                },
+                              ),
+                            ),
+                          ],
                         ),
-                        Expanded(
-                          child: Slider(
-                            value: currentVolume,
-                            min: 0.0,
-                            max: 1.0,
-                            divisions: 100,
-                            activeColor: primaryPinkColor,
-                            inactiveColor: primaryGreyColor2,
-                            onChanged: (double newValue) async{
-                              updateState(() {
-                                // Screen.setBrightness(newValue);
-                                currentVolume = newValue;
-                                print("$currentVolume");
-                              });
-                              await PerfectVolumeControl.setVolume(currentVolume);
-                            },
-                          ),
-                        ),
+                        Positioned(
+                            right: width * 0.25,
+                            top: 10,
+                            child: Transform(
+                                transform:  Matrix4.identity()..rotateZ(90 * 3.1415927 / 180),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(2),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: secondaryBlackColor.withOpacity(0.2),
+                                        blurRadius: 0.2,
+                                        spreadRadius: 0.5
+                                      )
+                                    ]
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 4.0,vertical: 5),
+                                    child: Center(child: CustomText(text: "${(currentVolume * 100).toInt().toString().padLeft(2,"0")}%",fontSize: 10,color: secondaryBlackColor,fontWeight: FontWeight.w600,)),
+                                  ),
+                                )))
                       ],
                     ),
                   ),
@@ -684,12 +734,12 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (BuildContext context, void Function(void Function()) state) {
-            if(mounted) {
-              startTimer(state);
+           /* if(mounted) {
+              //startTimer(state);
               if(mounted){
                 state((){});
               }
-            }
+            }*/
             return  Align(
             alignment: Alignment.center,
             child: Wrap(
@@ -716,77 +766,33 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
-                        width: width * 0.22,
-                        height: width * 0.07,
+                        width: width * 0.17,
+                        padding: const EdgeInsets.symmetric(vertical: 8),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(5),
                           color: greyEC,
                         ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              flex: 3,
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 8.0,right: 8,bottom: 3),
-                                child: Container(
-                                  color: Colors.transparent,
-                                  child: TextFormField(
-                                    textInputAction: TextInputAction.next,
-                                    cursorColor: primaryPinkColor,
-                                    controller: minController,
-                                    maxLines: 1,
-                                    keyboardType: TextInputType.number,
-                                    inputFormatters: [
-                                      LengthLimitingTextInputFormatter(2)
-                                    ],
-                                    decoration: const InputDecoration(
-                                      border: InputBorder.none
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const CustomText(text: ":"),
-                            Expanded(
-                              flex: 3,
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 12.0,right: 5,bottom: 3),
-                                child: Container(
-                                  color: Colors.transparent,
-                                  child: TextFormField(
-                                      cursorColor: primaryPinkColor ,
-                                      controller: secController,
-                                      textInputAction: TextInputAction.done,
-                                      keyboardType: TextInputType.number,
-                                      inputFormatters: [
-                                        LengthLimitingTextInputFormatter(2)
-                                      ],
-                                      decoration: const InputDecoration(
-                                        border: InputBorder.none,
-                                      ),
-                                    ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        child: Center(child: CustomText(text: "${(selectedTimes[selectedTime] ~/ 60).toString().padLeft(2,"0")} : ${(selectedTimes[selectedTime] % 60).toString().padLeft(2,"0")}")),
                       ),
                       SliderTheme(
                         data: const SliderThemeData(
                             trackShape: RectangularSliderTrackShape(),
                             thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10)),
-                        child: Slider(
-                            value: _position.inSeconds.toDouble(),
-                            min: 0.0,
-                            max: _duration.inSeconds.toDouble(),
-                            divisions: 100,
+                        child: Slider.adaptive(
+                            value: selectedTime.toDouble(),
+                            min: 0,
+                            max: 7,
+                            divisions: 7,
                             activeColor: primaryPinkColor,
                             inactiveColor: primaryGreyColor2,
                             onChanged: (double newValue) async{
-                              await audioPlayer.seek(Duration(seconds: newValue.toInt()));
-                              await audioPlayer.resume();
-                              print("dialog update");
-                              state(() {});
+                              state(() {
+                                setDuration = 1;
+                                selectedTime = check?0:newValue.toInt();
+                                setDuration = selectedTimes[selectedTime];
+                                setDuration *= 60;
+                                print("index $selectedTime");
+                              });
                               setState(() {});
                             },
                             semanticFormatterCallback: (double newValue) {
@@ -818,16 +824,12 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
                             onChanged: (newValue){
                               state(() {
                                 check = newValue!;
+                                if(check){
+                                  selectedTime = 0;
+                                }
                               });
                         }),
                         TextButton(onPressed: check?() async{
-                          int min = int.parse(minController.text);
-                          int sec = int.parse(secController.text);
-                          min = min * 60;
-                          sec = sec + min;
-                          if(_duration.inSeconds.toInt() > sec){
-                            await audioPlayer.seek(Duration(seconds:sec));
-                          }
                           if(mounted){
                             Navigator.pop(context);
                           }
@@ -1049,4 +1051,5 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
       ),
     );
   }
+
 }
