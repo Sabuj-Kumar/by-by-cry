@@ -5,13 +5,11 @@ import 'package:bye_bye_cry_new/compoment/shared/custom_image.dart';
 import 'package:bye_bye_cry_new/compoment/shared/custom_svg.dart';
 import 'package:bye_bye_cry_new/screens/provider/add_music_provider.dart';
 import 'package:bye_bye_cry_new/screens/provider/mix_music_provider.dart';
-import 'package:bye_bye_cry_new/start_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screen_wake/flutter_screen_wake.dart';
 import 'package:perfect_volume_control/perfect_volume_control.dart';
-import '../compoment/bottom_sheet.dart';
 import '../compoment/shared/custom_app_bar.dart';
 import '../compoment/shared/custom_text.dart';
 import '../compoment/shared/screen_size.dart';
@@ -57,6 +55,7 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
     startPlayer();
     changeVolume();
     initPlatformState();
+    pausePlayMethod();
     super.initState();
   }
 
@@ -133,6 +132,19 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
    }
   }
 
+  pausePlayMethod()async{
+    if(issongplaying){
+      await audioPlayer.pause();
+      print("pause");
+    }else{
+      String url = widget.musicModel.musicFile;
+      await audioPlayer.play(AssetSource(url));
+      print("play");
+    }
+    if(mounted){
+      setState(() {});
+    }
+  }
   @override
   Widget build(BuildContext context) {
     final height = ScreenSize(context).height;

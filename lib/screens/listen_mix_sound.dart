@@ -48,6 +48,7 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
     150
   ];
   int selectedTime = 0;
+  bool playPouse = true;
   int setDuration = 0;
   AudioCache audioCache = AudioCache();
   AudioPlayer audioPlayer = AudioPlayer();
@@ -121,7 +122,7 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
   }
   startPlayer()async{
     //_position = _slider;
-    audioPlayer.onPlayerStateChanged.listen((state) {
+    audioPlayer.onPlayerStateChanged.listen((state){
       issongplaying = state == PlayerState.playing;
       if(_duration.inSeconds.toInt() == _position.inSeconds.toInt() || (_duration.inSeconds.toInt() - 1 == _position.inSeconds.toInt())) {
         if(mounted){
@@ -139,6 +140,7 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
                 setState(() {
                   index++;
                 });
+                print("index++ $index");
                 pausePlayMethod();
               }
             }else{
@@ -156,7 +158,17 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
         setState(() {});
       }
       if(mounted){
-        continueMusic();
+        if(playPouse){
+          if(_duration.inSeconds.toInt() == _position.inSeconds.toInt() || (_duration.inSeconds.toInt() - 1 == _position.inSeconds.toInt())){
+            if(!issongplaying){
+              index = index == 0?1:0;
+              if(mounted){
+                setState((){});
+              }
+              playMusic();
+            }
+          }
+        }
       }
     });
     audioPlayer.onDurationChanged.listen((newDuration) {
@@ -187,6 +199,9 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
           musicList.add(ref.watch(mixMusicProvider).combinationList[musicIndex].second!);
           setState(() {});
         }
+        if(mounted){
+          pausePlayMethod();
+        }
       }
     });
   }
@@ -211,6 +226,7 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
   }
 
   pausePlayMethod()async{
+    print("index $index");
     if(issongplaying){
       await audioPlayer.pause();
       print("pause");
@@ -224,15 +240,24 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
     }
   }
 
-  continueMusic(){
+  playMusic()async{
+    if(setDuration > 0){
+      pausePlayMethod();
+    }
+    if(mounted){
+      setState(() {});
+    }
+  }
+ /* continueMusic(){
       if(setDuration > 0){
         if(!issongplaying){
-          index = 0;
           pausePlayMethod();
-          print("asasche");
         }
       }
-  }
+      if(mounted){
+        setState(() {});
+      }
+  }*/
 /*  startTimer(void Function(void Function()) state)async{
     _timer =
         Timer.periodic(const Duration(milliseconds: 500),(timer){
@@ -497,12 +522,18 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
                       ),
                       child: GestureDetector(
                         onTap: ()async {
-                          if (issongplaying) {
+                          if(issongplaying) {
                             await audioPlayer.pause();
+                            if(mounted){
+                              playPouse = false;
+                            }
                             print("pause solution");
                           } else {
                             String url = musicList[index].musicFile;
                             await audioPlayer.play(AssetSource(url));
+                            if(mounted){
+                              playPouse = true;
+                            }
                             print("play");
                           }
                         },

@@ -1,7 +1,7 @@
 
+import 'package:bye_bye_cry_new/screens/provider/mix_music_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:perfect_volume_control/perfect_volume_control.dart';
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../compoment/shared/custom_app_bar.dart';
 import '../compoment/shared/custom_image.dart';
 import '../compoment/shared/custom_text.dart';
@@ -9,14 +9,14 @@ import '../compoment/shared/outline_button.dart';
 import '../compoment/shared/screen_size.dart';
 import '../compoment/utils/color_utils.dart';
 
-class AddToPlayListPage extends StatefulWidget {
+class AddToPlayListPage extends ConsumerStatefulWidget {
   const AddToPlayListPage({Key? key}) : super(key: key);
 
   @override
-  State<AddToPlayListPage> createState() => _AddToPlayListPageState();
+  ConsumerState<AddToPlayListPage> createState() => _AddToPlayListPageState();
 }
 
-class _AddToPlayListPageState extends State<AddToPlayListPage> {
+class _AddToPlayListPageState extends ConsumerState<AddToPlayListPage> {
   double currentvol = 1;
   double currentvol2 = 1;
   @override
@@ -48,14 +48,13 @@ class _AddToPlayListPageState extends State<AddToPlayListPage> {
   Widget build(BuildContext context) {
     final width = ScreenSize(context).width;
     final height = ScreenSize(context).height;
-
     return Scaffold(
       appBar: const CustomAppBar(title: 'My Playlist',),
       body: SingleChildScrollView(
         child: Column(
           children: [
             Column(
-              children: List.generate(3, (index) =>Padding(
+              children: List.generate(ref.watch(mixMusicProvider).mixPlaylist.length, (index) =>Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10.0),
                 child: Column(
                   children: [
@@ -67,13 +66,12 @@ class _AddToPlayListPageState extends State<AddToPlayListPage> {
                       children: [
                         Column(
                           children: [
-                            const  CustomText(text: "Chainsaw",fontSize: 20,fontWeight: FontWeight.w600,color: blackColor77,),
+                            CustomText(text: "${ref.watch(mixMusicProvider).mixPlaylist[index].first?.musicName}",fontSize: 20,fontWeight: FontWeight.w600,color: blackColor77,),
                             CustomImage(
-                              imageUrl: 'asset/images/chainsaw_mix_new.png',
-                              height: width * .35,
-                              width: width * .35,
-                              boxFit: BoxFit.cover,
-                            ),
+                                height: width * .35,
+                                width: width * .35,
+                                boxFit: BoxFit.cover,
+                                imageUrl: "${ref.watch(mixMusicProvider).mixPlaylist[index].second?.image}"),
                           ],
                         ),
                         Icon(
@@ -83,17 +81,17 @@ class _AddToPlayListPageState extends State<AddToPlayListPage> {
                         ),
                         Column(
                           children: [
-                            const CustomText(text: "Ocean",fontSize: 20,fontWeight: FontWeight.w600,color: blackColor77),
+                            CustomText(text: "${ref.watch(mixMusicProvider).mixPlaylist[index].second?.musicName}",fontSize: 20,fontWeight: FontWeight.w600,color: blackColor77,),
                             Padding(
                               padding: const EdgeInsets.only(right: 10.0,top: 10),
                               child: Container(
                                 height: width * .35,
                                 width: width * .35,
                                 decoration: const BoxDecoration(
-                                    color: primaryPinkColor,
                                     borderRadius: BorderRadius.all(Radius.circular(20))),
-                                child: const CustomImage(
-                                    imageUrl: 'asset/images/icon_png/music.png'),
+                                child: CustomImage(
+                                    boxFit: BoxFit.fill,
+                                    imageUrl: "${ref.watch(mixMusicProvider).mixPlaylist[index].second?.image}"),
                               ),
                             ),
                           ],
@@ -109,7 +107,7 @@ class _AddToPlayListPageState extends State<AddToPlayListPage> {
                             SizedBox(
                               width: width * .45,
                               child: Slider(
-                                  value: _value.toDouble(),
+                                  value: 5,
                                   min: 1.0,
                                   max: 20.0,
                                   divisions: 100,
@@ -124,10 +122,10 @@ class _AddToPlayListPageState extends State<AddToPlayListPage> {
                                     return '${newValue.round()} dollars';
                                   }),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                            const Padding(
+                              padding:  EdgeInsets.symmetric(horizontal: 15.0),
                               child: CustomText(
-                                text: 'Set sound ${_value} volume',
+                                text: 'Set sound 5 volume',
                                 fontWeight: FontWeight.w400,
                                 fontSize: 16,
                               ),
@@ -142,7 +140,7 @@ class _AddToPlayListPageState extends State<AddToPlayListPage> {
                               child: Align(
                                 alignment: Alignment.topLeft,
                                 child: Slider(
-                                    value: _value2.toDouble(),
+                                    value:5,
                                     min: 1.0,
                                     max: 20.0,
                                     divisions: 100,
@@ -158,10 +156,10 @@ class _AddToPlayListPageState extends State<AddToPlayListPage> {
                                     }),
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                            const Padding(
+                              padding:  EdgeInsets.symmetric(horizontal: 15.0),
                               child: CustomText(
-                                text: 'Set sound ${_value2} volume',
+                                text: 'Set sound 5 volume',
                                 fontWeight: FontWeight.w400,
                                 fontSize: 16,
                               ),
@@ -175,7 +173,7 @@ class _AddToPlayListPageState extends State<AddToPlayListPage> {
               ),),
             ),
             const SizedBox(height: 20),
-            GestureDetector(
+            ref.watch(mixMusicProvider).mixPlaylist.length <=3?GestureDetector(
               onTap: (){},
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -187,7 +185,7 @@ class _AddToPlayListPageState extends State<AddToPlayListPage> {
                   CustomText(text: "Add another Sound Set",fontSize: 16,fontWeight: FontWeight.w600,color: primaryGreyColor),
                 ],
               ),
-            ),
+            ):const SizedBox(),
             const SizedBox(height: 40),
             OutLineButton(
               height: height * .06,
@@ -197,7 +195,7 @@ class _AddToPlayListPageState extends State<AddToPlayListPage> {
               textFontWeight: FontWeight.w600,
               borderRadius: 50,
               onPressed: () {
-                Navigator.pop(context);
+               // Navigator.pop(context);
                 //_showDialog(context);
               },
             ),
