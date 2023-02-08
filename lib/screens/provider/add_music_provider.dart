@@ -14,12 +14,17 @@ class AddMusicProvider extends ChangeNotifier {
   List<MusicModel> playList = [];
   int pageNumber = 0;
   bool showAddPlaylist = false;
+  String musicId = "";
+  bool changeToPlayNow = false;
 
-  showPlusPlaylist({bool playlistPlusBottom = false}){
+  changePlay({bool change = false}){
+    changeToPlayNow = change;
+    notifyListeners();
+  }
+  showPlusPlaylist({bool playlistPlusBottom = false,}){
     showAddPlaylist = playlistPlusBottom;
     notifyListeners();
   }
-
   addMusic(){
 
     musicList.add(MusicModel(musicName: 'Canon blended', musicFile: "babyCry/Canon_blended.wav", id: '1', image: chainsaw));

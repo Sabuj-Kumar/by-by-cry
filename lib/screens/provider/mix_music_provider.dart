@@ -13,7 +13,12 @@ class MixMusicProvider extends ChangeNotifier{
   List<MixMusicModel> mixPlaylist = [];
   MixMusicModel? mixMusicModel;
   bool alertDiaLog = false;
+  bool changeToMixPlayNow = false;
 
+  changeMixPlay({bool change = false}){
+    changeToMixPlayNow = change;
+    notifyListeners();
+  }
   clearMixMusics(){
     musicModelFirst = null;
     musicModelSecond = null;
@@ -28,9 +33,12 @@ class MixMusicProvider extends ChangeNotifier{
     notifyListeners();
   }
   createMix(MixMusicModel mixMusicModel)async{
-    combinationList.add(mixMusicModel);
-    await LocalDB.setMixMusicListItem(combinationList);
-    print('added mix ${mixMusicModel.id}');
+    int index = combinationList.indexWhere((element) => element.id == mixMusicModel.id);
+    if(index < 0){
+      combinationList.add(mixMusicModel);
+      await LocalDB.setMixMusicListItem(combinationList);
+      print('added mix ${mixMusicModel.id}');
+    }
     /*int index = combinationList.indexWhere((element) => element.id == mixMusicModel.id);
     if(!mixPlayListIds.contains(mixMusicModel.id)) {
       if(index < 0) {
@@ -62,31 +70,40 @@ class MixMusicProvider extends ChangeNotifier{
   addOrRemoveMixPlayList({required String id})async{
     if(combinationList.isNotEmpty){
       int index = combinationList.indexWhere((element) => element.id == id);
-      if(!mixPlayListIds.contains(id)) {
-        if(index >= 0) {
+      if(index >= 0) {
+        if(!mixPlayListIds.contains(id)) {
           mixPlaylist.add(combinationList[index]);
           mixPlayListIds.add(id);
           await LocalDB.setMixPlayListItem(mixPlaylist);
           print('added mix musix');
-        }
-      }else {
-        if(index >= 0) {
+        }else{
           mixPlaylist.remove(combinationList[index]);
           mixPlayListIds.remove(id);
           await LocalDB.setMixPlayListItem(mixPlaylist);
-          print('remove mix music');
         }
       }
     }
     notifyListeners();
   }
-
   alertDialogStart(){
     alertDiaLog = true;
     notifyListeners();
   }
   alertDialogStop(){
     alertDiaLog = false;
+    notifyListeners();
+  }
+  deleteMix({required String mixId})async{
+    int index = combinationList.indexWhere((element) => element.id == mixId);
+    if(index >= 0){
+      if(mixPlaylist.contains(combinationList[index])){
+        mixPlaylist.remove(combinationList[index]);
+        mixPlayListIds.remove(mixId);
+        await LocalDB.setMixPlayListItem(mixPlaylist);
+      }
+      combinationList.removeAt(index);
+      await LocalDB.setMixMusicListItem(combinationList);
+    }
     notifyListeners();
   }
 }

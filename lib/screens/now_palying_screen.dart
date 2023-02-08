@@ -18,9 +18,9 @@ import '../compoment/utils/image_link.dart';
 import 'models/music_models.dart';
 
 class NowPlayingScreen extends ConsumerStatefulWidget {
-  final MusicModel musicModel;
+  final String musicId;
   final VoidCallback? onPressed;
-  const NowPlayingScreen({Key? key,required this.musicModel,this.onPressed}) : super(key: key);
+  const NowPlayingScreen({Key? key,required this.musicId,this.onPressed}) : super(key: key);
 
   @override
   ConsumerState<NowPlayingScreen> createState() => _NowPlayingScreenState();
@@ -28,8 +28,7 @@ class NowPlayingScreen extends ConsumerStatefulWidget {
 
 class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with TickerProviderStateMixin{
 
-  int _value = 1;
-  double _value2 = 1;
+
   List<String> times = [
     "0",
     "5 min",
@@ -40,6 +39,16 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
     "120 min",
     "150 min",
   ];
+  List<int> selectedTimes = [
+    0,
+    5,
+    10,
+    30,
+    60,
+    90,
+    120,
+    150
+  ];
   AudioCache audioCache = AudioCache();
   AudioPlayer audioPlayer = AudioPlayer();
   Duration _duration = Duration.zero;
@@ -49,13 +58,18 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
   bool issongplaying = false;
   double brightness = 0.5;
   late StreamSubscription<double> _subscription;
+  int index = 0;
+  int selectedTime = 0;
+  int setDuration = 0;
+  bool check = false;
+  bool playPouse = true;
 
   @override
   void initState() {
+    initialization();
     startPlayer();
     changeVolume();
     initPlatformState();
-    pausePlayMethod();
     super.initState();
   }
 
@@ -66,6 +80,18 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
     super.dispose();
   }
 
+  initialization(){
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      int _index = ref.watch(addProvider).musicList.indexWhere((element) => element.id == widget.musicId);
+      if(_index >= 0){
+        index = _index;
+        if(mounted){
+          setState(() {});
+          pausePlayMethod();
+        }
+      }
+    });
+  }
   changeVolume(){
     PerfectVolumeControl.hideUI = true;
     Future.delayed(Duration.zero, () async {
@@ -78,31 +104,26 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
       currentVolume = volume;
       if(mounted){
         print('sound $currentVolume');
-        setState(() {});
+        setState((){});
       }
     });
   }
-  Future<void> initPlatformState() async {
+  Future<void> initPlatformState()async{
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
       brightness = await FlutterScreenWake.brightness; //get the current screen brightness
       if(brightness > 1){
         brightness = brightness / 10;
-        // sometime it gives value ranging 0.0 - 10.0, so convert it to range 0.0 - 1.0
       }
       print(brightness);
       setState(() {
         brightness = brightness;
         //change the variable value and update screen UI
       });
-
     } on PlatformException {
       brightness = 0.0;
     }
 
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
     if (!mounted) return;
   }
   startPlayer()async{
@@ -111,8 +132,31 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
     audioPlayer.onPlayerStateChanged.listen((state) {
       issongplaying = state == PlayerState.playing;
       if(mounted){
-        print("in method $issongplaying");
-        setState(() {});
+        setState((){});
+      }
+      if(_duration.inSeconds.toInt() == _position.inSeconds.toInt() || (_duration.inSeconds.toInt() - 1 == _position.inSeconds.toInt())) {
+        if(mounted){
+          setState(() {
+            setDuration -= _duration.inSeconds.toInt();
+            print("set duration change $setDuration");
+            print("playe or not $playPouse");
+            if(!issongplaying){
+              if(playPouse) {
+                if (mounted) {
+                  if (setDuration > 0) {
+                    pausePlayMethod();
+                  }
+                  setState(() {});
+                }
+              }
+            }
+          });
+        }
+      }
+      if(mounted){
+        if(playPouse){
+
+        }
       }
     });
     audioPlayer.onDurationChanged.listen((newDuration) {
@@ -131,13 +175,12 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
      setState(() {});
    }
   }
-
   pausePlayMethod()async{
     if(issongplaying){
       await audioPlayer.pause();
       print("pause");
     }else{
-      String url = widget.musicModel.musicFile;
+      String url = ref.watch(addProvider).musicList[index].musicFile;
       await audioPlayer.play(AssetSource(url));
       print("play");
     }
@@ -145,6 +188,22 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
       setState(() {});
     }
   }
+  changeIndex({bool changeIndex = false}){
+    print("change index");
+    if(changeIndex){
+      index = (index + 1) % ref.watch(addProvider).musicList.length;
+    }else{
+      index = (index - 1);
+      if(index < 0){
+        index = ref.watch(addProvider).musicList.length-1;
+      }
+    }
+    print('new index $index');
+   if(mounted){
+     setState(() {});
+   }
+  }
+
   @override
   Widget build(BuildContext context) {
     final height = ScreenSize(context).height;
@@ -182,7 +241,7 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
               ],
             ),
             CustomImage(
-              imageUrl: widget.musicModel.image,
+              imageUrl: ref.watch(addProvider).musicList[index].image,
               height: width * .7,
               width: width * .9,
               boxFit: BoxFit.fill,
@@ -195,7 +254,7 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                      CustomText(
-                      text: widget.musicModel.musicName,
+                      text: ref.watch(addProvider).musicList[index].musicName,
                       fontSize: 20,
                       fontWeight: FontWeight.w400,
                       color: secondaryBlackColor,
@@ -214,9 +273,9 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                     children:  [
                       GestureDetector(
                           onTap: (){
-                              ref.read(addProvider).addOrRemovePlayList(id:  widget.musicModel.id);
+                              ref.read(addProvider).addOrRemovePlayList(id:  ref.watch(addProvider).musicList[index].id);
                           },
-                          child: CustomImage(imageUrl: 'asset/images/icon_png/love.png',color: ref.watch(addProvider).playListIds.contains(widget.musicModel.id)? Colors.red:blackColorA0,)),
+                          child: CustomImage(imageUrl: 'asset/images/icon_png/love.png',color: ref.watch(addProvider).playListIds.contains(ref.watch(addProvider).musicList[index].id)? Colors.red:blackColorA0,)),
                       const SizedBox(
                         width: 10,
                       ),
@@ -242,7 +301,7 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                           onTap: (){
                             ref.read(addProvider).changePage(2);
                             ref.read(mixMusicProvider).clearMixMusics();
-                            ref.read(mixMusicProvider).mixFirstMusic(widget.musicModel);
+                            ref.read(mixMusicProvider).mixFirstMusic(ref.watch(addProvider).musicList[index]);
                            // Navigator.push(context, MaterialPageRoute(builder: (context) => const StartPage()));
                           },
                           child: const CustomText(
@@ -293,16 +352,16 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                     activeColor: primaryPinkColor,
                     inactiveColor: primaryGreyColor2,
                     onChanged: (double newValue) async{
-                      _value = newValue.round();
+
                       print("slider");
                       if(_position.inSeconds.toInt()>=_duration.inSeconds.toInt()){
-                        String url = widget.musicModel.musicFile;
+                        String url = ref.watch(addProvider).musicList[index].musicFile;
                         await audioPlayer.play(AssetSource(url));
                       }
                       await audioPlayer.seek(Duration(seconds: newValue.toInt()));
                       await audioPlayer.resume();
                       if(_position.inSeconds.toInt()<_duration.inSeconds.toInt()){
-                        String url = widget.musicModel.musicFile;
+                        String url = ref.watch(addProvider).musicList[index].musicFile;
                         await audioPlayer.play(AssetSource(url));
                         print("play less");
                       }
@@ -332,11 +391,17 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                     IconButton(
                         padding: EdgeInsets.zero,
                         onPressed: ()async{
-                          if(_position.inSeconds.toInt() - 5 > 0){
-                            await audioPlayer.seek(Duration(seconds: _position.inSeconds.toInt() - 5));
-                            String url = widget.musicModel.musicFile;
+                          changeIndex(changeIndex: false);
+                          if(mounted){
+                            String url = ref.watch(addProvider).musicList[index].musicFile;
+                            await audioPlayer.seek(const Duration(seconds:0));
                             await audioPlayer.play(AssetSource(url));
-                            print('click');
+                          }
+                          if(_position.inSeconds.toInt()>=_duration.inSeconds.toInt()-1){
+                            await audioPlayer.pause();
+                          }
+                          if(mounted){
+                            setState(() {});
                           }
                         },
                         icon: const CustomSvg(svg: left_shift,color: primaryPinkColor)),
@@ -359,10 +424,16 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                       child: GestureDetector(
                         onTap: ()async {
                           if (issongplaying) {
+                            if(mounted){
+                              playPouse = false;
+                            }
                             await audioPlayer.pause();
                             print("pause solution");
                           } else {
-                            String url = widget.musicModel.musicFile;
+                            if(mounted){
+                              playPouse = true;
+                            }
+                            String url = ref.watch(addProvider).musicList[index].musicFile;
                             await audioPlayer.play(AssetSource(url));
                             print("play");
                           }
@@ -379,14 +450,18 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                     IconButton(
                         padding: EdgeInsets.zero,
                         onPressed: ()async{
-                            //await audioPlayer.pause();
-                            await audioPlayer.seek(Duration(seconds: _position.inSeconds.toInt() + 5));
-                            await audioPlayer.resume();
-                            print('click');
-
-                            if(_position.inSeconds.toInt()>=_duration.inSeconds.toInt()){
-                              await audioPlayer.pause();
-                            }
+                          changeIndex(changeIndex: true);
+                          if(mounted){
+                            String url = ref.watch(addProvider).musicList[index].musicFile;
+                            await audioPlayer.seek(const Duration(seconds:0));
+                            await audioPlayer.play(AssetSource(url));
+                          }
+                          if(_position.inSeconds.toInt()>=_duration.inSeconds.toInt()-1){
+                            await audioPlayer.pause();
+                          }
+                          if(mounted){
+                            setState(() {});
+                          }
                         },
                         icon: const CustomSvg(svg: right_shift,color: primaryPinkColor)),
                     IconButton(
@@ -422,7 +497,7 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
               children: [
                 Container(
                   color: Colors.transparent,
-                  height: width * 0.27,
+                  height: width * 0.23,
                   child: AlertDialog(
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15)
@@ -487,6 +562,7 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
     showDialog(
       context: context,
       builder: (BuildContext context) {
+        final width = ScreenSize(context).width;
         return StatefulBuilder(
           builder: (BuildContext context, void Function(void Function()) updateState) { return Column(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -503,39 +579,65 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                   contentPadding: EdgeInsets.zero,
                   content: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10)
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10)
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                    child: Stack(
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 20.0,top:15,right: 0,bottom: 0),
-                          child: Transform(
-                            alignment: Alignment.topCenter,
-                            transform:  Matrix4.identity()..rotateZ(90 * 3.1415927 / 180),
-                            child: const CustomSvg(svg: volume,color: Colors.red,),
-                          ),
-                        ),
-                        Expanded(
-                          child: Slider(
-                            value: currentVolume,
-                            min: 0.0,
-                            max: 1.0,
-                            divisions: 100,
-                            activeColor: primaryPinkColor,
-                            inactiveColor: primaryGreyColor2,
-                            onChanged: (double newValue) async{
-                              updateState(() {
-                                // Screen.setBrightness(newValue);
-                                currentVolume = newValue;
-                                print("$currentVolume");
-                              });
-                              await PerfectVolumeControl.setVolume(currentVolume);
-                            },
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 20.0,top:15,right: 0,bottom: 0),
+                              child: Transform(
+                                alignment: Alignment.topCenter,
+                                transform:  Matrix4.identity()..rotateZ(90 * 3.1415927 / 180),
+                                child: const CustomSvg(svg: volume,color: Colors.red,),
+                              ),
                             ),
+                            Expanded(
+                              child: Slider(
+                                value: currentVolume,
+                                min: 0.0,
+                                max: 1.0,
+                                divisions: 100,
+                                activeColor: primaryPinkColor,
+                                inactiveColor: primaryGreyColor2,
+                                onChanged: (double newValue) async{
+                                  updateState(() {
+                                    // Screen.setBrightness(newValue);
+                                    currentVolume = newValue;
+                                    print("volume $currentVolume");
+                                  });
+                                  await PerfectVolumeControl.setVolume(currentVolume);
+                                },
+                              ),
+                            ),
+                          ],
                         ),
+                        Positioned(
+                            right: width * 0.25,
+                            top: 10,
+                            child: Transform(
+                                transform:  Matrix4.identity()..rotateZ(90 * 3.1415927 / 180),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(2),
+                                      boxShadow: [
+                                        BoxShadow(
+                                            color: secondaryBlackColor.withOpacity(0.2),
+                                            blurRadius: 0.2,
+                                            spreadRadius: 0.5
+                                        )
+                                      ]
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 4.0,vertical: 5),
+                                    child: Center(child: CustomText(text: "${(currentVolume * 100).toInt().toString().padLeft(2,"0")}%",fontSize: 10,color: secondaryBlackColor,fontWeight: FontWeight.w600,)),
+                                  ),
+                                )))
                       ],
                     ),
                   ),
@@ -554,91 +656,126 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
       context: context,
       builder: (BuildContext context) {
         return StatefulBuilder(
-          builder: (BuildContext context, void Function(void Function()) updateState) { return  Align(
-            alignment: Alignment.center,
-            child: Wrap(
-              children: [
-                AlertDialog(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15)
-                  ),
-                  backgroundColor: Colors.white,
-                  title: const CustomText(
-                    text: 'Select Duration',
-                    textAlign: TextAlign.center,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: primaryGreyColor,
-                  ),
-                  content: Column(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: greyEC,
+          builder: (BuildContext context, void Function(void Function()) state) {
+            /* if(mounted) {
+              //startTimer(state);
+              if(mounted){
+                state((){});
+              }
+            }*/
+            return  Align(
+              alignment: Alignment.center,
+              child: Wrap(
+                children: [
+                  AlertDialog(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15)
+                    ),
+                    backgroundColor: Colors.white,
+                    title: Column(
+                      children: const [
+                        CustomText(
+                          text: 'Select Duration',
+                          textAlign: TextAlign.center,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          color: primaryGreyColor,
                         ),
-                        child:  Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 9),
-                          child: CustomText(
-                            text: '${(_value2 ~/ 60).toString().padLeft(2,'0')}:${(_value2 % 60).toString().padLeft(2,'0')}',
-                            fontSize: 20,
-                            color: secondaryBlackColor,
-                            fontWeight: FontWeight.w400,
+                        SizedBox(height: 20),
+                      ],
+                    ),
+                    contentPadding: EdgeInsets.zero,
+                    content: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          width: width * 0.17,
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            color: greyEC,
+                          ),
+                          child: Center(child: CustomText(text: "${(selectedTimes[selectedTime] ~/ 60).toString().padLeft(2,"0")} : ${(selectedTimes[selectedTime] % 60).toString().padLeft(2,"0")}")),
+                        ),
+                        SliderTheme(
+                          data: const SliderThemeData(
+                              trackShape: RectangularSliderTrackShape(),
+                              thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10)),
+                          child: Slider.adaptive(
+                              value: selectedTime.toDouble(),
+                              min: 0,
+                              max: 7,
+                              divisions: 7,
+                              activeColor: primaryPinkColor,
+                              inactiveColor: primaryGreyColor2,
+                              onChanged: (double newValue) async{
+                                state(() {
+                                  setDuration = 1;
+                                  selectedTime = check?0:newValue.toInt();
+                                  setDuration = selectedTimes[selectedTime];
+                                  setDuration *= 60;
+                                  print("index $selectedTime");
+                                });
+                                setState(() {});
+                              },
+                              semanticFormatterCallback: (double newValue) {
+                                return '${newValue.round()} dollars';
+                              }),
+                        ),
+                        SizedBox(
+                          width: width * 0.59,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: List.generate(times.length, (index) => CustomText(text: times[index],fontWeight: FontWeight.w400,fontSize: 8,color: secondaryBlackColor) ),
                           ),
                         ),
-                      ),
-                      SliderTheme(
-                        data: const SliderThemeData(
-                            trackShape: RectangularSliderTrackShape(),
-                            thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10)),
-                        child: Slider(
-                            value: _value.toDouble(),
-                            min: 0.0,
-                            max: 150.0,
-                            divisions: 100,
-                            activeColor: primaryPinkColor,
-                            inactiveColor: primaryGreyColor2,
-                            onChanged: (double newValue) {
-                              updateState(() {
-                                _value = newValue.round();
-                              });
-                            },
-                            semanticFormatterCallback: (double newValue) {
-                              return '${newValue.round()} dollars';
-                            }),
-                      ),
-                      SizedBox(
-                        width: width * 0.5,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: List.generate(times.length, (index) => CustomText(text: times[index],fontWeight: FontWeight.w400,fontSize: 6,color: secondaryBlackColor) ),
-                        ),
+                        const SizedBox(height: 15),
+                      ],
+                    ),
+                    actionsAlignment: MainAxisAlignment.start,
+                    actionsPadding: const EdgeInsets.only(left: 48,bottom: 30),
+                    actions: <Widget>[
+                      Row(
+                        children: [
+                          Checkbox(
+                              side: const BorderSide(color: blackColorA0),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              activeColor: primaryPinkColor,
+                              value: check,
+                              onChanged: (newValue){
+                                state(() {
+                                  check = newValue!;
+                                  if(check){
+                                    selectedTime = 0;
+                                  }
+                                });
+                              }),
+                          TextButton(onPressed: check?() async{
+                            if(mounted){
+                              Navigator.pop(context);
+                            }
+                          }:null,
+                              child: const CustomText(text: "continuous play",fontSize: 16,fontWeight: FontWeight.w400,color: primaryGreyColor,))
+                        ],
                       )
                     ],
                   ),
-                  actionsAlignment: MainAxisAlignment.start,
-                  actionsPadding: const EdgeInsets.only(left: 48,bottom: 30),
-                  actions: <Widget>[
-                    Row(
-                      children: [
-                        Container(
-                          height: 13,
-                          width: 13,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: primaryPinkColor,width: 2)
-                          ),
-                        ),
-                        SizedBox(width: width * 0.02),
-                        const CustomText(text: "continuous play",fontSize: 16,fontWeight: FontWeight.w400,color: primaryGreyColor,)
-                      ],
-                    )
-                  ],
-                ),
-              ],
-            ),
-          );  },
+                ],
+              ),
+            );  },
         );
       },
-    );
+    ).then((value) {
+      if(mounted){
+        ref.read(mixMusicProvider).alertDialogStop();
+        if(mounted){
+          setState(() {
+            print("asche");
+          });
+        }
+      }
+    });
   }
 }

@@ -10,7 +10,8 @@ import '../compoment/shared/screen_size.dart';
 import '../compoment/utils/color_utils.dart';
 
 class AddToPlayListPage extends ConsumerStatefulWidget {
-  const AddToPlayListPage({Key? key}) : super(key: key);
+  final VoidCallback? onPressed;
+  const AddToPlayListPage({Key? key,this.onPressed}) : super(key: key);
 
   @override
   ConsumerState<AddToPlayListPage> createState() => _AddToPlayListPageState();
@@ -49,7 +50,7 @@ class _AddToPlayListPageState extends ConsumerState<AddToPlayListPage> {
     final width = ScreenSize(context).width;
     final height = ScreenSize(context).height;
     return Scaffold(
-      appBar: const CustomAppBar(title: 'My Playlist',),
+      appBar: CustomAppBar(title: 'My Playlist',onPressed: widget.onPressed),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -71,7 +72,7 @@ class _AddToPlayListPageState extends ConsumerState<AddToPlayListPage> {
                                 height: width * .35,
                                 width: width * .35,
                                 boxFit: BoxFit.cover,
-                                imageUrl: "${ref.watch(mixMusicProvider).mixPlaylist[index].second?.image}"),
+                                imageUrl: "${ref.watch(mixMusicProvider).mixPlaylist[index].first?.image}"),
                           ],
                         ),
                         Icon(
@@ -125,7 +126,7 @@ class _AddToPlayListPageState extends ConsumerState<AddToPlayListPage> {
                             const Padding(
                               padding:  EdgeInsets.symmetric(horizontal: 15.0),
                               child: CustomText(
-                                text: 'Set sound 5 volume',
+                                text: 'Set sound 1 volume',
                                 fontWeight: FontWeight.w400,
                                 fontSize: 16,
                               ),
@@ -159,7 +160,7 @@ class _AddToPlayListPageState extends ConsumerState<AddToPlayListPage> {
                             const Padding(
                               padding:  EdgeInsets.symmetric(horizontal: 15.0),
                               child: CustomText(
-                                text: 'Set sound 5 volume',
+                                text: 'Set sound 2 volume',
                                 fontWeight: FontWeight.w400,
                                 fontSize: 16,
                               ),
@@ -172,8 +173,8 @@ class _AddToPlayListPageState extends ConsumerState<AddToPlayListPage> {
                 ),
               ),),
             ),
-            const SizedBox(height: 20),
-            ref.watch(mixMusicProvider).mixPlaylist.length <=3?GestureDetector(
+            ref.watch(mixMusicProvider).mixPlaylist.length <3?const SizedBox(height: 20):const SizedBox(),
+            ref.watch(mixMusicProvider).mixPlaylist.length <3?GestureDetector(
               onTap: (){},
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,

@@ -30,7 +30,12 @@ class _PlayListScreenState extends ConsumerState<PlayListScreen> {
 
     final height = ScreenSize(context).height;
 
-    return goMixPlayList?const AddToPlayListPage():Scaffold(
+    return goMixPlayList? AddToPlayListPage(
+      onPressed: (){
+        goMixPlayList = false;
+        setState(() {});
+      },
+    ):Scaffold(
       appBar: const CustomAppBar(
         title: 'My Playlist',
         actionTitle: 'Edit',

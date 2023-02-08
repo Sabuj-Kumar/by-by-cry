@@ -26,4 +26,5 @@ const ocean = "asset/images/sounds_image/Ocean.png";
 const dummy = "asset/images/sounds_image/dummy.png";
 const music = "asset/images/icon_png/sound_color.png";
 const logo= "asset/images/Logo.png";
+const musicJust = "asset/images/music.svg";
 

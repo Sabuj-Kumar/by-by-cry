@@ -177,42 +177,61 @@ class _MixScreenState extends ConsumerState<MixScreen> {
                         size: height * .05,
                         color: primaryPinkColor,
                       ),
-                      CustomImage(
-                        imageUrl: ref.watch(mixMusicProvider).musicModelSecond?.image ?? music,
+                      ref.watch(mixMusicProvider).musicModelSecond?.image == null?Container(
+                        height: width * .3,
+                        width: width * .3,
+                        decoration: BoxDecoration(
+                          color: secondaryPickColor,
+                          borderRadius: BorderRadius.circular(10)
+                        ),
+                        child: const Padding(
+                          padding: EdgeInsets.all(25.0),
+                          child: CustomSvg(
+                            svg: musicJust,
+                          ),
+                        ),
+                      ):CustomImage(
+                        imageUrl: ref.watch(mixMusicProvider).musicModelSecond!.image,
                         height: width * .35,
                         width: width * .35,
                         boxFit: BoxFit.cover,
                       ),
                     ],
                   ),
-                  const SizedBox(height: 20),
                 ],
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  CustomText(
-                    text: "${ref.watch(mixMusicProvider).musicModelFirst?.musicName}",
-                    textAlign: TextAlign.center,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w400,
-                    color: primaryGreyColor,
-                  ),
-                  const SizedBox(),
-                  GestureDetector(
-                    onTap:(){
-                      if(ref.watch(mixMusicProvider).musicModelSecond?.musicName == null){
-                        ref.read(addProvider).showPlusPlaylist(playlistPlusBottom:true);
-                        ref.read(addProvider).changePage(1);
-                      }
-                    },
-                    child: Container(
-                      color: Colors.transparent,
+                  Expanded(
+                    child: Center(
                       child: CustomText(
-                        text: ref.watch(mixMusicProvider).musicModelSecond?.musicName ?? "Add a Sound",
+                        text: "${ref.watch(mixMusicProvider).musicModelFirst?.musicName}",
+                        textAlign: TextAlign.center,
                         fontSize: 20,
                         fontWeight: FontWeight.w400,
                         color: primaryGreyColor,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Center(
+                      child: GestureDetector(
+                        onTap:(){
+                          if(ref.watch(mixMusicProvider).musicModelSecond?.musicName == null){
+                            ref.read(addProvider).showPlusPlaylist(playlistPlusBottom:true,);
+                            ref.read(addProvider).changePage(1);
+                          }
+                        },
+                        child: Container(
+                          color: Colors.transparent,
+                          child: CustomText(
+                            text: ref.watch(mixMusicProvider).musicModelSecond?.musicName ?? "Add a Sound",
+                            fontSize: 20,
+                            fontWeight: FontWeight.w400,
+                            color: primaryGreyColor,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -245,7 +264,7 @@ class _MixScreenState extends ConsumerState<MixScreen> {
                       const Padding(
                         padding:  EdgeInsets.symmetric(horizontal: 15.0),
                         child: CustomText(
-                          text: 'Set sound ${5} volume',
+                          text: 'Set sound 1 volume',
                           fontWeight: FontWeight.w400,
                           fontSize: 16,
                         ),
@@ -279,7 +298,7 @@ class _MixScreenState extends ConsumerState<MixScreen> {
                       const Padding(
                         padding:  EdgeInsets.symmetric(horizontal: 15.0),
                         child: CustomText(
-                          text: 'Set sound ${5} volume',
+                          text: 'Set sound 2 volume',
                           fontWeight: FontWeight.w400,
                           fontSize: 16,
                         ),
