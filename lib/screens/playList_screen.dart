@@ -94,7 +94,7 @@ class _PlayListScreenState extends ConsumerState<PlayListScreen> {
                 ref.watch(mixMusicProvider).mixPlaylist.length,
                     (index) => Container(
                     color: index % 2 == 0?Colors.transparent:pinkLightColor,
-                    child: musicList(musicName: "${ref.watch(mixMusicProvider).mixPlaylist[index].first?.musicName}+${ref.watch(mixMusicProvider).mixPlaylist[index].second?.musicName}")),
+                    child: mixMusicList(musicName: "${ref.watch(mixMusicProvider).mixPlaylist[index].first?.musicName}+${ref.watch(mixMusicProvider).mixPlaylist[index].second?.musicName}")),
               ),
             ),
             const SizedBox(
@@ -165,7 +165,55 @@ class _PlayListScreenState extends ConsumerState<PlayListScreen> {
           ),
           GestureDetector(
             onTap: (){
-              //Navigation.navigatePages(context, NowPlayingScreen(musicModel: ref.watch(addProvider).musicList[0],));
+              ref.read(addProvider).changePage(1);
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.black.withOpacity(0.1)
+              ),
+              child: const Padding(
+                padding: EdgeInsets.all(1.0),
+                child: CustomImage(
+                  imageUrl: playButton,
+                  height: 30,
+                  width: 30,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  Widget mixMusicList({required String musicName}) {
+    final height = ScreenSize(context).height;
+    return Padding(
+      padding: const EdgeInsets.only(left: 20.0, right: 20, top: 5, bottom: 5),
+      child: Row(
+        //  crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Container(
+                height: height * .07,
+                width: height * .07,
+                decoration: const BoxDecoration(
+                    color: primaryPinkColor,
+                    borderRadius: BorderRadius.all(Radius.circular(10))),
+              ),
+              const SizedBox(width: 20),
+              CustomText(
+                text: musicName,
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
+            ],
+          ),
+          GestureDetector(
+            onTap: (){
+              ref.read(addProvider).changePage(1);
             },
             child: Container(
               decoration: BoxDecoration(

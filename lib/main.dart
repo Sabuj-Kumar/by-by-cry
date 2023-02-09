@@ -3,6 +3,8 @@ import 'package:bye_bye_cry_new/start_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'initial_home_page.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   //await Firebase.initializeApp();
@@ -19,7 +21,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Bye Bye Cry',
       theme: ThemeData(fontFamily: 'Neue Einstellung'),
-      home:  const StartPage(),
+      home:  const InitialHomePage(),
       //home: const SignIn(),
     );
   }

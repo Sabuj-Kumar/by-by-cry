@@ -1,3 +1,4 @@
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:bye_bye_cry_new/compoment/shared/custom_image.dart';
 import 'package:bye_bye_cry_new/compoment/shared/custom_svg.dart';
@@ -5,11 +6,9 @@ import 'package:bye_bye_cry_new/compoment/shared/custom_text.dart';
 import 'package:bye_bye_cry_new/compoment/shared/screen_size.dart';
 import 'package:bye_bye_cry_new/screens/provider/add_music_provider.dart';
 import 'package:bye_bye_cry_new/screens/provider/mix_music_provider.dart';
-import 'package:bye_bye_cry_new/screens/sound_edit_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../compoment/shared/custom_app_bar.dart';
-import '../compoment/shared/custom_navigation.dart';
 import '../compoment/shared/outline_button.dart';
 import '../compoment/utils/color_utils.dart';
 import '../compoment/utils/image_link.dart';
@@ -111,7 +110,8 @@ class _SoundScreenState extends ConsumerState<SoundScreen> {
       }
   }
   initialized(){
-
+    changeToMixPlayNow = ref.read(mixMusicProvider).changeToMixPlayNow;
+    changeToPlayNow = ref.read(addProvider).changeToPlayNow;
   }
 
   @override

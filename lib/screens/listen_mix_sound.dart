@@ -128,44 +128,37 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
         if(mounted){
           setState(() {
             setDuration -= _duration.inSeconds.toInt();
-            print("set duration change ${setDuration}");
+            print("set duration change $setDuration");
           });
         }
       }
-      if(mounted){
         if(!issongplaying){
           if(_duration.inSeconds.toInt() == _position.inSeconds.toInt() || (_duration.inSeconds.toInt() - 1 == _position.inSeconds.toInt())){
             if(mounted){
-              if(index < musicList.length-1){
-                setState(() {
-                  index++;
-                });
+              if(index < 1){
+                index = 1;
                 print("index++ $index");
                 pausePlayMethod();
+              }else{
+                index = 0;
               }
-            }else{
-              if(mounted){
-                setState(() {
-                  index = 0;
-                });
-                print("Index 0");
-              }
+              setState(() {});
             }
           }else{
             print("else duration ${_duration.inSeconds.toInt()}");
           }
-        }
-        setState(() {});
       }
       if(mounted){
         if(playPouse){
           if(_duration.inSeconds.toInt() == _position.inSeconds.toInt() || (_duration.inSeconds.toInt() - 1 == _position.inSeconds.toInt())){
             if(!issongplaying){
-              index = index == 0?1:0;
+              print("not stop");
               if(mounted){
                 setState((){});
               }
-              playMusic();
+              if(setDuration > 0){
+                pausePlayMethod();
+              }
             }
           }
         }
@@ -226,7 +219,7 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
   }
 
   pausePlayMethod()async{
-    print("index $index");
+    print("play index $index");
     if(issongplaying){
       await audioPlayer.pause();
       print("pause");
@@ -239,56 +232,6 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
       setState(() {});
     }
   }
-
-  playMusic()async{
-    if(setDuration > 0){
-      pausePlayMethod();
-    }
-    if(mounted){
-      setState(() {});
-    }
-  }
- /* continueMusic(){
-      if(setDuration > 0){
-        if(!issongplaying){
-          pausePlayMethod();
-        }
-      }
-      if(mounted){
-        setState(() {});
-      }
-  }*/
-/*  startTimer(void Function(void Function()) state)async{
-    _timer =
-        Timer.periodic(const Duration(milliseconds: 500),(timer){
-          if(mounted){
-            if(_position.inSeconds.toDouble() == _duration.inSeconds.toDouble() -1){
-              _timer!.cancel();
-            }
-            if(!ref.watch(mixMusicProvider).alertDiaLog){
-              _timer!.cancel();
-            }
-            if(mounted) {
-              if (ref
-                  .watch(mixMusicProvider)
-                  .alertDiaLog) {
-                if(mounted){
-                  if(issongplaying){
-                    if(mounted){
-                      state(() {});
-                    }
-                  }else{
-                    if(mounted){
-                      _timer!.cancel();
-                      state(() {});
-                    }
-                  }
-                }
-              }
-            }
-          }
-        });
-  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -536,6 +479,7 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
                             }
                             print("play");
                           }
+                          if(mounted){setState(() {});}
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(22),

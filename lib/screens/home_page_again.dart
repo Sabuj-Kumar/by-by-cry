@@ -1,6 +1,7 @@
 
 import 'package:bye_bye_cry_new/compoment/shared/custom_svg.dart';
 import 'package:bye_bye_cry_new/compoment/shared/custom_text.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -11,14 +12,15 @@ import '../compoment/utils/color_utils.dart';
 import '../compoment/utils/image_link.dart';
 
 class HomePageAgain extends ConsumerStatefulWidget {
-  final VoidCallback? onTap;
-  const HomePageAgain({Key? key,this.onTap}) : super(key: key);
+
+  const HomePageAgain({Key? key}) : super(key: key);
 
   @override
   ConsumerState<HomePageAgain> createState() => _HomePageAgainPageState();
 }
 
 class _HomePageAgainPageState extends ConsumerState<HomePageAgain> {
+  CarouselController buttonCarouselController = CarouselController();
   @override
   Widget build(BuildContext context) {
     final width = ScreenSize(context).width;
@@ -37,7 +39,7 @@ class _HomePageAgainPageState extends ConsumerState<HomePageAgain> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     GestureDetector(
-                      onTap: widget.onTap,
+                      onTap: (){},
                       child: Container(
                         color: primaryWhiteColor,
                         child: CustomImage(
@@ -80,7 +82,7 @@ class _HomePageAgainPageState extends ConsumerState<HomePageAgain> {
                 textFontSize: 24,
                 textFontWeight: FontWeight.w600,
                 borderRadius: 40,
-                onPressed: widget.onTap!,
+                onPressed: (){},
                 textPaddingVerticalTop: 5,
                 textPaddingHorizontal: 57,
               ),
@@ -95,29 +97,52 @@ class _HomePageAgainPageState extends ConsumerState<HomePageAgain> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        const Padding(
-                          padding:  EdgeInsets.only(left: 30.0,right: 30,top: 20),
-                          child:  CustomSvg(svg: loveSvg),
-                        ),
                          Padding(
-                           padding: const EdgeInsets.only(left: 15.0,right: 15,bottom: 30),
+                           padding: const EdgeInsets.symmetric(horizontal: 15.0,vertical: 30),
                            child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                               const CustomSvg(svg: leftDirection),
-                              SizedBox(width: width * 0.03),
-                               const Expanded(
-                                child: CustomText(
-                                  text: "Does baby have gas? Try This :\nLay baby on their back and bring their knees to their chest. Move baby’s leg in a bicycle motion and apply each time their knees reach their chest ",
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 18,
-                                  color: secondaryBlackColor,
-                                  textAlign: TextAlign.center,
-                                  height: 1.4,
+                              GestureDetector(
+                                  onTap: (){
+                                    buttonCarouselController.previousPage(duration: const Duration(milliseconds: 500),curve: Curves.easeIn);
+                                  },
+                                  child: Container(
+                                      color: Colors.transparent,
+                                      child: const Padding(
+                                        padding: EdgeInsets.all( 6.0),
+                                        child: CustomSvg(svg: leftDirection),
+                                      ))),
+                              Expanded(
+                                child: CarouselSlider.builder(
+                                  carouselController: buttonCarouselController,
+                                  itemCount: 3,
+                                  itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex) =>
+                                      const CustomText(
+                                        text: "Does baby have gas? Try This :\nLay baby on their back and bring their knees to their chest. Move baby’s leg in a bicycle motion and apply each time their knees reach their chest ",
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 18,
+                                        color: secondaryBlackColor,
+                                        textAlign: TextAlign.center,
+                                        height: 1.4,
+                                      ),
+                                  options: CarouselOptions(
+                                    aspectRatio: 2.6,
+                                    viewportFraction: 1,
+                                    enableInfiniteScroll: false,
+                                    onPageChanged: (index,reasons){}
+                                  ),
                                 ),
                               ),
-                              SizedBox(width: width * 0.03),
-                              const CustomSvg(svg: rightDirection),
+                              GestureDetector(
+                                  onTap: (){
+                                    buttonCarouselController.nextPage(duration: const Duration(milliseconds: 500),curve: Curves.easeIn);
+                                  },
+                                  child: Container(
+                                      color: Colors.transparent,
+                                      child: const Padding(
+                                        padding: EdgeInsets.all(6.0),
+                                        child: CustomSvg(svg: rightDirection),
+                                      ))),
                             ],
                         ),
                          )
