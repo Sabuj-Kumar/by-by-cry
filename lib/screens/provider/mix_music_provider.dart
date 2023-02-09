@@ -14,7 +14,12 @@ class MixMusicProvider extends ChangeNotifier{
   MixMusicModel? mixMusicModel;
   bool alertDiaLog = false;
   bool changeToMixPlayNow = false;
+  String musicId = "";
 
+  setMusicId({String mixMusicId = ''}){
+    musicId = mixMusicId;
+    notifyListeners();
+  }
   changeMixPlay({bool change = false}){
     changeToMixPlayNow = change;
     notifyListeners();

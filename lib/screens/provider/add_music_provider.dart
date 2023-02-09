@@ -17,6 +17,10 @@ class AddMusicProvider extends ChangeNotifier {
   String musicId = "";
   bool changeToPlayNow = false;
 
+  setMusicId({String normalMusicId = ''}){
+    musicId = normalMusicId;
+    notifyListeners();
+  }
   changePlay({bool change = false}){
     changeToPlayNow = change;
     notifyListeners();

@@ -15,7 +15,6 @@ import '../compoment/shared/custom_text.dart';
 import '../compoment/shared/screen_size.dart';
 import '../compoment/utils/color_utils.dart';
 import '../compoment/utils/image_link.dart';
-import 'models/music_models.dart';
 
 class NowPlayingScreen extends ConsumerStatefulWidget {
   final String musicId;

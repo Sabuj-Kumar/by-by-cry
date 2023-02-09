@@ -63,7 +63,6 @@ class _SoundScreenState extends ConsumerState<SoundScreen> {
   ];
 
   startPlayer()async{
-    audioCache.prefix = "asset";
     audioPlayer.onPlayerStateChanged.listen((state) {
       issongplaying = state == PlayerState.playing;
       if(mounted){
@@ -110,8 +109,37 @@ class _SoundScreenState extends ConsumerState<SoundScreen> {
       }
   }
   initialized(){
-    changeToMixPlayNow = ref.read(mixMusicProvider).changeToMixPlayNow;
-    changeToPlayNow = ref.read(addProvider).changeToPlayNow;
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      if(mounted){
+        if(ref.watch(mixMusicProvider).changeToMixPlayNow){
+            mixMusicId = ref.watch(mixMusicProvider).musicId;
+            if(mounted){
+              ref.read(mixMusicProvider).setMusicId();
+            }
+        }
+      }
+      if(mounted){
+        if(ref.read(addProvider).changeToPlayNow){
+          musicId = ref.watch(addProvider).musicId;
+          if(mounted){
+            ref.read(addProvider).setMusicId();
+          }
+        }
+      }
+      if(mounted){
+        changeToMixPlayNow = ref.read(mixMusicProvider).changeToMixPlayNow;
+      }
+      if(mounted){
+        changeToPlayNow = ref.read(addProvider).changeToPlayNow;
+      }
+      if(mounted){
+        ref.read(addProvider).changePlay(change: false);
+      }
+      if(mounted){
+        ref.read(mixMusicProvider).changeMixPlay(change: false);
+      }
+      if(mounted){setState((){});}
+    });
   }
 
   @override
@@ -128,7 +156,7 @@ class _SoundScreenState extends ConsumerState<SoundScreen> {
   @override
   Widget build(BuildContext context) {
     return changeToPlayNow?NowPlayingScreen(
-        musicId: music!.id,
+        musicId: musicId,
         onPressed: (){
           setState(() {
             changeToPlayNow = false;
@@ -255,6 +283,7 @@ class _SoundScreenState extends ConsumerState<SoundScreen> {
       onTap: (){
         setState(() {
           music = musicModel;
+          musicId = musicModel.id;
           changeToPlayNow = ref.watch(addProvider).showAddPlaylist?false:deleteShow?false:true;
           print("change");
         });

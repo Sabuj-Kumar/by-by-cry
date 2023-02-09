@@ -58,24 +58,6 @@ class _PlayListScreenState extends ConsumerState<PlayListScreen> {
                         hintStyle: TextStyle(color: blackColorA0,fontSize: 14,fontWeight: FontWeight.w400),
                         hintText: 'Search music', border: InputBorder.none
                     ),
-                    // onChanged: (text) {
-                    //   if (text.length > 0) {
-                    //     searching = true;
-                    //     filtered.value = [];
-                    //     users.forEach((user) {
-                    //       if (user['name']
-                    //           .toString()
-                    //           .toLowerCase()
-                    //           .contains(text.toLowerCase()) ||
-                    //           user['tel'].toString().contains(text)) {
-                    //         filtered.value.add(user);
-                    //       }
-                    //     });
-                    //   } else {
-                    //     searching = false;
-                    //     filtered.value = [];
-                    //   }
-                    // },
                   ),
                   trailing: GestureDetector(onTap:(){},child: const CustomSvg(svg: "asset/images/search_icon.svg",)),
                 ),
@@ -86,7 +68,7 @@ class _PlayListScreenState extends ConsumerState<PlayListScreen> {
                 ref.watch(addProvider).playList.length,
                 (index) => Container(
                     color: index % 2 == 0?Colors.transparent:pinkLightColor,
-                    child: musicList(musicName: ref.watch(addProvider).playList[index].musicName)),
+                    child: musicList(musicName: ref.watch(addProvider).playList[index].musicName,musicId:  ref.watch(addProvider).playList[index].id)),
               ),
             ),
             Column(
@@ -94,7 +76,7 @@ class _PlayListScreenState extends ConsumerState<PlayListScreen> {
                 ref.watch(mixMusicProvider).mixPlaylist.length,
                     (index) => Container(
                     color: index % 2 == 0?Colors.transparent:pinkLightColor,
-                    child: mixMusicList(musicName: "${ref.watch(mixMusicProvider).mixPlaylist[index].first?.musicName}+${ref.watch(mixMusicProvider).mixPlaylist[index].second?.musicName}")),
+                    child: mixMusicList(musicName: "${ref.watch(mixMusicProvider).mixPlaylist[index].first?.musicName}+${ref.watch(mixMusicProvider).mixPlaylist[index].second?.musicName}",musicId:  ref.watch(mixMusicProvider).mixPlaylist[index].id)),
               ),
             ),
             const SizedBox(
@@ -138,7 +120,7 @@ class _PlayListScreenState extends ConsumerState<PlayListScreen> {
     );
   }
 
-  Widget musicList({required String musicName}) {
+  Widget musicList({required String musicName,required String musicId}) {
     final height = ScreenSize(context).height;
     return Padding(
       padding: const EdgeInsets.only(left: 20.0, right: 20, top: 5, bottom: 5),
@@ -165,7 +147,15 @@ class _PlayListScreenState extends ConsumerState<PlayListScreen> {
           ),
           GestureDetector(
             onTap: (){
-              ref.read(addProvider).changePage(1);
+              if(mounted){
+                ref.read(addProvider).setMusicId(normalMusicId: musicId);
+              }
+              if(mounted){
+                ref.read(addProvider).changePage(1);
+              }
+              if(mounted){
+                ref.read(addProvider).changePlay(change: true);
+              }
             },
             child: Container(
               decoration: BoxDecoration(
@@ -186,7 +176,7 @@ class _PlayListScreenState extends ConsumerState<PlayListScreen> {
       ),
     );
   }
-  Widget mixMusicList({required String musicName}) {
+  Widget mixMusicList({required String musicName,required String musicId}) {
     final height = ScreenSize(context).height;
     return Padding(
       padding: const EdgeInsets.only(left: 20.0, right: 20, top: 5, bottom: 5),
@@ -213,7 +203,15 @@ class _PlayListScreenState extends ConsumerState<PlayListScreen> {
           ),
           GestureDetector(
             onTap: (){
-              ref.read(addProvider).changePage(1);
+              if(mounted){
+                ref.read(mixMusicProvider).setMusicId(mixMusicId: musicId);
+              }
+              if(mounted){
+                ref.read(addProvider).changePage(1);
+              }
+              if(mounted){
+                ref.read(mixMusicProvider).changeMixPlay(change:true);
+              }
             },
             child: Container(
               decoration: BoxDecoration(
