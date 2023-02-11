@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 const Color backGroundColor = Color(0xFFFFF4F6);
 const Color secondaryWhiteColor = Color(0xFFFFFDFF);
 const Color primaryPinkColor = Color(0xFFF7C2CB);
+const Color secondaryPickColor = Color(0xFFFFE5EA);
 const Color secondaryAwashColor = Color(0xFFE5E5E5);
 const Color secondaryPinkColor = Color(0xFFFFEFF2);
 const Color primaryGreyColor = Color(0xFF7F7B75);

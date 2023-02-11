@@ -5,6 +5,21 @@ import '../screens/models/music_models.dart';
 
 class LocalDB{
 
+  static setMixMusicListItem(List<MixMusicModel> mixMusicList)async{
+    final prefs = await SharedPreferences.getInstance();
+    if(prefs.containsKey("mixMusicList")) { prefs.remove("mixMusicList");}
+    prefs.setString("mixMusicList",jsonEncode(mixMusicList));
+  }
+  static Future<List<MixMusicModel>?>getMixMusicListItem()async{
+    final prefs = await SharedPreferences.getInstance();
+    if(prefs.containsKey("mixMusicList")) {
+      List<dynamic> jsonData = jsonDecode(prefs.getString("mixMusicList")??"[]");
+      List<MixMusicModel> realData = jsonData.map((e) => MixMusicModel.fromJson(e)).toList();
+      return realData;
+    }
+    return null;
+  }
+
   static setMixPlayListItem(List<MixMusicModel> mixMusicList)async{
     final prefs = await SharedPreferences.getInstance();
     if(prefs.containsKey("mixPlayList")) { prefs.remove("mixPlayList");}

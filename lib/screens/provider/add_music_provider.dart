@@ -1,8 +1,6 @@
 import 'package:bye_bye_cry_new/local_db/local_db.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../compoment/utils/image_link.dart';
 import '../models/music_models.dart';
 
@@ -12,16 +10,23 @@ class AddMusicProvider extends ChangeNotifier {
   List<String> nameList = [];
   List<String> playListIds = [];
   List<MusicModel> musicList = [];
-  MusicModel? musicModelFirst,musicModelSecond;
-  List<MixMusicModel> combinationList = [];
-  MixMusicModel mixMusicModel = MixMusicModel();
   bool homePage = true;
   List<MusicModel> playList = [];
   int pageNumber = 0;
+  bool showAddPlaylist = false;
+  String musicId = "";
+  bool changeToPlayNow = false;
 
-
-  changePage(int pageNum){
-    pageNumber = pageNum;
+  setMusicId({String normalMusicId = ''}){
+    musicId = normalMusicId;
+    notifyListeners();
+  }
+  changePlay({bool change = false}){
+    changeToPlayNow = change;
+    notifyListeners();
+  }
+  showPlusPlaylist({bool playlistPlusBottom = false,}){
+    showAddPlaylist = playlistPlusBottom;
     notifyListeners();
   }
   addMusic(){
@@ -40,23 +45,14 @@ class AddMusicProvider extends ChangeNotifier {
     print("music add ${musicList.length}");
     notifyListeners();
   }
-
   changeHomePage(){
     homePage = false;
     notifyListeners();
   }
-  combination()async{
-    final prefs = await SharedPreferences.getInstance();
-    if(musicList.isNotEmpty){
-      for(int index = 0; index < musicList.length; index++){
-          for(int nextIndex = index + 1; nextIndex < musicList.length; nextIndex++){
-            combinationList.add(MixMusicModel(first: musicList[index], second: musicList[nextIndex]));
-          }
-      }
-    }
+  changePage(int pageNum){
+    pageNumber = pageNum;
     notifyListeners();
   }
-
   assignAllPlaylist()async{
     playList = await LocalDB.getPlayListItem() ?? [];
     playListIds = [];
@@ -85,18 +81,5 @@ class AddMusicProvider extends ChangeNotifier {
       }
     }
     notifyListeners();
-  }
-
-  mixFirstMusic(MusicModel firstMixMusicModel){
-    musicModelFirst = firstMixMusicModel;
-    notifyListeners();
-  }
-  mixSecondMusic(MusicModel secondMixMusicModel){
-    musicModelSecond = secondMixMusicModel;
-    notifyListeners();
-  }
-  createMix(MixMusicModel mixMusicModel){
-
-
   }
 }

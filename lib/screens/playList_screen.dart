@@ -1,6 +1,7 @@
 import 'package:bye_bye_cry_new/compoment/shared/custom_image.dart';
 import 'package:bye_bye_cry_new/compoment/shared/custom_text.dart';
 import 'package:bye_bye_cry_new/screens/provider/add_music_provider.dart';
+import 'package:bye_bye_cry_new/screens/provider/mix_music_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -21,23 +22,23 @@ class PlayListScreen extends ConsumerStatefulWidget {
 }
 
 class _PlayListScreenState extends ConsumerState<PlayListScreen> {
+
+  bool goMixPlayList = false;
   @override
   Widget build(BuildContext context) {
     TextEditingController searchController = TextEditingController();
 
     final height = ScreenSize(context).height;
 
-    List<String> textList = [
-      'Witching Hour',
-      'Goodbye CO',
-      'Yard Work',
-      'Beach Naps',
-      'Grandma’s House',
-    ];
-    return Scaffold(
+    return goMixPlayList? AddToPlayListPage(
+      onPressed: (){
+        goMixPlayList = false;
+        setState(() {});
+      },
+    ):Scaffold(
       appBar: const CustomAppBar(
         title: 'My Playlist',
-        actionTitle: 'Edit',
+        //actionTitle: 'Edit',
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -57,24 +58,6 @@ class _PlayListScreenState extends ConsumerState<PlayListScreen> {
                         hintStyle: TextStyle(color: blackColorA0,fontSize: 14,fontWeight: FontWeight.w400),
                         hintText: 'Search music', border: InputBorder.none
                     ),
-                    // onChanged: (text) {
-                    //   if (text.length > 0) {
-                    //     searching = true;
-                    //     filtered.value = [];
-                    //     users.forEach((user) {
-                    //       if (user['name']
-                    //           .toString()
-                    //           .toLowerCase()
-                    //           .contains(text.toLowerCase()) ||
-                    //           user['tel'].toString().contains(text)) {
-                    //         filtered.value.add(user);
-                    //       }
-                    //     });
-                    //   } else {
-                    //     searching = false;
-                    //     filtered.value = [];
-                    //   }
-                    // },
                   ),
                   trailing: GestureDetector(onTap:(){},child: const CustomSvg(svg: "asset/images/search_icon.svg",)),
                 ),
@@ -85,14 +68,26 @@ class _PlayListScreenState extends ConsumerState<PlayListScreen> {
                 ref.watch(addProvider).playList.length,
                 (index) => Container(
                     color: index % 2 == 0?Colors.transparent:pinkLightColor,
-                    child: musicList(musicName: ref.watch(addProvider).playList[index].musicName)),
+                    child: musicList(musicName: ref.watch(addProvider).playList[index].musicName,musicId:  ref.watch(addProvider).playList[index].id)),
+              ),
+            ),
+            Column(
+              children: List.generate(
+                ref.watch(mixMusicProvider).mixPlaylist.length,
+                    (index) => Container(
+                    color: index % 2 == 0?Colors.transparent:pinkLightColor,
+                    child: mixMusicList(musicName: "${ref.watch(mixMusicProvider).mixPlaylist[index].first?.musicName}+${ref.watch(mixMusicProvider).mixPlaylist[index].second?.musicName}",musicId:  ref.watch(mixMusicProvider).mixPlaylist[index].id)),
               ),
             ),
             const SizedBox(
               height: 10,
             ),
             GestureDetector(
-              onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context) => const AddToPlayListPage()));},
+              onTap: (){
+                setState(() {
+                  goMixPlayList = true;
+                });
+              },
               child: Container(
               //  height: height * .07,
                 color: pinkLightColor,
@@ -107,9 +102,7 @@ class _PlayListScreenState extends ConsumerState<PlayListScreen> {
                         ),
                         onPressed: () {},
                       ),
-                      SizedBox(
-                        width: height * .05,
-                      ),
+                      SizedBox(width: height * .05),
                       const CustomText(
                         text: 'Add Playlist',
                         fontSize: 20,
@@ -127,7 +120,7 @@ class _PlayListScreenState extends ConsumerState<PlayListScreen> {
     );
   }
 
-  Widget musicList({required String musicName}) {
+  Widget musicList({required String musicName,required String musicId}) {
     final height = ScreenSize(context).height;
     return Padding(
       padding: const EdgeInsets.only(left: 20.0, right: 20, top: 5, bottom: 5),
@@ -144,9 +137,7 @@ class _PlayListScreenState extends ConsumerState<PlayListScreen> {
                     color: primaryPinkColor,
                     borderRadius: BorderRadius.all(Radius.circular(10))),
               ),
-              const SizedBox(
-                width: 20,
-              ),
+              const SizedBox(width: 20),
               CustomText(
                 text: musicName,
                 fontSize: 18,
@@ -156,7 +147,71 @@ class _PlayListScreenState extends ConsumerState<PlayListScreen> {
           ),
           GestureDetector(
             onTap: (){
-              Navigation.navigatePages(context, NowPlayingScreen(musicModel: ref.watch(addProvider).musicList[0],));
+              if(mounted){
+                ref.read(addProvider).setMusicId(normalMusicId: musicId);
+              }
+              if(mounted){
+                ref.read(addProvider).changePage(1);
+              }
+              if(mounted){
+                ref.read(addProvider).changePlay(change: true);
+              }
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.black.withOpacity(0.1)
+              ),
+              child: const Padding(
+                padding: EdgeInsets.all(1.0),
+                child: CustomImage(
+                  imageUrl: playButton,
+                  height: 30,
+                  width: 30,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  Widget mixMusicList({required String musicName,required String musicId}) {
+    final height = ScreenSize(context).height;
+    return Padding(
+      padding: const EdgeInsets.only(left: 20.0, right: 20, top: 5, bottom: 5),
+      child: Row(
+        //  crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Container(
+                height: height * .07,
+                width: height * .07,
+                decoration: const BoxDecoration(
+                    color: primaryPinkColor,
+                    borderRadius: BorderRadius.all(Radius.circular(10))),
+              ),
+              const SizedBox(width: 20),
+              CustomText(
+                text: musicName,
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
+            ],
+          ),
+          GestureDetector(
+            onTap: (){
+              if(mounted){
+                ref.read(mixMusicProvider).setMusicId(mixMusicId: musicId);
+              }
+              if(mounted){
+                ref.read(addProvider).changePage(1);
+              }
+              if(mounted){
+                ref.read(mixMusicProvider).changeMixPlay(change:true);
+              }
             },
             child: Container(
               decoration: BoxDecoration(
