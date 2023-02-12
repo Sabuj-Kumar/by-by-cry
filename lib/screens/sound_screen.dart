@@ -96,16 +96,25 @@ class _SoundScreenState extends ConsumerState<SoundScreen> {
       setState(() {});
     }
   }
-  playMusic({required String id}){
+  playMusic({required String id}) async{
+      print("playlist play button click");
       int _index = ref.watch(addProvider).musicList.indexWhere((element) => element.id == id);
       if(_index >= 0){
-        index = _index;
+        if(_index == index){
+          if(issongplaying){
+            await audioPlayer.pause();
+          }else{
+            String url = ref.watch(addProvider).musicList[index].musicFile;
+            await audioPlayer.play(AssetSource(url));
+          }
+        }else{
+          index = _index;
+          String url = ref.watch(addProvider).musicList[index].musicFile;
+          await audioPlayer.play(AssetSource(url));
+        }
       }
       if(mounted){
         setState(() {});
-      }
-      if(mounted){
-        pausePlayMethod();
       }
   }
   initialized(){
@@ -280,7 +289,7 @@ class _SoundScreenState extends ConsumerState<SoundScreen> {
 
   Widget imageList({required MusicModel musicModel,required BuildContext context,}) {
     return GestureDetector(
-      onTap: (){
+      onTap: ref.watch(addProvider).showAddPlaylist?null:(){
         setState(() {
           music = musicModel;
           musicId = musicModel.id;
@@ -310,7 +319,7 @@ class _SoundScreenState extends ConsumerState<SoundScreen> {
                 Container(
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.black.withOpacity(0.1)
+                    color: Colors.black.withOpacity(0.05)
                   ),
                   child: ref.read(addProvider).showAddPlaylist?GestureDetector(
                     onTap:()async {
@@ -318,24 +327,17 @@ class _SoundScreenState extends ConsumerState<SoundScreen> {
                       if(mounted){
                         playMusic(id: musicId);
                       }
-                      /*if(mounted){
-                        pausePlayMethod();
-                      }*/
                     },
-                    child: musicId == musicModel.id?Container(
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.black.withOpacity(0.1)
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: issongplaying? const CustomSvg(svg:pouseButton,color: blackColor97,height: 12,width: 12,):const CustomImage(
-                          imageUrl:playButton,
-                        ),
+                    child: musicId == musicModel.id?Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: issongplaying? const CustomSvg(svg:pouseButton,color: blackColor97,height: 12,width: 12,):const CustomImage(
+                        imageUrl:playButton,
+                        scale: 0.8,
                       ),
                     ):const Padding(
                       padding: EdgeInsets.all(15.0),
-                      child:  CustomImage(
+                      child: CustomImage(
+                        scale: 0.8,
                         imageUrl:playButton,
                       ),
                     ),

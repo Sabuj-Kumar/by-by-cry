@@ -351,7 +351,6 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
                     activeColor: primaryPinkColor,
                     inactiveColor: primaryGreyColor2,
                     onChanged: (double newValue) async{
-
                       print("slider");
                       if(_position.inSeconds.toInt()>=_duration.inSeconds.toInt()){
                         String url = ref.watch(addProvider).musicList[index].musicFile;

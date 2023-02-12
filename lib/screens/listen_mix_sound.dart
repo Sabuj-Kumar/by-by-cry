@@ -80,7 +80,6 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
     _subscription.cancel();
     super.dispose();
   }
-
   changeVolume(){
     PerfectVolumeControl.hideUI = true;
     Future.delayed(Duration.zero, () async {
@@ -217,7 +216,6 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
         setState((){});
       }
   }
-
   pausePlayMethod()async{
     print("play index $index");
     if(issongplaying){
@@ -288,13 +286,20 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      CustomText(
-                        text: musicList.isEmpty?"":musicList[index].musicName,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w400,
-                        color: secondaryBlackColor,
+                      Expanded(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CustomText(
+                              text: musicList.isEmpty?"":"${musicList[0].musicName}+${musicList[1].musicName}",
+                              fontSize: 20,
+                              fontWeight: FontWeight.w400,
+                              color: secondaryBlackColor,
+                            ),
+                            const SizedBox(height:8,child: CustomSvg(svg: down_arrow,color: blackColorA0,)),
+                          ],
+                        ),
                       ),
-                      const SizedBox( height:8,child: CustomSvg(svg: down_arrow,color: blackColorA0,)),
                     ],
                   ),
                 ),
@@ -461,8 +466,6 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
                             await audioPlayer.seek(const Duration(seconds:0));
                             await audioPlayer.play(AssetSource(url));
                           }
-                          print('click');
-
                           if(_position.inSeconds.toInt()>=_duration.inSeconds.toInt()-1){
                             await audioPlayer.pause();
                           }
@@ -898,11 +901,11 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
                                               ),
                                               Row(
                                                 mainAxisAlignment: MainAxisAlignment.start,
-                                                children: const [
-                                                  CustomSvg(svg: volume),
+                                                children:  [
+                                                  const CustomSvg(svg: volume),
                                                   Padding(
-                                                    padding: EdgeInsets.symmetric(horizontal: 5.0),
-                                                    child: CustomText(text: "20%",fontSize: 12,fontWeight: FontWeight.w600,color: blackColor50),
+                                                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                                    child: CustomText(text: "${(currentVolume * 100).toInt().toString().padLeft(2,"0")}%",fontSize: 12,fontWeight: FontWeight.w600,color: blackColor50),
                                                   ),
                                                 ],
                                               ),
@@ -933,18 +936,17 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
                                               ),
                                               Row(
                                                 mainAxisAlignment: MainAxisAlignment.start,
-                                                children: const [
-                                                  CustomSvg(svg: volume),
+                                                children:  [
+                                                  const CustomSvg(svg: volume),
                                                   Padding(
-                                                    padding: EdgeInsets.symmetric(horizontal: 5.0),
-                                                    child: CustomText(text: "60%",fontSize: 12,fontWeight: FontWeight.w600,color: blackColor50),
+                                                    padding:const EdgeInsets.symmetric(horizontal: 5.0),
+                                                    child: CustomText(text: "${(currentVolume * 100).toInt().toString().padLeft(2,"0")}%",fontSize: 12,fontWeight: FontWeight.w600,color: blackColor50),
                                                   ),
                                                 ],
                                               ),
                                             ],
                                           ),
                                         ),
-                                        //CustomImage(imageUrl: "asset/images/chainsaw_now_playing.png")
                                       ],
                                     ),
                                     Row(
@@ -969,14 +971,18 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
                                             height: 30,
                                             width: 30,
                                             color: blackColor97,
-                                          ): const Padding(
+                                          ):issongplaying?const Padding(
                                             padding: EdgeInsets.all(10.0),
                                             child: CustomSvg(svg: pouseButton,height: 15,
                                               width: 15,
                                               color: blackColor97),
-                                          )
-                                      ),
-                                    ),
+                                          ):const CustomImage(
+                                            imageUrl: playButton,
+                                            height: 30,
+                                            width: 30,
+                                            color: blackColor97,
+                                          ),
+                                      ))
                                   ],
                                 ),
                               ],

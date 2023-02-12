@@ -1,6 +1,7 @@
 
 import 'package:bye_bye_cry_new/compoment/shared/custom_svg.dart';
 import 'package:bye_bye_cry_new/compoment/shared/custom_text.dart';
+import 'package:bye_bye_cry_new/screens/provider/add_music_provider.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -82,7 +83,9 @@ class _HomePageAgainPageState extends ConsumerState<HomePageAgain> {
                 textFontSize: 24,
                 textFontWeight: FontWeight.w600,
                 borderRadius: 40,
-                onPressed: (){},
+                onPressed: (){
+                  ref.read(addProvider).changePage(1);
+                },
                 textPaddingVerticalTop: 5,
                 textPaddingHorizontal: 57,
               ),
@@ -117,17 +120,21 @@ class _HomePageAgainPageState extends ConsumerState<HomePageAgain> {
                                   carouselController: buttonCarouselController,
                                   itemCount: 3,
                                   itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex) =>
-                                      const CustomText(
-                                        text: "Does baby have gas? Try This :\nLay baby on their back and bring their knees to their chest. Move baby’s leg in a bicycle motion and apply each time their knees reach their chest ",
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 18,
-                                        color: secondaryBlackColor,
-                                        textAlign: TextAlign.center,
-                                        height: 1.4,
+                                      Container(
+                                        color: Colors.transparent,
+                                        child: const CustomText(
+                                          text: "Does baby have gas? Try This :\nLay baby on their back and bring their knees to their chest. Move baby’s leg in a bicycle motion and apply each time their knees reach their chest ",
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 18,
+                                          color: secondaryBlackColor,
+                                          textAlign: TextAlign.center,
+                                          height: 1.3,
+                                        ),
                                       ),
                                   options: CarouselOptions(
                                     aspectRatio: 2.6,
                                     viewportFraction: 1,
+                                    autoPlay: true,
                                     enableInfiniteScroll: false,
                                     onPageChanged: (index,reasons){}
                                   ),

@@ -1,4 +1,6 @@
 
+import 'dart:async';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:bye_bye_cry_new/compoment/shared/custom_image.dart';
 import 'package:bye_bye_cry_new/compoment/shared/custom_snackbar.dart';
@@ -6,6 +8,7 @@ import 'package:bye_bye_cry_new/screens/provider/add_music_provider.dart';
 import 'package:bye_bye_cry_new/screens/provider/mix_music_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:perfect_volume_control/perfect_volume_control.dart';
 import '../compoment/shared/custom_app_bar.dart';
 import '../compoment/shared/custom_svg.dart';
 import '../compoment/shared/custom_text.dart';
@@ -30,16 +33,51 @@ class _MixScreenState extends ConsumerState<MixScreen> {
   double currentvol2 = 1;
   bool playPause = false;
   int index = 0;
+  double currentVolume = 0.0;
+  double currentVolume1 = 0.0;
   AudioPlayer audioPlayer = AudioPlayer();
   Duration _duration = Duration.zero;
   Duration _position = Duration.zero;
+  late StreamSubscription<double> _subscription;
 
   List<MusicModel> musicList = [];
   @override
   void initState() {
     startPlayer();
     addMixList();
+    getVolume();
     super.initState();
+  }
+  getVolume()async{
+    Future.delayed(Duration.zero, () async {
+      currentVolume = await PerfectVolumeControl.getVolume();
+      if(ref.watch(mixMusicProvider).musicModelSecond?.image != null){
+        currentVolume1 = await PerfectVolumeControl.getVolume();
+      }
+      setState(() {});
+    });
+  }
+  changeVolume1(){
+    PerfectVolumeControl.hideUI = true;
+    PerfectVolumeControl.stream.listen((volume) {
+      currentVolume = volume;
+      if(mounted){
+        setState((){});
+      }
+    });
+  }
+  changeVolume2(){
+    PerfectVolumeControl.hideUI = true;
+    Future.delayed(Duration.zero, () async {
+      currentVolume1 = await PerfectVolumeControl.getVolume();
+      setState(() {});
+    });
+    PerfectVolumeControl.stream.listen((volume) {
+      currentVolume1 = volume;
+      if(mounted){
+        setState((){});
+      }
+    });
   }
 
   addMixList(){
@@ -57,15 +95,10 @@ class _MixScreenState extends ConsumerState<MixScreen> {
     });
   }
   startPlayer()async{
-
     audioPlayer.onPlayerStateChanged.listen((state) {
       playPause = state == PlayerState.playing;
       if(mounted){
-        print("in method $playPause");
-        print("duration ${_duration.inSeconds.toInt()}");
-        print("position ${_position.inSeconds.toInt()}");
         if(!playPause){
-          print("ses");
           if(_duration.inSeconds.toInt() == _position.inSeconds.toInt() || (_duration.inSeconds.toInt() - 1 == _position.inSeconds.toInt())){
             print("ses check");
             if(index < musicList.length-1){
@@ -89,7 +122,6 @@ class _MixScreenState extends ConsumerState<MixScreen> {
             print("else position ${_position.inSeconds.toInt()}");
           }
         }
-
         setState(() {});
       }
     });
@@ -109,7 +141,6 @@ class _MixScreenState extends ConsumerState<MixScreen> {
       setState(() {});
     }
   }
-
   pausePlayMethod()async{
     if(playPause){
       await audioPlayer.pause();
@@ -123,6 +154,7 @@ class _MixScreenState extends ConsumerState<MixScreen> {
       setState(() {});
     }
   }
+
   @override
   void dispose() {
     audioPlayer.dispose();
@@ -166,74 +198,90 @@ class _MixScreenState extends ConsumerState<MixScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      CustomImage(
-                        imageUrl: "${ref.watch(mixMusicProvider).musicModelFirst?.image}",
-                        height: width * .35,
-                        width: width * .35,
-                        boxFit: BoxFit.cover,
+                      Column(
+                        children: [
+                          CustomImage(
+                            imageUrl: "${ref.watch(mixMusicProvider).musicModelFirst?.image}",
+                            height: width * .35,
+                            width: width * .35,
+                            boxFit: BoxFit.cover,
+                          ),
+                          Center(
+                            child: CustomText(
+                              text: "${ref.watch(mixMusicProvider).musicModelFirst?.musicName}",
+                              textAlign: TextAlign.center,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w400,
+                              color: primaryGreyColor,
+                            ),
+                          )
+                        ],
                       ),
                       Icon(
                         Icons.add,
                         size: height * .05,
                         color: primaryPinkColor,
                       ),
-                      ref.watch(mixMusicProvider).musicModelSecond?.image == null?Container(
-                        height: width * .3,
-                        width: width * .3,
-                        decoration: BoxDecoration(
-                          color: secondaryPickColor,
-                          borderRadius: BorderRadius.circular(10)
-                        ),
-                        child: const Padding(
-                          padding: EdgeInsets.all(25.0),
-                          child: CustomSvg(
-                            svg: musicJust,
-                          ),
-                        ),
-                      ):CustomImage(
-                        imageUrl: ref.watch(mixMusicProvider).musicModelSecond!.image,
-                        height: width * .35,
-                        width: width * .35,
-                        boxFit: BoxFit.cover,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Center(
-                      child: CustomText(
-                        text: "${ref.watch(mixMusicProvider).musicModelFirst?.musicName}",
-                        textAlign: TextAlign.center,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w400,
-                        color: primaryGreyColor,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Center(
-                      child: GestureDetector(
+                      ref.watch(mixMusicProvider).musicModelSecond?.image == null?GestureDetector(
                         onTap:(){
                           if(ref.watch(mixMusicProvider).musicModelSecond?.musicName == null){
                             ref.read(addProvider).showPlusPlaylist(playlistPlusBottom:true,);
                             ref.read(addProvider).changePage(1);
                           }
                         },
-                        child: Container(
-                          color: Colors.transparent,
-                          child: CustomText(
-                            text: ref.watch(mixMusicProvider).musicModelSecond?.musicName ?? "Add a Sound",
-                            fontSize: 20,
-                            fontWeight: FontWeight.w400,
-                            color: primaryGreyColor,
-                          ),
+                        child: Column(
+                          children: [
+                            Container(
+                              height: width * .3,
+                              width: width * .3,
+                              decoration: BoxDecoration(
+                                color: secondaryPickColor,
+                                borderRadius: BorderRadius.circular(10)
+                              ),
+                              child: const Padding(
+                                padding: EdgeInsets.all(25.0),
+                                child: CustomSvg(
+                                  svg: musicJust,
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: width * 0.04),
+                            Center(
+                              child: Container(
+                                color: Colors.transparent,
+                                child: CustomText(
+                                  text: ref.watch(mixMusicProvider).musicModelSecond?.musicName ?? "Add a Sound",
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w400,
+                                  color: primaryGreyColor,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
+                      ):Column(
+                        children: [
+                          CustomImage(
+                            imageUrl: ref.watch(mixMusicProvider).musicModelSecond!.image,
+                            height: width * .35,
+                            width: width * .35,
+                            boxFit: BoxFit.cover,
+                          ),
+                          SizedBox(height: width * 0.04),
+                          Center(
+                            child: Container(
+                              color: Colors.transparent,
+                              child: CustomText(
+                                text: ref.watch(mixMusicProvider).musicModelSecond?.musicName ?? "Add a Sound",
+                                fontSize: 20,
+                                fontWeight: FontWeight.w400,
+                                color: primaryGreyColor,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
+                    ],
                   ),
                 ],
               ),
@@ -246,25 +294,26 @@ class _MixScreenState extends ConsumerState<MixScreen> {
                       SizedBox(
                         width: width * .45,
                         child: Slider(
-                            value: 5,
-                            min: 1.0,
-                            max: 20.0,
-                            divisions: 100,
-                            activeColor: primaryPinkColor,
-                            inactiveColor: primaryGreyColor2,
-                            onChanged: (double newValue) {
-                              setState(() {
-                                //_value = newValue.round();
-                              });
-                            },
-                            semanticFormatterCallback: (double newValue) {
-                              return '${newValue.round()} dollars';
-                            }),
+                          value: currentVolume,
+                          min: 0.0,
+                          max: 1.0,
+                          divisions: 100,
+                          activeColor: primaryPinkColor,
+                          inactiveColor: primaryGreyColor2,
+                          onChanged: (double newValue) async{
+                            setState(() {
+                              // Screen.setBrightness(newValue);
+                              currentVolume = newValue;
+                              print("volume $currentVolume");
+                            });
+                            await PerfectVolumeControl.setVolume(currentVolume);
+                          },
+                        ),
                       ),
-                      const Padding(
-                        padding:  EdgeInsets.symmetric(horizontal: 15.0),
+                       Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15.0),
                         child: CustomText(
-                          text: 'Set sound 1 volume',
+                          text: 'Set sound ${(currentVolume * 100).toInt().toString().padLeft(2,"0")} volume',
                           fontWeight: FontWeight.w400,
                           fontSize: 16,
                         ),
@@ -276,29 +325,26 @@ class _MixScreenState extends ConsumerState<MixScreen> {
                     children: [
                       SizedBox(
                         width: width * .45,
-                        child: Align(
-                          alignment: Alignment.topLeft,
-                          child: Slider(
-                              value: 5,
-                              min: 1.0,
-                              max: 20.0,
-                              divisions: 100,
-                              activeColor: primaryPinkColor,
-                              inactiveColor: primaryGreyColor2,
-                              onChanged: (double newValue) {
-                                setState(() {
-                                  //_value2 = newValue.round();
-                                });
-                              },
-                              semanticFormatterCallback: (double newValue) {
-                                return '${newValue.round()} dollars';
-                              }),
+                        child: Slider(
+                          value: ref.watch(mixMusicProvider).musicModelSecond?.image == null?0:currentVolume1,
+                          min: 0.0,
+                          max: 1.0,
+                          divisions: 100,
+                          activeColor: primaryPinkColor,
+                          inactiveColor: primaryGreyColor2,
+                          onChanged: ref.watch(mixMusicProvider).musicModelSecond?.image == null?null:(double newValue) async{
+                            setState(() {
+                              currentVolume1 = newValue;
+                              print("volume $currentVolume1");
+                            });
+                            await PerfectVolumeControl.setVolume(currentVolume1);
+                          },
                         ),
                       ),
-                      const Padding(
-                        padding:  EdgeInsets.symmetric(horizontal: 15.0),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15.0),
                         child: CustomText(
-                          text: 'Set sound 2 volume',
+                          text: 'Set sound ${(currentVolume1 * 100).toInt().toString().padLeft(2,"0")} volume',
                           fontWeight: FontWeight.w400,
                           fontSize: 16,
                         ),
