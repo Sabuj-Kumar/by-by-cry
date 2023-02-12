@@ -136,7 +136,9 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> with Ticker
       if(_duration.inSeconds.toInt() == _position.inSeconds.toInt() || (_duration.inSeconds.toInt() - 1 == _position.inSeconds.toInt())) {
         if(mounted){
           setState(() {
-            setDuration -= _duration.inSeconds.toInt();
+            if(setDuration > 0){
+              setDuration -= _duration.inSeconds.toInt();
+            }
             print("set duration change $setDuration");
             print("playe or not $playPouse");
             if(!issongplaying){
