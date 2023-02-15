@@ -5,6 +5,7 @@ import 'package:bye_bye_cry_new/compoment/shared/custom_image.dart';
 import 'package:bye_bye_cry_new/compoment/shared/custom_svg.dart';
 import 'package:bye_bye_cry_new/screens/models/music_models.dart';
 import 'package:bye_bye_cry_new/screens/provider/mix_music_provider.dart';
+import 'package:bye_bye_cry_new/screens/provider/playlistProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -335,9 +336,11 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
             ),
             GestureDetector(
               onTap: (){
-                CustomBottomSheet.bottomSheet(context, isDismiss: true,child: StatefulBuilder(builder: (BuildContext context, void Function(void Function()) updateState) {
-                  return bottomSheet(context:context,id: ref.watch(mixMusicProvider).combinationList[musicIndex].id);
-                },));
+                if(ref.watch(playlistProvider).playFromPlaylist){
+                  CustomBottomSheet.bottomSheet(context, isDismiss: true,child: StatefulBuilder(builder: (BuildContext context, void Function(void Function()) updateState) {
+                    return bottomSheet(context:context,id: ref.watch(mixMusicProvider).combinationList[musicIndex].id);
+                  },));
+                }
               },
               child: Container(
                 color: Colors.transparent,
@@ -356,7 +359,7 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
                               fontWeight: FontWeight.w400,
                               color: secondaryBlackColor,
                             ),
-                            const SizedBox(height:8,child: CustomSvg(svg: down_arrow,color: blackColorA0,)),
+                            ref.watch(playlistProvider).playFromPlaylist?const SizedBox(height:8,child: CustomSvg(svg: down_arrow,color: blackColorA0,)):const SizedBox(),
                           ],
                         ),
                       ),

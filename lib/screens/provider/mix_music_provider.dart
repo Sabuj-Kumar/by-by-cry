@@ -46,27 +46,13 @@ class MixMusicProvider extends ChangeNotifier{
   }
   createMix(MixMusicModel mixMusicModel)async{
     int index = combinationList.indexWhere((element) => element.id == mixMusicModel.id);
+    print("mix music create $index");
     if(index < 0){
       combinationList.add(mixMusicModel);
       await LocalDB.setMixMusicListItem(combinationList);
       print('added mix ${mixMusicModel.id}');
     }
-    /*int index = combinationList.indexWhere((element) => element.id == mixMusicModel.id);
-    if(!mixPlayListIds.contains(mixMusicModel.id)) {
-      if(index < 0) {
-        combinationList.add(mixMusicModel);
-      *//*  mixPlayListIds.add(mixMusicModel.id);
-        await LocalDB.setMixPlayListItem(combinationList);*//*
-        print('added mix ${mixMusicModel.id}');
-      }
-    }else {
-      if(index >= 0) {
-        combinationList.remove(mixMusicModel);
-       *//* mixPlayListIds.remove(mixMusicModel.id);
-        await LocalDB.setMixPlayListItem(combinationList);*//*
-        print('remove');
-      }
-    }*/
+
   }
   assignMixAllPlaylist()async{
     mixPlaylist = await LocalDB.getMixPlayListItem()??[];
@@ -115,6 +101,13 @@ class MixMusicProvider extends ChangeNotifier{
       }
       combinationList.removeAt(index);
       await LocalDB.setMixMusicListItem(combinationList);
+    }else{
+      int index = mixPlaylist.indexWhere((element) => element.id == mixId);
+      if(index >= 0){
+        mixPlaylist.remove(combinationList[index]);
+        mixPlayListIds.remove(mixId);
+        await LocalDB.setMixPlayListItem(mixPlaylist);
+      }
     }
     notifyListeners();
   }

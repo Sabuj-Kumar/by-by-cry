@@ -2,6 +2,7 @@ import 'package:bye_bye_cry_new/compoment/shared/custom_image.dart';
 import 'package:bye_bye_cry_new/compoment/shared/custom_text.dart';
 import 'package:bye_bye_cry_new/screens/provider/add_music_provider.dart';
 import 'package:bye_bye_cry_new/screens/provider/mix_music_provider.dart';
+import 'package:bye_bye_cry_new/screens/provider/playlistProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -23,17 +24,17 @@ class PlayListScreen extends ConsumerStatefulWidget {
 
 class _PlayListScreenState extends ConsumerState<PlayListScreen> {
 
+  TextEditingController searchController = TextEditingController();
   bool goMixPlayList = false;
   @override
   Widget build(BuildContext context) {
-    TextEditingController searchController = TextEditingController();
-
     final height = ScreenSize(context).height;
-
-    return goMixPlayList? AddToPlayListPage(
+    return ref.watch(playlistProvider).goMixPlaylistScreen? AddToPlayListPage(
       onPressed: (){
-        goMixPlayList = false;
-        setState(() {});
+        ref.read(playlistProvider).showMixPlayList(goMixPlaylist: false);
+        if(mounted){
+          setState(() {});
+        }
       },
     ):Scaffold(
       appBar: const CustomAppBar(
@@ -84,9 +85,10 @@ class _PlayListScreenState extends ConsumerState<PlayListScreen> {
             ),
             GestureDetector(
               onTap: (){
-                setState(() {
-                  goMixPlayList = true;
-                });
+                ref.read(playlistProvider).showMixPlayList(goMixPlaylist:true);
+                if(mounted){
+                  setState(() {});
+                }
               },
               child: Container(
               //  height: height * .07,
@@ -211,6 +213,9 @@ class _PlayListScreenState extends ConsumerState<PlayListScreen> {
               }
               if(mounted){
                 ref.read(mixMusicProvider).changeMixPlay(change:true);
+              }
+              if(mounted){
+                ref.read(playlistProvider).playFormPlaylistMethod(playFromPlaylistOrNot: true);
               }
             },
             child: Container(

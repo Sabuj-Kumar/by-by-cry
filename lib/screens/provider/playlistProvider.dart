@@ -7,20 +7,53 @@ final playlistProvider = ChangeNotifierProvider((ref) => PlaylistProvider());
 
 class PlaylistProvider  extends ChangeNotifier{
 
-  List<MixMusicModel> playList = [];
+  List<MixMusicModel?> mixPlayList = [];
+  MusicModel? musicModel;
   bool addInPlayListTrueFalse = false;
+  bool goMixPlaylistScreen = false;
+  int index = 0;
+  bool firstOrSecond = true;
+  bool playFromPlaylist = false;
 
   createMusic(){
-    playList.add(MixMusicModel(id: ""));
+    mixPlayList.add(MixMusicModel(id: ""));
     notifyListeners();
   }
-  addInPlaylistTrue({required bool addPlayListTrue}){
-    addInPlayListTrueFalse = addPlayListTrue;
+  showMixPlayList({required bool goMixPlaylist}){
+    goMixPlaylistScreen = goMixPlaylist;
     notifyListeners();
   }
-  addInPlaylistFalse({required bool addPlayListFalse}){
-    addInPlayListTrueFalse = addPlayListFalse;
+  addInPlaylistTrue(){
+    addInPlayListTrueFalse = true;
     notifyListeners();
   }
-
+  addInPlaylistFalse(){
+    addInPlayListTrueFalse = false;
+    notifyListeners();
+  }
+  setIndex({required int setIndex}){
+    index = setIndex;
+    notifyListeners();
+  }
+  setMusicFirstOrSecond({required bool setFirstOrSecondMusic}){
+    firstOrSecond = setFirstOrSecondMusic;
+    notifyListeners();
+  }
+  setMusic({required MusicModel setMusicModel}){
+    musicModel = setMusicModel;
+    if(firstOrSecond){
+      mixPlayList[index]?.first = musicModel;
+    }else{
+      mixPlayList[index]?.second = musicModel;
+    }
+    notifyListeners();
+  }
+  clearPlaylist(){
+    mixPlayList = [];
+    notifyListeners();
+  }
+  playFormPlaylistMethod({required bool playFromPlaylistOrNot}){
+    playFromPlaylist = playFromPlaylistOrNot;
+    notifyListeners();
+  }
 }

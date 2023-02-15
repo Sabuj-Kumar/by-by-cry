@@ -6,6 +6,7 @@ import 'package:bye_bye_cry_new/compoment/shared/custom_text.dart';
 import 'package:bye_bye_cry_new/compoment/shared/screen_size.dart';
 import 'package:bye_bye_cry_new/screens/provider/add_music_provider.dart';
 import 'package:bye_bye_cry_new/screens/provider/mix_music_provider.dart';
+import 'package:bye_bye_cry_new/screens/provider/playlistProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../compoment/shared/custom_app_bar.dart';
@@ -361,13 +362,26 @@ class _SoundScreenState extends ConsumerState<SoundScreen> {
                     ),
                     child: GestureDetector(
                       onTap: (){
-                        ref.read(addProvider).changePage(2);
-                        if(ref.read(mixMusicProvider).selectMixSound){
-                          ref.read(mixMusicProvider).mixFirstMusic(musicModel);
+                        ref.read(addProvider).changePage(3);
+                        if(ref.watch(playlistProvider).addInPlayListTrueFalse){
+                          if(mounted){
+                            ref.read(playlistProvider).showMixPlayList(goMixPlaylist: true);
+                          }
+                          if(mounted){
+                            ref.read(playlistProvider).setMusic(setMusicModel: musicModel);
+                          }
+                          if(mounted){
+                            ref.read(playlistProvider).addInPlaylistFalse();
+                          }
                         }else{
-                          ref.read(mixMusicProvider).mixSecondMusic(musicModel);
+                          ref.read(addProvider).changePage(2);
+                          if(ref.read(mixMusicProvider).selectMixSound){
+                            ref.read(mixMusicProvider).mixFirstMusic(musicModel);
+                          }else{
+                            ref.read(mixMusicProvider).mixSecondMusic(musicModel);
+                          }
+                          ref.read(addProvider).showPlusPlaylist(playlistPlusBottom: false);
                         }
-                        ref.read(addProvider).showPlusPlaylist(playlistPlusBottom: false);
                       },
                       child: const Padding(
                         padding: EdgeInsets.all(5.0),
@@ -386,10 +400,15 @@ class _SoundScreenState extends ConsumerState<SoundScreen> {
   Widget mixImageList({required MixMusicModel mixMusicModel,required BuildContext context}) {
     return GestureDetector(
       onTap: (){
-        setState(() {
-          mixMusicId = mixMusicModel.id;
-          changeToMixPlayNow = ref.watch(addProvider).showAddPlaylist?false:deleteShow?false:true;
-        });
+        if(mounted){
+          ref.read(playlistProvider).playFormPlaylistMethod(playFromPlaylistOrNot: false);
+        }
+        if(mounted){
+          setState(() {
+            mixMusicId = mixMusicModel.id;
+            changeToMixPlayNow = ref.watch(addProvider).showAddPlaylist?false:deleteShow?false:true;
+          });
+        }
       },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
