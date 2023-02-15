@@ -15,7 +15,12 @@ class MixMusicProvider extends ChangeNotifier{
   bool alertDiaLog = false;
   bool changeToMixPlayNow = false;
   String musicId = "";
+  bool selectMixSound = false;
 
+  selectedMixSound({required bool selectSound}){
+    selectMixSound = selectSound;
+    notifyListeners();
+  }
   setMusicId({String mixMusicId = ''}){
     musicId = mixMusicId;
     notifyListeners();
@@ -31,10 +36,12 @@ class MixMusicProvider extends ChangeNotifier{
   }
   mixFirstMusic(MusicModel firstMixMusicModel){
     musicModelFirst = firstMixMusicModel;
+    print('first music added');
     notifyListeners();
   }
   mixSecondMusic(MusicModel secondMixMusicModel){
     musicModelSecond = secondMixMusicModel;
+    print('first music added');
     notifyListeners();
   }
   createMix(MixMusicModel mixMusicModel)async{

@@ -231,57 +231,61 @@ class _SoundScreenState extends ConsumerState<SoundScreen> {
                     ),// const SizedBox(height: 5,)
                   ],
                 ),
-              )),
-              Column(
-                  children: List.generate(
-                    ref.watch(mixMusicProvider).combinationList.isEmpty?0:ref.watch(mixMusicProvider).combinationList.length,
-                        (index) => Column(
+              )),// ref.watch(addProvider).showAddPlaylist?
+              ref.watch(addProvider).showAddPlaylist?const SizedBox(height: 15,):Column(
+                children: [
+                  Column(
+                      children: List.generate(
+                        ref.watch(mixMusicProvider).combinationList.isEmpty?0:ref.watch(mixMusicProvider).combinationList.length,
+                            (index) => Column(
+                          children: [
+                            Container(
+                              color: index % 2 == 0?Colors.transparent:pinkLightColor,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                                child: mixImageList(
+                                    context: context,mixMusicModel: ref.watch(mixMusicProvider).combinationList[index]),
+                              ),
+                            ),// const SizedBox(height: 5,)
+                          ],
+                        ),
+                      )),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25.0,vertical: 5),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Container(
-                          color: index % 2 == 0?Colors.transparent:pinkLightColor,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                            child: mixImageList(
-                                context: context,mixMusicModel: ref.watch(mixMusicProvider).combinationList[index]),
+                          width: 60,
+                          // height: 50,
+                          padding: const EdgeInsets.all(10.0),
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(10),
+                            ),
+                            color: primaryPinkColor,
                           ),
-                        ),// const SizedBox(height: 5,)
+                          child: const CustomImage(
+                            boxFit: BoxFit.fill,
+                            imageUrl: whitePlus,
+                            scale: 1,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        const CustomText(
+                          text: 'Mix Two Sounds',
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: blackColor50,
+                        )
                       ],
                     ),
-                  )),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0,vertical: 5),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: 60,
-                     // height: 50,
-                      padding: const EdgeInsets.all(10.0),
-                      decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(10),
-                        ),
-                        color: primaryPinkColor,
-                      ),
-                      child: const CustomImage(
-                        boxFit: BoxFit.fill,
-                        imageUrl: whitePlus,
-                        scale: 1,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    const CustomText(
-                      text: 'Mix Two Sounds',
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: blackColor50,
-                    )
-                  ],
-                ),
-              ),
-              const SizedBox(height: 15,)
+                  ),
+                  const SizedBox(height: 15,)
+                ],
+              )
             ],
           ),
         ));
@@ -358,7 +362,11 @@ class _SoundScreenState extends ConsumerState<SoundScreen> {
                     child: GestureDetector(
                       onTap: (){
                         ref.read(addProvider).changePage(2);
-                        ref.read(mixMusicProvider).mixSecondMusic(musicModel);
+                        if(ref.read(mixMusicProvider).selectMixSound){
+                          ref.read(mixMusicProvider).mixFirstMusic(musicModel);
+                        }else{
+                          ref.read(mixMusicProvider).mixSecondMusic(musicModel);
+                        }
                         ref.read(addProvider).showPlusPlaylist(playlistPlusBottom: false);
                       },
                       child: const Padding(
