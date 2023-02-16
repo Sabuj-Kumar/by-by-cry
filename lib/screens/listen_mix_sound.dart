@@ -334,37 +334,27 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
               width: width * .9,
               boxFit: BoxFit.fill,
             ),
-            GestureDetector(
-              onTap: (){
-                if(ref.watch(playlistProvider).playFromPlaylist){
-                  CustomBottomSheet.bottomSheet(context, isDismiss: true,child: StatefulBuilder(builder: (BuildContext context, void Function(void Function()) updateState) {
-                    return bottomSheet(context:context,id: ref.watch(mixMusicProvider).combinationList[musicIndex].id);
-                  },));
-                }
-              },
-              child: Container(
-                color: Colors.transparent,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            CustomText(
-                              text: "${ref.watch(mixMusicProvider).combinationList[musicIndex].first?.musicName}+${ref.watch(mixMusicProvider).combinationList[musicIndex].second?.musicName}",
-                              fontSize: 20,
-                              fontWeight: FontWeight.w400,
-                              color: secondaryBlackColor,
-                            ),
-                            ref.watch(playlistProvider).playFromPlaylist?const SizedBox(height:8,child: CustomSvg(svg: down_arrow,color: blackColorA0,)):const SizedBox(),
-                          ],
-                        ),
+            Container(
+              color: Colors.transparent,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CustomText(
+                            text: "${ref.watch(mixMusicProvider).combinationList[musicIndex].first?.musicName}+${ref.watch(mixMusicProvider).combinationList[musicIndex].second?.musicName}",
+                            fontSize: 20,
+                            fontWeight: FontWeight.w400,
+                            color: secondaryBlackColor,
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -848,211 +838,5 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
        }
       }
     });
-  }
-  Widget bottomSheet({required BuildContext context,required String id}){
-    final width = ScreenSize(context).width;
-    int playIndex = ref.watch(mixMusicProvider).combinationList.indexWhere((element) => element.id == id);
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      child: Wrap(
-        children: [
-          Container(
-            color: Colors.transparent,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: primaryPinkColor
-                            ),
-                            child: const Padding(
-                              padding: EdgeInsets.all(1.0),
-                              child: CustomImage(
-                                imageUrl: playButton,
-                                height: 30,
-                                width: 30,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children:  [
-                                const CustomText(text: "Witching Hour",fontWeight: FontWeight.w600,fontSize: 20,color: blackColor50),
-                                const SizedBox(height: 5),
-                                Flexible(
-                                    fit: FlexFit.loose,
-                                    child: Container(
-                                        color: Colors.transparent,
-                                        width: width * 0.67,
-                                        child: CustomText(text: "${ref.watch(mixMusicProvider).combinationList[playIndex].first?.musicName} + ${ref.watch(mixMusicProvider).combinationList[playIndex].second?.musicName} is playing",fontWeight: FontWeight.w400,fontSize: 14,color: blackColor50)))
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                      const CustomSvg(svg: arrow_foreword),
-                    ],
-                  ),
-                ),
-                Container(height: 2, color: blackColorD9),
-                SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: List.generate(ref.watch(mixMusicProvider).combinationList.length, (index) => Container(
-                        color: Colors.white,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                CustomText(text: "Sound Set ${index+1}",fontSize: 16,fontWeight: FontWeight.w600,color: blackColor50),
-                                SizedBox(height: width * 0.05),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          color: Colors.transparent,
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            children: [
-                                              SizedBox(
-                                                width: width * 0.44,
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.start,
-                                                  children: [
-                                                    SizedBox(
-                                                        height: width * 0.1,
-                                                        width: width * 0.1,
-                                                        child:  CustomImage(imageUrl: "${ref.watch(mixMusicProvider).combinationList[index].first?.image}",boxFit: BoxFit.fill,)),
-                                                     Expanded(
-                                                       child: Padding(
-                                                        padding: const EdgeInsets.all(10.0),
-                                                        child: CustomText(text: "${ref.watch(mixMusicProvider).combinationList[index].first?.musicName}",fontSize: 16,fontWeight: FontWeight.w600,color: blackColor50),
-                                                    ),
-                                                     ),
-                                                  ],
-                                                ),
-                                              ),
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                children:  [
-                                                  const CustomSvg(svg: volume),
-                                                  Padding(
-                                                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                                                    child: CustomText(text: "${(currentVolume * 100).toInt().toString().padLeft(2,"0")}%",fontSize: 12,fontWeight: FontWeight.w600,color: blackColor50),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        SizedBox(height: width * 0.03),
-                                        Container(
-                                          color: Colors.transparent,
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            children: [
-                                              SizedBox(
-                                                width: width * 0.44,
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.start,
-                                                  children: [
-                                                    SizedBox(
-                                                        height: width * 0.1,
-                                                        width: width * 0.1,
-                                                        child:  CustomImage(imageUrl: "${ref.watch(mixMusicProvider).combinationList[index].second?.image}",boxFit: BoxFit.fill)),
-                                                     Padding(
-                                                      padding: const EdgeInsets.all(10.0),
-                                                      child: CustomText(text: "${ref.watch(mixMusicProvider).combinationList[index].second?.musicName}",fontSize: 16,fontWeight: FontWeight.w600,color: blackColor50),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                children:  [
-                                                  const CustomSvg(svg: volume),
-                                                  Padding(
-                                                    padding:const EdgeInsets.symmetric(horizontal: 5.0),
-                                                    child: CustomText(text: "${(currentVolume * 100).toInt().toString().padLeft(2,"0")}%",fontSize: 12,fontWeight: FontWeight.w600,color: blackColor50),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: const [
-                                        CustomSvg(svg: timer),
-                                        Padding(
-                                          padding: EdgeInsets.symmetric(horizontal: 8.0),
-                                          child: CustomText(text: "8 min",fontWeight: FontWeight.w600,fontSize: 12,color: primaryGreyColor,),
-                                        )
-                                      ],
-                                    ),
-                                    Container(
-                                      clipBehavior: Clip.hardEdge,
-                                      decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: Colors.black.withOpacity(0.1)
-                                      ),
-                                      child: Padding(
-                                          padding: const EdgeInsets.all(1.0),
-                                          child: ref.watch(mixMusicProvider).combinationList[index].id != id?const CustomImage(
-                                            imageUrl: playButton,
-                                            height: 30,
-                                            width: 30,
-                                            color: blackColor97,
-                                          ):issongplaying1?const Padding(
-                                            padding: EdgeInsets.all(10.0),
-                                            child: CustomSvg(svg: pouseButton,height: 15,
-                                              width: 15,
-                                              color: blackColor97),
-                                          ):const CustomImage(
-                                            imageUrl: playButton,
-                                            height: 30,
-                                            width: 30,
-                                            color: blackColor97,
-                                          ),
-                                      ))
-                                  ],
-                                ),
-                              ],
-                            ),
-                            index < 2?const SizedBox(height: 10):const SizedBox(),
-                            index < 2?Container(width: width,height: 1.5,color: blackColorD9,):const SizedBox(),
-                            const SizedBox(height: 20)
-                          ],
-                        ),
-                      )),
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }

@@ -1,4 +1,26 @@
 
+class PlayListModel{
+
+  String? title;
+  String id;
+  List<MixMusicModel>? playListList;
+
+  PlayListModel({this.title,required this.id,this.playListList});
+
+  factory PlayListModel.fromJson(Map<String,dynamic> json){
+    return PlayListModel(
+        id:json['id'],
+        title: json['title'],
+        playListList:List<MixMusicModel>.from(json["playListList"].map((x) => MixMusicModel.fromJson(x))),
+    );
+  }
+  Map<String,dynamic> toJson() => {
+    "id":id,
+    "title":title,
+    "playListList":List<dynamic>.from(playListList!.map((x) => x.toJson())),
+  };
+}
+
 class MixMusicModel{
 
   String id;

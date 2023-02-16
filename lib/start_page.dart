@@ -6,6 +6,7 @@ import 'package:bye_bye_cry_new/screens/mix_screen.dart';
 import 'package:bye_bye_cry_new/screens/playList_screen.dart';
 import 'package:bye_bye_cry_new/screens/provider/add_music_provider.dart';
 import 'package:bye_bye_cry_new/screens/provider/mix_music_provider.dart';
+import 'package:bye_bye_cry_new/screens/provider/playlistProvider.dart';
 import 'package:bye_bye_cry_new/screens/sound_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -39,6 +40,9 @@ class _StartPageState extends ConsumerState<StartPage> {
       }
       if(mounted){
         ref.read(addProvider).assignAllPlaylist();
+      }
+      if(mounted){
+        ref.read(playlistProvider).assignMixPlayList();
       }
       setState((){});
     });

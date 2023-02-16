@@ -49,4 +49,22 @@ class LocalDB{
     }
     return null;
   }
+
+  static setMixPlayList(List<PlayListModel> playListModel)async{
+    final prefs = await SharedPreferences.getInstance();
+    if(prefs.containsKey("listMixPlayList")) { prefs.remove("listMixPlayList");}
+    prefs.setString("listMixPlayList",jsonEncode(playListModel.map((e) => e.toJson()).toList()));
+    print("added ${playListModel.length}");
+  }
+
+  static Future<List<PlayListModel>?>getMixPlayList()async{
+    final prefs = await SharedPreferences.getInstance();
+    if(prefs.containsKey("listMixPlayList")) {
+      List<dynamic> jsonData = jsonDecode(prefs.getString("listMixPlayList")??"[]");
+      List<PlayListModel> realData = jsonData.map((e) => PlayListModel.fromJson(e)).toList();
+      return realData;
+    }
+    return null;
+  }
+  //PlayListModel
 }

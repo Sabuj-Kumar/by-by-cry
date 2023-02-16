@@ -4,6 +4,7 @@ import 'package:bye_bye_cry_new/compoment/shared/custom_image.dart';
 import 'package:bye_bye_cry_new/compoment/shared/custom_svg.dart';
 import 'package:bye_bye_cry_new/compoment/shared/custom_text.dart';
 import 'package:bye_bye_cry_new/compoment/shared/screen_size.dart';
+import 'package:bye_bye_cry_new/screens/playlist_mix_sound.dart';
 import 'package:bye_bye_cry_new/screens/provider/add_music_provider.dart';
 import 'package:bye_bye_cry_new/screens/provider/mix_music_provider.dart';
 import 'package:bye_bye_cry_new/screens/provider/playlistProvider.dart';
@@ -29,8 +30,10 @@ class _SoundScreenState extends ConsumerState<SoundScreen> {
   TextEditingController searchController = TextEditingController();
   bool changeToPlayNow = false;
   bool changeToMixPlayNow = false;
+  bool changeToMixPlayListNow = false;
   MusicModel? music;
   String mixMusicId = '';
+  String mixPlaylistMixMusicId = '';
   AudioCache audioCache = AudioCache();
   AudioPlayer audioPlayer = AudioPlayer();
   bool issongplaying = false;
@@ -137,16 +140,30 @@ class _SoundScreenState extends ConsumerState<SoundScreen> {
         }
       }
       if(mounted){
+        if(ref.read(playlistProvider).changeToMixPlayListNow){
+          mixPlaylistMixMusicId = ref.watch(playlistProvider).musicId;
+          if(mounted){
+            ref.read(playlistProvider).setMixPlaylistMusicId();
+          }
+        }
+      }
+      if(mounted){
         changeToMixPlayNow = ref.read(mixMusicProvider).changeToMixPlayNow;
       }
       if(mounted){
         changeToPlayNow = ref.read(addProvider).changeToPlayNow;
       }
       if(mounted){
+        changeToMixPlayListNow = ref.read(playlistProvider).changeToMixPlayListNow;
+      }
+      if(mounted){
         ref.read(addProvider).changePlay(change: false);
       }
       if(mounted){
         ref.read(mixMusicProvider).changeMixPlay(change: false);
+      }
+      if(mounted){
+        ref.read(playlistProvider).changePlaying(change: false);
       }
       if(mounted){setState((){});}
     });
@@ -168,15 +185,43 @@ class _SoundScreenState extends ConsumerState<SoundScreen> {
     return changeToPlayNow?NowPlayingScreen(
         musicId: musicId,
         onPressed: (){
-          setState(() {
-            changeToPlayNow = false;
-          });
+          if(ref.watch(addProvider).playFromPlayList){
+            if(mounted){
+              ref.read(addProvider).changePage(3);
+            }
+            if(mounted){
+              changeToPlayNow = false;
+              setState(() {});
+            }
+          } else{
+            setState(() {
+              changeToPlayNow = false;
+            });
+          }
+
         },
     ):changeToMixPlayNow?ListenMixSound(mixMusicModelId: mixMusicId,onPressed: (){
-      setState(() {
+      if(ref.watch(mixMusicProvider).playFromPlayList){
         changeToMixPlayNow = false;
+        if(mounted){
+          ref.read(addProvider).changePage(3);
+        }
+        if(mounted){
+          setState(() {});
+        }
+      } else{
+        setState(() {
+          changeToMixPlayNow = false;
+        });
+      }
+    }):changeToMixPlayListNow?PlaylistMixSound(playlistMixMusicId: mixPlaylistMixMusicId,onPressed: (){
+      setState(() {
+        changeToMixPlayListNow = false;
       });
-    }):Scaffold(
+      if(mounted){
+        ref.read(addProvider).changePage(3);
+      }
+    },):Scaffold(
         appBar: CustomAppBar(
             title: deleteShow?'Edit My Sounds':'My Sounds',
             actionTitle: deleteShow?"":'Edit',
@@ -295,6 +340,9 @@ class _SoundScreenState extends ConsumerState<SoundScreen> {
   Widget imageList({required MusicModel musicModel,required BuildContext context,}) {
     return GestureDetector(
       onTap: ref.watch(addProvider).showAddPlaylist?null:(){
+        if(mounted){
+          ref.read(addProvider).playFromPlaylistActive(change: false);
+        }
         setState(() {
           music = musicModel;
           musicId = musicModel.id;
@@ -401,7 +449,7 @@ class _SoundScreenState extends ConsumerState<SoundScreen> {
     return GestureDetector(
       onTap: (){
         if(mounted){
-          ref.read(playlistProvider).playFormPlaylistMethod(playFromPlaylistOrNot: false);
+          ref.read(mixMusicProvider).playFromPlayListActive(change: false);
         }
         if(mounted){
           setState(() {

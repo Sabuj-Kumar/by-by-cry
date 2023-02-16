@@ -104,8 +104,8 @@ class _CustomTextInputFieldState extends State<CustomTextInputField> {
           //contentPadding: widget.obscure? EdgeInsets.only(top: widget.obscurePadding!?25:10,left: 8,):widget.prefixImageLink != null?const EdgeInsets.only(top: 35):const EdgeInsets.all(10),
           border:OutlineInputBorder(
               borderRadius: BorderRadius.circular(widget.borderRadius),
-              borderSide: BorderSide(
-                color: Colors.grey.withOpacity(0.4),
+              borderSide: const BorderSide(
+                color: Colors.transparent,
               )
           ),
           errorBorder: OutlineInputBorder(
@@ -116,14 +116,14 @@ class _CustomTextInputFieldState extends State<CustomTextInputField> {
           ),
           focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(widget.borderRadius),
-              borderSide: BorderSide(
-                color: Colors.grey.withOpacity(0.4),
+              borderSide: const BorderSide(
+                color: Colors.transparent,
               )
           ),
           enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(widget.borderRadius),
-              borderSide: BorderSide(
-                color: Colors.grey.withOpacity(0.4),
+              borderSide: const BorderSide(
+                color: Colors.transparent,
               )
           ),
           focusedErrorBorder: OutlineInputBorder(

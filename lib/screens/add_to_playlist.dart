@@ -1,4 +1,5 @@
 
+import 'package:bye_bye_cry_new/compoment/shared/custom_input.dart';
 import 'package:bye_bye_cry_new/screens/provider/add_music_provider.dart';
 import 'package:bye_bye_cry_new/screens/provider/mix_music_provider.dart';
 import 'package:bye_bye_cry_new/screens/provider/playlistProvider.dart';
@@ -25,26 +26,13 @@ class AddToPlayListPage extends ConsumerStatefulWidget {
 class _AddToPlayListPageState extends ConsumerState<AddToPlayListPage> {
   double currentvol = 1;
   double currentvol2 = 1;
+  TextEditingController nameController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
   }
   addMusicToMixPlaylist(){
-    for(int idx = 0; idx < ref.watch(playlistProvider).mixPlayList.length;idx++){
-      MixMusicModel? mixMusicModel = ref.watch(playlistProvider).mixPlayList[idx];
-      if(mixMusicModel != null && mixMusicModel.first != null && mixMusicModel.second != null){
-        String _id = "${mixMusicModel.first?.id}${mixMusicModel.second?.id}";
-        mixMusicModel.id = _id;
-        if(mounted){
-          ref.read(mixMusicProvider).createMix(mixMusicModel);
-          if(mounted){
-            ref.read(mixMusicProvider).addOrRemoveMixPlayList(id: _id);
-          }
-          print("mix music add to my sound");
-        }
-      }
-    }
     if(mounted){
       ref.read(playlistProvider).showMixPlayList(goMixPlaylist: false);
     }
@@ -305,7 +293,7 @@ class _AddToPlayListPageState extends ConsumerState<AddToPlayListPage> {
     );
   }
   void _showDialog(BuildContext context) {
-    final height = ScreenSize(context).height;
+    final width = ScreenSize(context).height;
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -325,52 +313,54 @@ class _AddToPlayListPageState extends ConsumerState<AddToPlayListPage> {
                   fontWeight: FontWeight.w700,
                   color: secondaryBlackColor,
                 ),
-                content: Column(
-                  children: List.generate(ref.watch(playlistProvider).mixPlayList.length, (index) =>
-                      ref.watch(playlistProvider).mixPlayList[index]?.first != null && ref.watch(playlistProvider).mixPlayList[index]?.second != null?Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.white,
-                    ),
-                    child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 25.0,vertical: 20),
-                        child: CustomText(
-                          text: '${ref.watch(playlistProvider).mixPlayList[index]?.first?.musicName} + ${ref.watch(playlistProvider).mixPlayList[index]?.second?.musicName}',
-                          fontSize: 18,
-                          color: primaryGreyColor,
-                          fontWeight: FontWeight.w600,
-                        ),
-                    ),
+                content: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20)
                   ),
-                      ):const SizedBox()),
+                  child: CustomTextInputField(textEditingController: nameController,cursorColor: primaryPinkColor,borderColor: Colors.transparent,),
                 ),
                 actionsAlignment: MainAxisAlignment.center,
                 actionsPadding: const EdgeInsets.only(bottom: 10),
                 actions: <Widget>[
-                  OutLineButton(
-                    height: height * .06,
-                    width: height * .25,
-                    text: 'Save',
-                    textColor: secondaryBlackColor2,
-                    textFontSize: 20,
-                    textFontWeight: FontWeight.w600,
-                    borderRadius: 48,
-                    onPressed: () {
-                      addMusicToMixPlaylist();
-                      ref.read(playlistProvider).clearPlaylist();
-                      if(mounted){
-                        ref.read(playlistProvider).addInPlaylistFalse();
-                      }
-
-                      if(mounted){
-                        setState(() {});
-                      }
-                      if(mounted){
-                        Navigator.pop(context);
-                      }
-                    },
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 15.0),
+                    child: OutLineButton(
+                      height: width * .06,
+                      width: width * .25,
+                      text: 'Save',
+                      textColor: secondaryBlackColor2,
+                      textFontSize: 20,
+                      textFontWeight: FontWeight.w600,
+                      borderRadius: 48,
+                      onPressed: () {
+                       if(nameController.text.isNotEmpty){
+                         addMusicToMixPlaylist();
+                         if(mounted){
+                           ref.read(playlistProvider).addInPlaylistFalse();
+                         }
+                         if(mounted){
+                           ref.read(playlistProvider).createMixMusicPlaylist(mixTitle: nameController.text);
+                         }
+                         if(mounted){
+                           setState(() {});
+                         }
+                         if(mounted){
+                           Navigator.pop(context);
+                         }
+                       }else{
+                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                             backgroundColor: Colors.white,
+                             behavior: SnackBarBehavior.floating,
+                             content: const Text("Give The Title Name",style: TextStyle(color: Colors.black,),textAlign: TextAlign.center,),
+                             margin: const EdgeInsets.symmetric(vertical: 10,horizontal: 20),
+                             shape: RoundedRectangleBorder(
+                               borderRadius: BorderRadius.circular(10)
+                             ),
+                         ));
+                       }
+                      },
+                    ),
                   ),
                 ],
               ),

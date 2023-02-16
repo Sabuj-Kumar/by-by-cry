@@ -16,7 +16,12 @@ class MixMusicProvider extends ChangeNotifier{
   bool changeToMixPlayNow = false;
   String musicId = "";
   bool selectMixSound = false;
+  bool playFromPlayList = false;
 
+  playFromPlayListActive({bool change = false}){
+    playFromPlayList = change;
+    notifyListeners();
+  }
   selectedMixSound({required bool selectSound}){
     selectMixSound = selectSound;
     notifyListeners();
