@@ -135,8 +135,10 @@ class _PlaylistMixSoundState extends ConsumerState<PlaylistMixSound> with Ticker
         if(setDuration > 0){
           setDuration -= _duration.inSeconds;
           if(mounted){
-            setState(() {});
             pausePlayMethod();
+            if(mounted){
+              setState(() {});
+            }
           }
         }
       }
@@ -168,8 +170,10 @@ class _PlaylistMixSoundState extends ConsumerState<PlaylistMixSound> with Ticker
         if(setDuration > 0){
           setDuration -= _duration.inSeconds;
           if(mounted){
-            setState(() {});
             pausePlayMethod();
+          }
+          if(mounted){
+            setState(() {});
           }
         }
       }
@@ -265,10 +269,11 @@ class _PlaylistMixSoundState extends ConsumerState<PlaylistMixSound> with Ticker
       }
     }
     if(mounted){
-      updateState!((){});
+      updateState((){});
       setState(() {});
     }
   }
+
   @override
   Widget build(BuildContext context) {
     final height = ScreenSize(context).height;
@@ -372,9 +377,9 @@ class _PlaylistMixSoundState extends ConsumerState<PlaylistMixSound> with Ticker
                     trackShape: RectangularSliderTrackShape(),
                     thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10)),
                 child: Slider(
-                    value: position.inSeconds.toDouble() < _position2.inSeconds.toDouble()?_position.inSeconds.toDouble():_position2.inSeconds.toDouble(),
+                    value: _position.inSeconds.toDouble() > _position2.inSeconds.toDouble()?_position.inSeconds.toDouble():_position2.inSeconds.toDouble(),
                     min: 0,
-                    max: _duration.inSeconds.toDouble() < _duration2.inSeconds.toDouble()?_duration.inSeconds.toDouble():_duration2.inSeconds.toDouble(),
+                    max: _duration.inSeconds.toDouble() > _duration2.inSeconds.toDouble()?_duration.inSeconds.toDouble():_duration2.inSeconds.toDouble(),
                     divisions: 100,
                     activeColor: primaryPinkColor,
                     inactiveColor: primaryGreyColor2,
