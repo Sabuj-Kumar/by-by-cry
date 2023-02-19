@@ -1,17 +1,14 @@
 import 'dart:async';
-import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:bye_bye_cry_new/compoment/shared/custom_image.dart';
 import 'package:bye_bye_cry_new/compoment/shared/custom_svg.dart';
 import 'package:bye_bye_cry_new/screens/models/music_models.dart';
 import 'package:bye_bye_cry_new/screens/provider/mix_music_provider.dart';
-import 'package:bye_bye_cry_new/screens/provider/playlistProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screen_wake/flutter_screen_wake.dart';
 import 'package:perfect_volume_control/perfect_volume_control.dart';
-import '../compoment/bottom_sheet.dart';
 import '../compoment/shared/custom_app_bar.dart';
 import '../compoment/shared/custom_text.dart';
 import '../compoment/shared/screen_size.dart';
@@ -50,13 +47,16 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
     150
   ];
   int selectedTime = 0;
+  int mul = 0;
   bool playPouse = true;
+  bool playThisMusic = false;
   int setDuration = 0;
+  int selectedSliderLength = 0;
   AudioCache audioCache = AudioCache();
   AudioPlayer audioPlayer1 = AudioPlayer();
   AudioPlayer audioPlayer2 = AudioPlayer();
-  Duration _duration = Duration.zero;
-  Duration _position = Duration.zero;
+  Duration _duration1 = Duration.zero;
+  Duration _position1 = Duration.zero;
   Duration _duration2 = Duration.zero;
   Duration _position2 = Duration.zero;
   Duration position = Duration.zero;
@@ -75,6 +75,7 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
 
   @override
   void initState() {
+    initialization();
     startPlayer1();
     startPlayer2();
     changeVolume();
@@ -82,11 +83,6 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
     super.initState();
   }
 
-  @override
-  void didChangeDependencies() {
-    initialization();
-    super.didChangeDependencies();
-  }
   @override
   void dispose() {
     audioPlayer1.dispose();
@@ -110,6 +106,15 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
       }
     });
   }
+  changeDuration(){
+    mul++;
+    setDuration -= duration.inSeconds;
+    if(mounted){
+      setState(() {});
+      print("mul $mul duration $setDuration");
+      pausePlayMethod();
+    }
+  }
   Future<void> brightNess() async {
 
     try {
@@ -127,16 +132,40 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
     }
     if (!mounted) return;
   }
-
+  playFirstMusic()async{
+      String url1 = ref.watch(mixMusicProvider).combinationList[musicIndex].first?.musicFile??"";
+      await audioPlayer1.play(AssetSource(url1));
+      if(mounted){
+        setState(() {});
+      }
+  }
+  pauseFirstMusic()async{
+    await audioPlayer1.pause();
+  }
+  playSecondMusic()async{
+      String url2 = ref.watch(mixMusicProvider).combinationList[musicIndex].second?.musicFile??"";
+      await audioPlayer2.play(AssetSource(url2));
+      if(mounted){
+        setState(() {});
+      }
+  }
+  pauseSecondMusic()async{
+    await audioPlayer2.pause();
+  }
   startPlayer1()async{
     audioPlayer1.onPlayerStateChanged.listen((state){
       issongplaying1 = state == PlayerState.playing;
-      if(!issongplaying1 || !issongplaying2){
-        if(setDuration > 0){
-          setDuration -= _duration.inSeconds;
-          if(mounted){
-            setState(() {});
-            pausePlayMethod();
+      if(playPouse){
+        if(!issongplaying1){
+          if((_position1.inSeconds < duration.inSeconds-1 || _position2.inSeconds < duration.inSeconds-1)){
+            if(mounted){
+              playFirstMusic();
+            }
+          }
+        }
+        if(!issongplaying1 && !issongplaying2){
+          if(setDuration > 0){
+            changeDuration();
           }
         }
       }
@@ -145,14 +174,34 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
       }
     });
     audioPlayer1.onDurationChanged.listen((newDuration) {
-      _duration = newDuration;
-     print("first music duration ${_duration.inSeconds}");
+      _duration1 = newDuration;
       if(mounted){
         setState(() {});
       }
     });
     audioPlayer1.onPositionChanged.listen((newPositions) {
-      _position = newPositions;
+      _position1 = newPositions;
+      if(playPouse){
+        if((_position1.inSeconds >= duration.inSeconds-1 || _position2.inSeconds >= duration.inSeconds-1)){
+          if(mounted){
+            if(setDuration <= 0){
+              pauseFirstMusic();
+            }
+          }
+        }
+      }
+      if(playPouse){
+        if(!issongplaying1 && !issongplaying2){
+          if(setDuration > 0){
+            changeDuration();
+          }else{
+            if(mounted){
+              playPouse = false;
+              setState(() {});
+            }
+          }
+        }
+      }
       if(mounted){
         setState(() {});
       }
@@ -164,12 +213,17 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
   startPlayer2()async{
     audioPlayer2.onPlayerStateChanged.listen((state){
       issongplaying2 = state == PlayerState.playing;
-      if(!issongplaying1 || !issongplaying2){
-        if(setDuration > 0){
-          setDuration -= _duration.inSeconds;
-          if(mounted){
-            setState(() {});
-            pausePlayMethod();
+      if(playPouse){
+        if(!issongplaying2){
+          if((_position1.inSeconds >= duration.inSeconds-1  || _position2.inSeconds >= duration.inSeconds-1)){
+            if(mounted){
+              playSecondMusic();
+            }
+          }
+        }
+        if(!issongplaying1 && !issongplaying2){
+          if(setDuration > 0){
+            changeDuration();
           }
         }
       }
@@ -179,13 +233,33 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
     });
     audioPlayer2.onDurationChanged.listen((newDuration) {
       _duration2 = newDuration;
-      print("second music duration ${_duration2.inSeconds}");
       if(mounted){
         setState(() {});
       }
     });
     audioPlayer2.onPositionChanged.listen((newPositions) {
       _position2 = newPositions;
+      if(playPouse){
+        if((_position1.inSeconds >= duration.inSeconds-1  || _position2.inSeconds >= duration.inSeconds-1)){
+          if(mounted){
+            if(setDuration <= 0){
+              pauseSecondMusic();
+            }
+          }
+        }
+      }
+      if(playPouse){
+        if(!issongplaying1 && !issongplaying2){
+          if(setDuration > 0){
+            changeDuration();
+          }else{
+            if(mounted){
+              playPouse = false;
+              setState(() {});
+            }
+          }
+        }
+      }
       if(mounted){
         setState(() {});
       }
@@ -195,13 +269,26 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
     }
   }
   initialization(){
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async{
       musicIndex = ref.read(mixMusicProvider).combinationList.indexWhere((element) => element.id == widget.mixMusicModelId);
-      print("music index $musicIndex");
+      _duration1 = (await loadFile1())!;
+      _duration2 = (await loadFile2())!;
+      if(_duration1.inSeconds > _duration2.inSeconds){
+          duration = _duration1;
+          playThisMusic = true;
+          setState(() {});
+      }else{
+        duration = _duration2;
+        playThisMusic = false;
+        setState(() {});
+        print("two boro");
+      }
       if(mounted){
         setState(() {});
       }
-      checkMounted();
+      if(mounted){
+        checkMounted();
+      }
     });
   }
   changeIndex({bool changeIndex = false}){
@@ -221,6 +308,20 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
         setState((){});
       }*/
   }
+  Future<Duration?> loadFile1() {
+    return audioCache.loadAsFile("${ref.watch(mixMusicProvider).combinationList[musicIndex].first?.musicFile}")
+        .then((value) {
+      print(value);
+      return audioPlayer1.setSourceUrl(value.path);
+    }).then((value) => audioPlayer1.getDuration());
+  }
+  Future<Duration?> loadFile2() {
+    return audioCache.loadAsFile("${ref.watch(mixMusicProvider).combinationList[musicIndex].second?.musicFile}")
+        .then((value) {
+      print(value);
+      return audioPlayer2.setSourceUrl(value.path);
+    }).then((value) => audioPlayer2.getDuration());
+  }
   pausePlayMethod()async{
     if(issongplaying1 || issongplaying2){
       await audioPlayer1.pause();
@@ -228,7 +329,7 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
     }else{
       String url1 = ref.watch(mixMusicProvider).combinationList[musicIndex].first?.musicFile??"";
       String url2 = ref.watch(mixMusicProvider).combinationList[musicIndex].second?.musicFile??"";
-      print("${audioPlayer1.getDuration().then((value) => print("duration value$value"))}");
+
       await audioPlayer1.play(AssetSource(url1));
       await audioPlayer2.play(AssetSource(url2));
     }
@@ -250,48 +351,9 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
       setState(() {});
       pausePlayMethod();
     }
-    print("duration2 ${_duration2.inSeconds}  duration${_duration.inSeconds}");
+    print("duration2 ${_duration2.inSeconds}  duration${_duration1.inSeconds}");
   }
-/*if(_duration.inSeconds.toInt() == _position.inSeconds.toInt() || (_duration.inSeconds.toInt() - 1 == _position.inSeconds.toInt())) {
-        if(mounted){
-          setState(() {
-            if(setDuration>0){
-              setDuration -= _duration.inSeconds.toInt();
-            }
-          });
-        }
-      }*/
-  /* if(!issongplaying){
-          if(_duration.inSeconds.toInt() == _position.inSeconds.toInt() || (_duration.inSeconds.toInt() - 1 == _position.inSeconds.toInt())){
-            if(mounted){
-              if(index < 1){
-                index = 1;
-                print("index++ $index");
-                pausePlayMethod();
-              }else{
-                index = 0;
-              }
-              setState(() {});
-            }
-          }else{
-            print("else duration ${_duration.inSeconds.toInt()}");
-          }
-      }
-      if(mounted){
-        if(playPouse){
-          if(_duration.inSeconds.toInt() == _position.inSeconds.toInt() || (_duration.inSeconds.toInt() - 1 == _position.inSeconds.toInt())){
-            if(!issongplaying){
-              print("not stop");
-              if(mounted){
-                setState((){});
-              }
-              if(setDuration > 0){
-                pausePlayMethod();
-              }
-            }
-          }
-        }
-      }*/
+
   @override
   Widget build(BuildContext context) {
     final height = ScreenSize(context).height;
@@ -391,13 +453,13 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   CustomText(
-                    text: '${_position.inSeconds ~/ 60} : ${(_position.inSeconds % 60).toInt()}',
+                    text: '${(playThisMusic?_position1.inSeconds ~/ 60:_position2.inSeconds ~/ 60) + (duration.inSeconds * mul)} : ${playThisMusic?_position1.inSeconds % 60.toInt():_position2.inSeconds % 60.toInt()}',
                     fontSize: 10,
                     color: blackColor2,
                     fontWeight: FontWeight.w700,
                   ),
                   CustomText(
-                    text: '${_duration.inSeconds ~/ 60} : ${(_duration.inSeconds % 60).toInt()}',
+                    text: '${selectedSliderLength == 0?duration.inSeconds ~/ 60:selectedSliderLength~/60} : ${(selectedSliderLength ==0?duration.inSeconds % 60: selectedSliderLength % 60).toInt()}',
                     fontSize: 10,
                     color: blackColor2,
                     fontWeight: FontWeight.w700,
@@ -413,14 +475,14 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
                     trackShape: RectangularSliderTrackShape(),
                     thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10)),
                 child: Slider(
-                    value: position.inSeconds.toDouble() < _position2.inSeconds.toDouble()?_position.inSeconds.toDouble():_position2.inSeconds.toDouble(),
+                    value: (playThisMusic?_position1.inSeconds.toDouble():_position2.inSeconds.toDouble()) + (duration.inSeconds.toDouble() * mul),
                     min: 0,
-                    max: _duration.inSeconds.toDouble() < _duration2.inSeconds.toDouble()?_duration.inSeconds.toDouble():_duration2.inSeconds.toDouble(),
+                    max: selectedSliderLength == 0?duration.inSeconds.toDouble():selectedSliderLength.toDouble(),
                     divisions: 100,
                     activeColor: primaryPinkColor,
                     inactiveColor: primaryGreyColor2,
                     onChanged: (double newValue) async{
-                      if(newValue.toInt() <= _duration.inSeconds){
+                      if(newValue.toInt() <= _duration1.inSeconds){
                         await audioPlayer1.seek(Duration(seconds: newValue.toInt()));
                       }
                       if(newValue.toInt() <= _duration2.inSeconds){
@@ -428,6 +490,7 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
                       }
                       await audioPlayer1.resume();
                       await audioPlayer2.resume();
+                      playPouse = true;
                       if(mounted){
                         setState(() {});
                       }
@@ -484,9 +547,11 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
                       child: GestureDetector(
                         onTap: ()async {
                           if(playPouse){
-                            await audioPlayer1.pause();
-                            await audioPlayer2.pause();
+                            audioPlayer1.pause();
+                            audioPlayer2.pause();
+                            print('pouse naki play $playPouse');
                           }else{
+                            print('pouse naki play $playPouse');
                             String url1 = ref.watch(mixMusicProvider).combinationList[musicIndex].first?.musicFile??"";
                             String url2 = ref.watch(mixMusicProvider).combinationList[musicIndex].second?.musicFile??"";
                             await audioPlayer1.play(AssetSource(url1));
@@ -760,7 +825,7 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
                         data: const SliderThemeData(
                             trackShape: RectangularSliderTrackShape(),
                             thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10)),
-                        child: Slider.adaptive(
+                        child: Slider(
                             value: selectedTime.toDouble(),
                             min: 0,
                             max: 7,
@@ -775,7 +840,9 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
                                 setDuration *= 60;
                                 print("index $selectedTime");
                               });
-                              setState(() {});
+                              setState(() {
+                                selectedSliderLength = setDuration;
+                              });
                             },
                             semanticFormatterCallback: (double newValue) {
                               return '${newValue.round()} dollars';
@@ -808,6 +875,7 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
                                 check = newValue!;
                                 if(check){
                                   selectedTime = 0;
+                                  selectedSliderLength = 0;
                                 }
                               });
                         }),
@@ -827,15 +895,17 @@ class _ListenMixSoundState extends ConsumerState<ListenMixSound> with TickerProv
         );
       },
     ).then((value) {
+      setState(() {});
       if(mounted){
         ref.read(mixMusicProvider).alertDialogStop();
-       if(mounted){
+        print('selected second $selectedSliderLength');
+       /*if(mounted){
          setState(() {
            secController.text = "";
            minController.text = "";
            print("asche");
          });
-       }
+       }*/
       }
     });
   }

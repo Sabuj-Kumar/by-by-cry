@@ -1,6 +1,5 @@
 
 import 'dart:async';
-import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:bye_bye_cry_new/compoment/shared/custom_image.dart';
 import 'package:bye_bye_cry_new/compoment/shared/custom_svg.dart';
@@ -51,14 +50,15 @@ class _PlaylistMixSoundState extends ConsumerState<PlaylistMixSound> with Ticker
     150
   ];
   int selectedTime = 0;
+  int selectedSliderLength = 0;
   bool playPouse = true;
   int setDuration = 0;
   int mixPlaylistIndex = 0;
-  AudioCache audioCache = AudioCache();
-  AudioPlayer audioPlayer1 = AudioPlayer();
-  AudioPlayer audioPlayer2 = AudioPlayer();
-  Duration _duration = Duration.zero;
-  Duration _position = Duration.zero;
+  final audioPlayer1 = AudioPlayer();
+  final audioPlayer2 = AudioPlayer();
+  final player = AudioPlayer();
+  Duration _duration1 = Duration.zero;
+  Duration _position1 = Duration.zero;
   Duration _duration2 = Duration.zero;
   Duration _position2 = Duration.zero;
   Duration position = Duration.zero;
@@ -133,12 +133,10 @@ class _PlaylistMixSoundState extends ConsumerState<PlaylistMixSound> with Ticker
       issongplaying1 = state == PlayerState.playing;
       if(!issongplaying1 || !issongplaying2){
         if(setDuration > 0){
-          setDuration -= _duration.inSeconds;
+          setDuration -= _duration1!.inSeconds;
           if(mounted){
+            setState(() {});
             pausePlayMethod();
-            if(mounted){
-              setState(() {});
-            }
           }
         }
       }
@@ -147,14 +145,14 @@ class _PlaylistMixSoundState extends ConsumerState<PlaylistMixSound> with Ticker
       }
     });
     audioPlayer1.onDurationChanged.listen((newDuration) {
-      _duration = newDuration;
-
+      _duration1 = newDuration;
+      print("first music duration ${_duration1!.inSeconds}");
       if(mounted){
         setState(() {});
       }
     });
     audioPlayer1.onPositionChanged.listen((newPositions) {
-      _position = newPositions;
+      _position1 = newPositions;
       if(mounted){
         setState(() {});
       }
@@ -168,12 +166,10 @@ class _PlaylistMixSoundState extends ConsumerState<PlaylistMixSound> with Ticker
       issongplaying2 = state == PlayerState.playing;
       if(!issongplaying1 || !issongplaying2){
         if(setDuration > 0){
-          setDuration -= _duration.inSeconds;
-          if(mounted){
-            pausePlayMethod();
-          }
+          setDuration -= _duration1!.inSeconds;
           if(mounted){
             setState(() {});
+            pausePlayMethod();
           }
         }
       }
@@ -183,6 +179,7 @@ class _PlaylistMixSoundState extends ConsumerState<PlaylistMixSound> with Ticker
     });
     audioPlayer2.onDurationChanged.listen((newDuration) {
       _duration2 = newDuration;
+      print("second music duration ${_duration2.inSeconds}");
       if(mounted){
         setState(() {});
       }
@@ -244,7 +241,7 @@ class _PlaylistMixSoundState extends ConsumerState<PlaylistMixSound> with Ticker
       setState(() {});
       pausePlayMethod();
     }
-    print("duration2 ${_duration2.inSeconds}  duration${_duration.inSeconds}");
+    print("duration2 ${_duration2.inSeconds}  duration${_duration1.inSeconds}");
   }
   playMusicForBottomSheet({required String id,required Function(void Function()) updateState}) async{
     print("playlist play button click");
@@ -355,13 +352,13 @@ class _PlaylistMixSoundState extends ConsumerState<PlaylistMixSound> with Ticker
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   CustomText(
-                    text: '${_position.inSeconds ~/ 60} : ${(_position.inSeconds % 60).toInt()}',
+                    text: '${_position1.inSeconds ~/ 60} : ${(_position1.inSeconds % 60).toInt()}',
                     fontSize: 10,
                     color: blackColor2,
                     fontWeight: FontWeight.w700,
                   ),
                   CustomText(
-                    text: '${_duration.inSeconds ~/ 60} : ${(_duration.inSeconds % 60).toInt()}',
+                    text: '${_duration1.inSeconds ~/ 60} : ${(_duration1.inSeconds % 60).toInt()}',
                     fontSize: 10,
                     color: blackColor2,
                     fontWeight: FontWeight.w700,
@@ -370,21 +367,20 @@ class _PlaylistMixSoundState extends ConsumerState<PlaylistMixSound> with Ticker
               ),
             ),
             SizedBox(
-              //color: Colors.green,
               width: width * .95,
               child: SliderTheme(
                 data: const SliderThemeData(
                     trackShape: RectangularSliderTrackShape(),
                     thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10)),
                 child: Slider(
-                    value: _position.inSeconds.toDouble() > _position2.inSeconds.toDouble()?_position.inSeconds.toDouble():_position2.inSeconds.toDouble(),
+                    value: _position1.inSeconds.toDouble() > _position2.inSeconds.toDouble()?_position1.inSeconds.toDouble():_position2.inSeconds.toDouble(),
                     min: 0,
-                    max: _duration.inSeconds.toDouble() > _duration2.inSeconds.toDouble()?_duration.inSeconds.toDouble():_duration2.inSeconds.toDouble(),
+                    max: _duration1.inSeconds.toDouble() > _duration2.inSeconds.toDouble()?_duration1.inSeconds.toDouble():_duration2.inSeconds.toDouble(),
                     divisions: 100,
                     activeColor: primaryPinkColor,
                     inactiveColor: primaryGreyColor2,
                     onChanged: (double newValue) async{
-                      if(newValue.toInt() <= _duration.inSeconds){
+                      if(newValue.toInt() <= _duration1.inSeconds){
                         await audioPlayer1.seek(Duration(seconds: newValue.toInt()));
                       }
                       if(newValue.toInt() <= _duration2.inSeconds){
@@ -734,12 +730,16 @@ class _PlaylistMixSoundState extends ConsumerState<PlaylistMixSound> with Ticker
                               onChanged: (double newValue) async{
                                 state(() {
                                   setDuration = 1;
+                                  selectedSliderLength = 1;
                                   selectedTime = check?0:newValue.toInt();
                                   setDuration = selectedTimes[selectedTime];
                                   setDuration *= 60;
+                                  selectedSliderLength *= 60;
                                   print("index $selectedTime");
                                 });
-                                setState(() {});
+                                if(mounted){
+                                  setState((){});
+                                }
                               },
                               semanticFormatterCallback: (double newValue) {
                                 return '${newValue.round()} dollars';
@@ -772,6 +772,7 @@ class _PlaylistMixSoundState extends ConsumerState<PlaylistMixSound> with Ticker
                                   check = newValue!;
                                   if(check){
                                     selectedTime = 0;
+                                    selectedSliderLength=0;
                                   }
                                 });
                               }),
@@ -797,7 +798,6 @@ class _PlaylistMixSoundState extends ConsumerState<PlaylistMixSound> with Ticker
           setState(() {
             secController.text = "";
             minController.text = "";
-            print("asche");
           });
         }
       }
@@ -808,7 +808,7 @@ class _PlaylistMixSoundState extends ConsumerState<PlaylistMixSound> with Ticker
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       child:StatefulBuilder(
-        builder: (BuildContext context, void Function(void Function()) updateState) {
+        builder: (BuildContext context, void Function(void Function()) updateState){
           return Wrap(
             children: [
               Container(
@@ -1019,7 +1019,6 @@ class _PlaylistMixSoundState extends ConsumerState<PlaylistMixSound> with Ticker
             ],
           );
         },
-
       ),
     );
   }
