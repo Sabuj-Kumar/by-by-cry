@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'compoment/google_pay.dart';
 import 'compoment/shared/custom_image.dart';
 import 'compoment/shared/custom_image_text.dart';
 import 'compoment/shared/custom_text.dart';
@@ -238,6 +239,7 @@ class _InitialHomePageState extends ConsumerState<InitialHomePage> {
               textFontWeight: FontWeight.w700,
               borderRadius: 50,
               onPressed: () {
+               /* _showDialog(context);*/
                 Navigator.push(context, MaterialPageRoute(builder: (context) => const StartPage()));
               },
             ),
@@ -525,6 +527,41 @@ class _InitialHomePageState extends ConsumerState<InitialHomePage> {
     );
   }
 
+  void _showDialog(BuildContext context) {
+    final height = ScreenSize(context).height;
+    final width = ScreenSize(context).width;
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, void Function(void Function()) state) {
+            /* if(mounted) {
+              //startTimer(state);
+              if(mounted){
+                state((){});
+              }
+            }*/
+            return  Wrap(
+              children: [
+                AlertDialog(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15)
+                  ),
+                  backgroundColor: Colors.white,
+                  contentPadding: EdgeInsets.zero,
+                  content: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: const [
+                      GooglePay()
+                    ],
+                  ),
+                ),
+              ],
+            );  },
+        );
+      },
+    );
+  }
   Widget textCol({required String firstText, required String secondText}) {
     return Padding(
       padding: const EdgeInsets.all(20.0),

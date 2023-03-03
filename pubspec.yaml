@@ -29,6 +29,7 @@ dependencies:
   shared_preferences: ^2.0.17
   flutter_screen_wake: ^1.0.2
   carousel_slider: ^4.2.1
+  pay: ^1.1.0
 
 dev_dependencies:
   flutter_test:
